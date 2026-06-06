@@ -7,11 +7,16 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ahmedasfak.fintrack.entity.Expense;
+import com.ahmedasfak.fintrack.entity.ExpenseCategory;
 import com.ahmedasfak.fintrack.entity.User;
-
 
 public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
 
     List<Expense> findByUser(User user);
+
     Optional<Expense> findByIdAndUser(UUID id, User user);
+
+    List<Expense> findByUserAndCategory(
+            User user,
+            ExpenseCategory category);
 }

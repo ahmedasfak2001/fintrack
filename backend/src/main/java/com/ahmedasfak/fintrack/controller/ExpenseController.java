@@ -3,14 +3,18 @@ package com.ahmedasfak.fintrack.controller;
 import java.util.List;
 import java.util.UUID;
 
-import com.ahmedasfak.fintrack.dto.ExpenseResponse;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import com.ahmedasfak.fintrack.dto.UpdateExpenseRequest;
+import com.ahmedasfak.fintrack.entity.Expense;
+import com.ahmedasfak.fintrack.entity.ExpenseCategory;
+import com.ahmedasfak.fintrack.dto.ExpenseResponse;
+import com.ahmedasfak.fintrack.dto.SummaryResponse;
 import com.ahmedasfak.fintrack.dto.AddExpenseRequest;
 import com.ahmedasfak.fintrack.service.ExpenseService;
+import com.ahmedasfak.fintrack.dto.MonthlySummaryResponse;
 
 @RestController
 @RequestMapping("/api/expenses")
@@ -46,5 +50,45 @@ public class ExpenseController {
             @AuthenticationPrincipal UserDetails userDetails) {
 
         return expenseService.deleteExpense(id, userDetails);
+    }
+
+    // Get Summary Endpoint
+    @GetMapping("/summary")
+    public SummaryResponse getSummary(
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        return expenseService.getSummary(userDetails);
+    }
+
+    // Get Monthly Summary Endpoint
+    @GetMapping("/summary/monthly")
+    public MonthlySummaryResponse getMonthlySummary(
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        return expenseService.getMonthlySummary(userDetails);
+    }
+
+    // Update Expense Endpoint
+    @PutMapping("/{expenseId}")
+    public String updateExpense(
+            @PathVariable UUID expenseId,
+            @RequestBody UpdateExpenseRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        return expenseService.updateExpense(
+                expenseId,
+                request,
+                userDetails);
+    }
+
+    // Get Expenses by Category Endpoint
+    @GetMapping("/filter")
+    public List<Expense> getExpensesByCategory(
+            @RequestParam ExpenseCategory category,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        return expenseService.getExpensesByCategory(
+                category,
+                userDetails);
     }
 }
