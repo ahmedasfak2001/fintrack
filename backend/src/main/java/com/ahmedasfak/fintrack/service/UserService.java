@@ -1,5 +1,8 @@
 package com.ahmedasfak.fintrack.service;
 
+import com.ahmedasfak.fintrack.dto.AuthResponse;
+import com.ahmedasfak.fintrack.security.JwtService;
+
 import com.ahmedasfak.fintrack.dto.LoginRequest;
 import com.ahmedasfak.fintrack.dto.RegisterRequest;
 import com.ahmedasfak.fintrack.entity.User;
@@ -14,13 +17,16 @@ import java.time.LocalDateTime;
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public UserService(
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService) {
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     private final UserRepository userRepository;
@@ -55,29 +61,25 @@ public class UserService {
         return "User Registered Successfully";
     }
 
-    // For login User, we will check if the email exists. If it doesn't, we will
-    // return an error message. If it does, we will check if the password matches.
-    // If it doesn't, we will return an error message. If it does, we will return a
-    // success message.
-    public String login(LoginRequest request) {
+    // For login, we will check if the email exists. If it doesn't, we will return
+    // an error message. If it does, we will check if the password matches. If it
+    // doesn't,
+    public AuthResponse login(LoginRequest request) {
 
-    User user = userRepository
-            .findByEmail(request.getEmail())
-            .orElse(null);
+        User user = userRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Incorrect email or password"));
 
-    if (user == null) {
-        return "Incorrect email or password";
+        boolean passwordMatched = passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword());
+
+        if (!passwordMatched) {
+            throw new RuntimeException("Incorrect email or password");
+        }
+
+        String token = jwtService.generateToken(user.getEmail());
+
+        return new AuthResponse(token);
     }
-
-    boolean passwordMatched =
-            passwordEncoder.matches(
-                    request.getPassword(),
-                    user.getPassword());
-
-    if (!passwordMatched) {
-        return "Incorrect email or password";
-    }
-
-    return "Login Successful";
-}
 }

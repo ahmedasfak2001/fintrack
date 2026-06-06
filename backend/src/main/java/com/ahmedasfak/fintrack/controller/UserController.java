@@ -1,5 +1,6 @@
 package com.ahmedasfak.fintrack.controller;
 
+import com.ahmedasfak.fintrack.dto.AuthResponse;
 import com.ahmedasfak.fintrack.dto.LoginRequest;
 import com.ahmedasfak.fintrack.dto.RegisterRequest;
 import com.ahmedasfak.fintrack.service.UserService;
@@ -23,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(
+    public ResponseEntity<AuthResponse> login(
             @RequestBody LoginRequest request) {
 
         return ResponseEntity.ok(
