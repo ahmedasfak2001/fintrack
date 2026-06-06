@@ -1,6 +1,7 @@
 package com.ahmedasfak.fintrack.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.ahmedasfak.fintrack.dto.ExpenseResponse;
 
@@ -20,6 +21,7 @@ public class ExpenseController {
     public ExpenseController(ExpenseService expenseService) {
         this.expenseService = expenseService;
     }
+
     // Add Expense Endpoint
     @PostMapping
     public String addExpense(
@@ -28,11 +30,21 @@ public class ExpenseController {
 
         return expenseService.addExpense(request, userDetails);
     }
+
     // Get Expenses Endpoint
     @GetMapping
     public List<ExpenseResponse> getExpenses(
             @AuthenticationPrincipal UserDetails userDetails) {
 
         return expenseService.getExpenses(userDetails);
+    }
+
+    // Delete Expense Endpoint
+    @DeleteMapping("/{id}")
+    public String deleteExpense(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        return expenseService.deleteExpense(id, userDetails);
     }
 }

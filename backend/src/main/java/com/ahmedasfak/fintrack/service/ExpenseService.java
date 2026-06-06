@@ -1,6 +1,7 @@
 package com.ahmedasfak.fintrack.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.ahmedasfak.fintrack.dto.ExpenseResponse;
 
@@ -18,6 +19,7 @@ public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
     private final UserRepository userRepository;
+
     // Constructor Injection
     public ExpenseService(
             ExpenseRepository expenseRepository,
@@ -26,6 +28,7 @@ public class ExpenseService {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
     }
+
     // Add Expense
     public String addExpense(
             AddExpenseRequest request,
@@ -72,5 +75,23 @@ public class ExpenseService {
                     return response;
                 })
                 .toList();
+    }
+
+    // Delete Expense
+    public String deleteExpense(
+            UUID expenseId,
+            UserDetails userDetails) {
+
+        User user = userRepository
+                .findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Expense expense = expenseRepository
+                .findByIdAndUser(expenseId, user)
+                .orElseThrow(() -> new RuntimeException("Expense not found"));
+
+        expenseRepository.delete(expense);
+
+        return "Expense deleted successfully";
     }
 }
