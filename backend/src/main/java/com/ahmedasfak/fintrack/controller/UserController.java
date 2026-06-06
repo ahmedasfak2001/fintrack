@@ -1,7 +1,10 @@
 package com.ahmedasfak.fintrack.controller;
 
+import com.ahmedasfak.fintrack.dto.LoginRequest;
 import com.ahmedasfak.fintrack.dto.RegisterRequest;
 import com.ahmedasfak.fintrack.service.UserService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,5 +20,13 @@ public class UserController {
     @PostMapping("/register")
     public String register(@RequestBody RegisterRequest request) {
         return userService.register(request);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(
+            @RequestBody LoginRequest request) {
+
+        return ResponseEntity.ok(
+                userService.login(request));
     }
 }
