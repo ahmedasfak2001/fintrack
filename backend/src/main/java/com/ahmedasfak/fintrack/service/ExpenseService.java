@@ -268,4 +268,20 @@ public class ExpenseService {
                 return expenseRepository
                                 .findByUser(user, pageable);
         }
+        // Get Expenses by Date Range
+        public List<Expense> getExpensesByDateRange(
+                        LocalDate from,
+                        LocalDate to,
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                return expenseRepository
+                                .findByUserAndExpenseDateBetween(
+                                                user,
+                                                from,
+                                                to);
+        }
 }

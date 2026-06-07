@@ -1,5 +1,6 @@
 package com.ahmedasfak.fintrack.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -118,6 +119,22 @@ public class ExpenseController {
         return expenseService.getExpensesByMonth(
                 month,
                 year,
+                userDetails);
+    }
+
+    // Get Expenses by Date Range Endpoint
+    @GetMapping("/filter/date")
+    public List<Expense> getExpensesByDateRange(
+
+            @RequestParam LocalDate from,
+
+            @RequestParam LocalDate to,
+
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        return expenseService.getExpensesByDateRange(
+                from,
+                to,
                 userDetails);
     }
 }
