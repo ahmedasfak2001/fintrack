@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
 
 import com.ahmedasfak.fintrack.dto.UpdateExpenseRequest;
 import com.ahmedasfak.fintrack.entity.Expense;
@@ -36,11 +37,26 @@ public class ExpenseController {
     }
 
     // Get Expenses Endpoint
-    @GetMapping
-    public List<ExpenseResponse> getExpenses(
-            @AuthenticationPrincipal UserDetails userDetails) {
+    // @GetMapping
+    // public List<ExpenseResponse> getExpenses(
+    // @AuthenticationPrincipal UserDetails userDetails) {
 
-        return expenseService.getExpenses(userDetails);
+    // return expenseService.getExpenses(userDetails);
+    // }
+    // Get Expenses with Pagination Endpoint
+    @GetMapping
+    public Page<Expense> getExpenses(
+
+            @AuthenticationPrincipal UserDetails userDetails,
+
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "10") int size) {
+
+        return expenseService.getExpenses(
+                userDetails,
+                page,
+                size);
     }
 
     // Delete Expense Endpoint
@@ -89,6 +105,19 @@ public class ExpenseController {
 
         return expenseService.getExpensesByCategory(
                 category,
+                userDetails);
+    }
+
+    // Get Expenses by Month Endpoint
+    @GetMapping("/filter/month")
+    public List<Expense> getExpensesByMonth(
+            @RequestParam int month,
+            @RequestParam int year,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        return expenseService.getExpensesByMonth(
+                month,
+                year,
                 userDetails);
     }
 }

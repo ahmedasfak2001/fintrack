@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.UUID;
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -26,204 +28,244 @@ import com.ahmedasfak.fintrack.dto.UpdateExpenseRequest;
 @Service
 public class ExpenseService {
 
-    private final ExpenseRepository expenseRepository;
-    private final UserRepository userRepository;
+        private final ExpenseRepository expenseRepository;
+        private final UserRepository userRepository;
 
-    // Constructor Injection
-    public ExpenseService(
-            ExpenseRepository expenseRepository,
-            UserRepository userRepository) {
+        // Constructor Injection
+        public ExpenseService(
+                        ExpenseRepository expenseRepository,
+                        UserRepository userRepository) {
 
-        this.expenseRepository = expenseRepository;
-        this.userRepository = userRepository;
-    }
-
-    // Add Expense
-    public String addExpense(
-            AddExpenseRequest request,
-            UserDetails userDetails) {
-
-        User user = userRepository
-                .findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Expense expense = new Expense();
-
-        expense.setUser(user);
-        expense.setAmount(request.getAmount());
-        expense.setCategory(request.getCategory());
-        expense.setDescription(request.getDescription());
-        expense.setExpenseDate(request.getExpenseDate());
-
-        expenseRepository.save(expense);
-
-        return "Expense added successfully";
-    }
-
-    // Get Expenses
-    public List<ExpenseResponse> getExpenses(
-            UserDetails userDetails) {
-
-        User user = userRepository
-                .findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        List<Expense> expenses = expenseRepository.findByUser(user);
-
-        return expenses.stream()
-                .map(expense -> {
-
-                    ExpenseResponse response = new ExpenseResponse();
-
-                    response.setId(expense.getId());
-                    response.setAmount(expense.getAmount());
-                    response.setCategory(expense.getCategory());
-                    response.setDescription(expense.getDescription());
-                    response.setExpenseDate(expense.getExpenseDate());
-
-                    return response;
-                })
-                .toList();
-    }
-
-    // Delete Expense
-    public String deleteExpense(
-            UUID expenseId,
-            UserDetails userDetails) {
-
-        User user = userRepository
-                .findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Expense expense = expenseRepository
-                .findByIdAndUser(expenseId, user)
-                .orElseThrow(() -> new RuntimeException("Expense not found"));
-
-        expenseRepository.delete(expense);
-
-        return "Expense deleted successfully";
-    }
-
-    // Get Summary
-    public SummaryResponse getSummary(
-            UserDetails userDetails) {
-
-        User user = userRepository
-                .findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        List<Expense> expenses = expenseRepository.findByUser(user);
-
-        SummaryResponse response = new SummaryResponse();
-
-        BigDecimal totalExpense = expenses.stream()
-                .map(Expense::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        Map<String, BigDecimal> categoryBreakdown = new HashMap<>();
-
-        for (Expense expense : expenses) {
-
-            String category = expense.getCategory().name();
-
-            categoryBreakdown.put(
-                    category,
-                    categoryBreakdown.getOrDefault(
-                            category,
-                            BigDecimal.ZERO)
-                            .add(expense.getAmount()));
+                this.expenseRepository = expenseRepository;
+                this.userRepository = userRepository;
         }
 
-        response.setTotalExpense(totalExpense);
-        response.setExpenseCount((long) expenses.size());
-        response.setCategoryBreakdown(categoryBreakdown);
+        // Add Expense
+        public String addExpense(
+                        AddExpenseRequest request,
+                        UserDetails userDetails) {
 
-        return response;
-    }
+                User user = userRepository
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    // Get Monthly Summary
-    public MonthlySummaryResponse getMonthlySummary(
-            UserDetails userDetails) {
+                Expense expense = new Expense();
 
-        User user = userRepository
-                .findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                expense.setUser(user);
+                expense.setAmount(request.getAmount());
+                expense.setCategory(request.getCategory());
+                expense.setDescription(request.getDescription());
+                expense.setExpenseDate(request.getExpenseDate());
 
-        List<Expense> expenses = expenseRepository.findByUser(user);
+                expenseRepository.save(expense);
 
-        YearMonth currentMonth = YearMonth.now();
-
-        List<Expense> monthlyExpenses = expenses.stream()
-                .filter(expense -> YearMonth.from(expense.getExpenseDate())
-                        .equals(currentMonth))
-                .toList();
-
-        BigDecimal totalExpense = monthlyExpenses.stream()
-                .map(Expense::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        Map<String, BigDecimal> categoryBreakdown = new HashMap<>();
-
-        for (Expense expense : monthlyExpenses) {
-
-            String category = expense.getCategory().name();
-
-            categoryBreakdown.put(
-                    category,
-                    categoryBreakdown.getOrDefault(
-                            category,
-                            BigDecimal.ZERO)
-                            .add(expense.getAmount()));
+                return "Expense added successfully";
         }
 
-        MonthlySummaryResponse response = new MonthlySummaryResponse();
+        // Get Expenses
+        public List<ExpenseResponse> getExpenses(
+                        UserDetails userDetails) {
 
-        response.setMonth(currentMonth.getMonth().name());
-        response.setYear(currentMonth.getYear());
-        response.setTotalExpense(totalExpense);
-        response.setExpenseCount((long) monthlyExpenses.size());
-        response.setCategoryBreakdown(categoryBreakdown);
+                User user = userRepository
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return response;
-    }
+                List<Expense> expenses = expenseRepository.findByUser(user);
 
-    // Update Expense
-    public String updateExpense(
-            UUID expenseId,
-            UpdateExpenseRequest request,
-            UserDetails userDetails) {
+                return expenses.stream()
+                                .map(expense -> {
 
-        User user = userRepository
-                .findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                                        ExpenseResponse response = new ExpenseResponse();
 
-        Expense expense = expenseRepository
-                .findById(expenseId)
-                .orElseThrow(() -> new RuntimeException("Expense not found"));
+                                        response.setId(expense.getId());
+                                        response.setAmount(expense.getAmount());
+                                        response.setCategory(expense.getCategory());
+                                        response.setDescription(expense.getDescription());
+                                        response.setExpenseDate(expense.getExpenseDate());
 
-        if (!expense.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Unauthorized");
+                                        return response;
+                                })
+                                .toList();
         }
 
-        expense.setDescription(request.getDescription());
-        expense.setAmount(request.getAmount());
-        expense.setCategory(request.getCategory());
-        expense.setExpenseDate(request.getExpenseDate());
+        // Delete Expense
+        public String deleteExpense(
+                        UUID expenseId,
+                        UserDetails userDetails) {
 
-        expenseRepository.save(expense);
+                User user = userRepository
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return "Expense updated successfully";
-    }
-    // Get Expenses by Category
-    public List<Expense> getExpensesByCategory(
-            ExpenseCategory category,
-            UserDetails userDetails) {
+                Expense expense = expenseRepository
+                                .findByIdAndUser(expenseId, user)
+                                .orElseThrow(() -> new RuntimeException("Expense not found"));
 
-        User user = userRepository
-                .findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                expenseRepository.delete(expense);
 
-        return expenseRepository
-                .findByUserAndCategory(user, category);
-    }
+                return "Expense deleted successfully";
+        }
+
+        // Get Summary
+        public SummaryResponse getSummary(
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                List<Expense> expenses = expenseRepository.findByUser(user);
+
+                SummaryResponse response = new SummaryResponse();
+
+                BigDecimal totalExpense = expenses.stream()
+                                .map(Expense::getAmount)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                Map<String, BigDecimal> categoryBreakdown = new HashMap<>();
+
+                for (Expense expense : expenses) {
+
+                        String category = expense.getCategory().name();
+
+                        categoryBreakdown.put(
+                                        category,
+                                        categoryBreakdown.getOrDefault(
+                                                        category,
+                                                        BigDecimal.ZERO)
+                                                        .add(expense.getAmount()));
+                }
+
+                response.setTotalExpense(totalExpense);
+                response.setExpenseCount((long) expenses.size());
+                response.setCategoryBreakdown(categoryBreakdown);
+
+                return response;
+        }
+
+        // Get Monthly Summary
+        public MonthlySummaryResponse getMonthlySummary(
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                List<Expense> expenses = expenseRepository.findByUser(user);
+
+                YearMonth currentMonth = YearMonth.now();
+
+                List<Expense> monthlyExpenses = expenses.stream()
+                                .filter(expense -> YearMonth.from(expense.getExpenseDate())
+                                                .equals(currentMonth))
+                                .toList();
+
+                BigDecimal totalExpense = monthlyExpenses.stream()
+                                .map(Expense::getAmount)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                Map<String, BigDecimal> categoryBreakdown = new HashMap<>();
+
+                for (Expense expense : monthlyExpenses) {
+
+                        String category = expense.getCategory().name();
+
+                        categoryBreakdown.put(
+                                        category,
+                                        categoryBreakdown.getOrDefault(
+                                                        category,
+                                                        BigDecimal.ZERO)
+                                                        .add(expense.getAmount()));
+                }
+
+                MonthlySummaryResponse response = new MonthlySummaryResponse();
+
+                response.setMonth(currentMonth.getMonth().name());
+                response.setYear(currentMonth.getYear());
+                response.setTotalExpense(totalExpense);
+                response.setExpenseCount((long) monthlyExpenses.size());
+                response.setCategoryBreakdown(categoryBreakdown);
+
+                return response;
+        }
+
+        // Update Expense
+        public String updateExpense(
+                        UUID expenseId,
+                        UpdateExpenseRequest request,
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                Expense expense = expenseRepository
+                                .findById(expenseId)
+                                .orElseThrow(() -> new RuntimeException("Expense not found"));
+
+                if (!expense.getUser().getId().equals(user.getId())) {
+                        throw new RuntimeException("Unauthorized");
+                }
+
+                expense.setDescription(request.getDescription());
+                expense.setAmount(request.getAmount());
+                expense.setCategory(request.getCategory());
+                expense.setExpenseDate(request.getExpenseDate());
+
+                expenseRepository.save(expense);
+
+                return "Expense updated successfully";
+        }
+
+        // Get Expenses by Category
+        public List<Expense> getExpensesByCategory(
+                        ExpenseCategory category,
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                return expenseRepository
+                                .findByUserAndCategory(user, category);
+        }
+
+        // Get Expenses by Month
+        public List<Expense> getExpensesByMonth(
+                        int month,
+                        int year,
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                YearMonth yearMonth = YearMonth.of(year, month);
+
+                LocalDate startDate = yearMonth.atDay(1);
+
+                LocalDate endDate = yearMonth.atEndOfMonth();
+
+                return expenseRepository
+                                .findByUserAndExpenseDateBetween(
+                                                user,
+                                                startDate,
+                                                endDate);
+        }
+
+        // Get Expenses with Pagination
+        public Page<Expense> getExpenses(
+                        UserDetails userDetails,
+                        int page,
+                        int size) {
+
+                User user = userRepository
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                Pageable pageable = PageRequest.of(page, size);
+
+                return expenseRepository
+                                .findByUser(user, pageable);
+        }
 }
