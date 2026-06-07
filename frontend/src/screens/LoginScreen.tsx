@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LoginRequest } from "../types/LoginRequest";
 import { AuthResponse } from "../types/AuthResponse";
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -45,10 +45,12 @@ const LoginScreen = () => {
 
       console.log("Stored Token:", savedToken);
 
-      Alert.alert(
-        "Success",
-        "Login Successful"
-      );
+      // Alert.alert(
+      //   "Success",
+      //   "Login Successful"
+      // );
+
+      navigation.replace("Dashboard");
 
       console.log(
         "JWT Token:",

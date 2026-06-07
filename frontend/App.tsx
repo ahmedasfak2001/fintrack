@@ -20,8 +20,8 @@
 // });
 
 
-import LoginScreen from "./src/screens/LoginScreen";
+import AppNavigator from "./src/navigation/AppNavigator";
 
 export default function App() {
-  return <LoginScreen />;
+  return <AppNavigator />;
 }
