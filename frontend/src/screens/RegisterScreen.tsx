@@ -47,16 +47,35 @@ const RegisterScreen = ({ navigation }: any) => {
                 ]
             );
 
-        } catch (error) {
+        }
+        // catch (error) {
 
-            Alert.alert(
-                "Error",
-                "Registration failed"
-            );
+        //         Alert.alert(
+        //             "Error",
+        //             "Registration failed"
+        //         );
 
-            console.error(error);
+        //         console.error(error);
+        //     }
+        catch (error: any) {
+
+            if (error.response?.status === 403) {
+
+                Alert.alert(
+                    "Registration Failed",
+                    "Email already registered"
+                );
+
+            } else {
+
+                Alert.alert(
+                    "Registration Failed",
+                    "Something went wrong"
+                );
+            }
         }
     };
+
 
     return (
         <View style={styles.container}>

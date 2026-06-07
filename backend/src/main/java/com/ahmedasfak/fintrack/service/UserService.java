@@ -8,8 +8,10 @@ import com.ahmedasfak.fintrack.dto.RegisterRequest;
 import com.ahmedasfak.fintrack.entity.User;
 import com.ahmedasfak.fintrack.repository.UserRepository;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
@@ -40,8 +42,14 @@ public class UserService {
     // BCryptPasswordEncoder.
     public String register(RegisterRequest request) {
 
+        // if (userRepository.existsByEmail(request.getEmail())) {
+        // return "Email already exists";
+        // }
         if (userRepository.existsByEmail(request.getEmail())) {
-            return "Email already exists";
+
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "User already exists");
         }
 
         User user = new User();
