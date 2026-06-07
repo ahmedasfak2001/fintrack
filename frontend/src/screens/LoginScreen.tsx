@@ -91,7 +91,16 @@ const LoginScreen = ({ navigation }: any) => {
         title="Login"
         onPress={handleLogin}
       />
+
+      <View style={{ marginTop: 10 }}>
+        <Button
+          title="Create Account"
+          onPress={() => navigation.navigate("Register")}
+        />
+      </View>
     </View>
+
+
   );
 };
 
