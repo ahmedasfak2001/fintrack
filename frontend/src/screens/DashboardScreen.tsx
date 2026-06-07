@@ -1,25 +1,40 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Button } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const DashboardScreen = () => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>
-        Welcome to FinTrack
-      </Text>
-    </View>
-  );
+const DashboardScreen = ({ navigation }: any) => {
+
+    const logout = async () => {
+
+        await AsyncStorage.removeItem("token");
+
+        navigation.replace("Login");
+    };
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>
+                Welcome to FinTrack
+            </Text>
+
+            <Button
+                title="Logout"
+                onPress={logout}
+            />
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 24,
-  },
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    title: {
+        fontSize: 24,
+        marginBottom: 20,
+    },
 });
 
 export default DashboardScreen;
