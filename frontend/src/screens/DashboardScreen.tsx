@@ -18,6 +18,13 @@ const DashboardScreen = ({ navigation }: any) => {
             </Text>
 
             <Button
+                title="View Expenses"
+                onPress={() =>
+                    navigation.navigate("Expenses")
+                }
+            />
+
+            <Button
                 title="Logout"
                 onPress={logout}
             />
