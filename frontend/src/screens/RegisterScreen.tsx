@@ -1,87 +1,127 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  Alert,
-  StyleSheet,
+    View,
+    Text,
+    TextInput,
+    Button,
+    Alert,
+    StyleSheet,
 } from "react-native";
+
+import api from "../api/api";
+import { RegisterRequest } from "../types/RegisterRequest";
 
 const RegisterScreen = ({ navigation }: any) => {
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-  const handleRegister = () => {
-    Alert.alert("Register Clicked");
-  };
+    //   const handleRegister = () => {
+    //     Alert.alert("Register Clicked");
+    //   };
 
-  return (
-    <View style={styles.container}>
+    const handleRegister = async () => {
+        try {
 
-      <Text style={styles.title}>
-        FinTrack Register
-      </Text>
+            const request: RegisterRequest = {
+                name,
+                email,
+                password,
+            };
 
-      <TextInput
-        placeholder="Name"
-        value={name}
-        onChangeText={setName}
-        style={styles.input}
-      />
+            await api.post(
+                "/api/users/register",
+                request
+            );
 
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-      />
+            Alert.alert(
+                "Success",
+                "User registered successfully",
+                [
+                    {
+                        text: "OK",
+                        onPress: () =>
+                            navigation.navigate("Login"),
+                    },
+                ]
+            );
 
-      <TextInput
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-      />
+        } catch (error) {
 
-      <Button
-        title="Register"
-        onPress={handleRegister}
-      />
+            Alert.alert(
+                "Error",
+                "Registration failed"
+            );
 
-      <View style={{ marginTop: 10 }}>
+            console.error(error);
+        }
+    };
 
-        <Button
-          title="Back To Login"
-          onPress={() => navigation.goBack()}
-        />
+    return (
+        <View style={styles.container}>
 
-      </View>
+            <Text style={styles.title}>
+                FinTrack Register
+            </Text>
 
-    </View>
-  );
+            <TextInput
+                placeholder="Name"
+                value={name}
+                onChangeText={setName}
+                style={styles.input}
+            />
+
+            <TextInput
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+                style={styles.input}
+            />
+
+            <TextInput
+                placeholder="Password"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+                style={styles.input}
+            />
+
+            <Button
+                title="Register"
+                onPress={handleRegister}
+            />
+
+            <View style={{ marginTop: 10 }}>
+
+                <Button
+                    title="Back To Login"
+                    onPress={() => navigation.goBack()}
+                />
+
+            </View>
+
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 28,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  input: {
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 15,
-    borderRadius: 5,
-  },
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        padding: 20,
+    },
+    title: {
+        fontSize: 28,
+        marginBottom: 20,
+        textAlign: "center",
+    },
+    input: {
+        borderWidth: 1,
+        padding: 10,
+        marginBottom: 15,
+        borderRadius: 5,
+    },
 });
 
 export default RegisterScreen;
