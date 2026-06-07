@@ -3,11 +3,15 @@ package com.ahmedasfak.fintrack.controller;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.io.IOException;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import com.ahmedasfak.fintrack.dto.UpdateExpenseRequest;
 import com.ahmedasfak.fintrack.entity.Expense;
@@ -136,5 +140,24 @@ public class ExpenseController {
                 from,
                 to,
                 userDetails);
+    }
+
+    // Export Expenses to CSV Endpoint
+    @GetMapping("/export")
+    public ResponseEntity<String> exportExpenses(
+
+            @AuthenticationPrincipal UserDetails userDetails)
+
+            throws IOException {
+
+        String csvData = expenseService.exportExpensesToCsv(
+                userDetails);
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=expenses.csv")
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(csvData);
     }
 }

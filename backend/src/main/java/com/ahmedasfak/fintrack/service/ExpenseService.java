@@ -7,12 +7,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.io.StringWriter;
+import java.io.IOException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 
 import com.ahmedasfak.fintrack.dto.MonthlySummaryResponse;
 import com.ahmedasfak.fintrack.dto.SummaryResponse;
@@ -268,6 +272,7 @@ public class ExpenseService {
                 return expenseRepository
                                 .findByUser(user, pageable);
         }
+
         // Get Expenses by Date Range
         public List<Expense> getExpensesByDateRange(
                         LocalDate from,
@@ -283,5 +288,40 @@ public class ExpenseService {
                                                 user,
                                                 from,
                                                 to);
+        }
+        // Export Expenses to CSV
+        public String exportExpensesToCsv(
+                        UserDetails userDetails) throws IOException {
+
+                User user = userRepository
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                List<Expense> expenses = expenseRepository.findByUser(user);
+
+                StringWriter writer = new StringWriter();
+
+                CSVPrinter csvPrinter = new CSVPrinter(
+                                writer,
+                                CSVFormat.DEFAULT.builder()
+                                                .setHeader(
+                                                                "Date",
+                                                                "Category",
+                                                                "Amount",
+                                                                "Description")
+                                                .build());
+
+                for (Expense expense : expenses) {
+
+                        csvPrinter.printRecord(
+                                        expense.getExpenseDate(),
+                                        expense.getCategory(),
+                                        expense.getAmount(),
+                                        expense.getDescription());
+                }
+
+                csvPrinter.flush();
+
+                return writer.toString();
         }
 }
