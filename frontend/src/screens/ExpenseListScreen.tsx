@@ -5,6 +5,8 @@ import {
     Text,
     StyleSheet,
     FlatList,
+    Button,
+    Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api/api";
@@ -52,6 +54,58 @@ const ExpenseListScreen = () => {
             console.error(error);
         }
     };
+    const confirmDelete = (
+        expenseId: string
+    ) => {
+
+        Alert.alert(
+            "Delete Expense",
+            "Are you sure?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel",
+                },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: () =>
+                        deleteExpense(expenseId),
+                },
+            ]
+        );
+    };
+    const deleteExpense = async (
+        expenseId: string
+    ) => {
+
+        try {
+
+            const token =
+                await AsyncStorage.getItem("token");
+
+            await api.delete(
+                `/api/expenses/${expenseId}`,
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`,
+                    },
+                }
+            );
+
+            fetchExpenses();
+
+        } catch (error) {
+
+            console.error(error);
+
+            Alert.alert(
+                "Error",
+                "Failed to delete expense"
+            );
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -59,8 +113,25 @@ const ExpenseListScreen = () => {
             <FlatList
                 data={expenses}
                 keyExtractor={(item: any) => item.id}
+                // renderItem={({ item }: any) => (
+                //     <View style={styles.card}>
+                //         <Text>
+                //             ₹ {item.amount}
+                //         </Text>
+
+                //         <Text>
+                //             {item.category}
+                //         </Text>
+
+                //         <Text>
+                //             {item.description}
+                //         </Text>
+                //     </View>
+                // )}
                 renderItem={({ item }: any) => (
+
                     <View style={styles.card}>
+
                         <Text>
                             ₹ {item.amount}
                         </Text>
@@ -72,6 +143,14 @@ const ExpenseListScreen = () => {
                         <Text>
                             {item.description}
                         </Text>
+
+                        <Button
+                            title="Delete"
+                            onPress={() =>
+                                confirmDelete(item.id)
+                            }
+                        />
+
                     </View>
                 )}
             />
