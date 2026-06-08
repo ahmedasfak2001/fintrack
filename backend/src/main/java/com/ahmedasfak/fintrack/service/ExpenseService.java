@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Sort;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -258,6 +259,7 @@ public class ExpenseService {
         }
 
         // Get Expenses with Pagination
+        // Get Expenses with Pagination
         public Page<Expense> getExpenses(
                         UserDetails userDetails,
                         int page,
@@ -267,7 +269,10 @@ public class ExpenseService {
                                 .findByEmail(userDetails.getUsername())
                                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-                Pageable pageable = PageRequest.of(page, size);
+                Pageable pageable = PageRequest.of(
+                                page,
+                                size,
+                                Sort.by("createdAt").descending());
 
                 return expenseRepository
                                 .findByUser(user, pageable);
@@ -289,6 +294,7 @@ public class ExpenseService {
                                                 from,
                                                 to);
         }
+
         // Export Expenses to CSV
         public String exportExpensesToCsv(
                         UserDetails userDetails) throws IOException {

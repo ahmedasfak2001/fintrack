@@ -99,7 +99,7 @@ const AddExpenseScreen = ({ navigation }: any) => {
                     {
                         text: "OK",
                         onPress: () =>
-                            navigation.navigate("Expenses"),
+                            navigation.goBack(),
                     },
                 ]
             );

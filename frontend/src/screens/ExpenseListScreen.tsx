@@ -59,7 +59,7 @@ const ExpenseListScreen = ({ navigation }: any) => {
 
             const response =
                 await api.get(
-                    "/api/expenses?page=0&size=10",
+                    "/api/expenses?page=0&size=100",
                     {
                         headers: {
                             Authorization:
