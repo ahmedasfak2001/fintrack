@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -8,11 +8,107 @@ import {
     StyleSheet,
 } from "react-native";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from "@react-native-picker/picker";
+
+import api from "../api/api";
+import { AddExpenseRequest } from "../types/AddExpenseRequest";
+
 const AddExpenseScreen = () => {
 
     const [amount, setAmount] = useState("");
-    const [category, setCategory] = useState("");
     const [description, setDescription] = useState("");
+
+    const [category, setCategory] = useState("");
+    const [categories, setCategories] = useState<string[]>([]);
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    const fetchCategories = async () => {
+
+        try {
+
+            const token =
+                await AsyncStorage.getItem("token");
+
+            const response =
+                await api.get(
+                    "/api/expenses/categories",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            setCategories(response.data);
+
+            if (response.data.length > 0) {
+                setCategory(response.data[0]);
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Error fetching categories:",
+                error
+            );
+        }
+    };
+
+    const handleAddExpense = async () => {
+
+        try {
+
+            const token =
+                await AsyncStorage.getItem("token");
+
+            const request: AddExpenseRequest = {
+                amount: Number(amount),
+                category,
+                description,
+                expenseDate: new Date()
+                    .toISOString()
+                    .split("T")[0],
+            };
+
+            const response =
+                await api.post(
+                    "/api/expenses",
+                    request,
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            Alert.alert(
+                "Success",
+                response.data
+            );
+
+            setAmount("");
+            setDescription("");
+
+            if (categories.length > 0) {
+                setCategory(categories[0]);
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            Alert.alert(
+                "Error",
+                "Failed to add expense"
+            );
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -29,12 +125,21 @@ const AddExpenseScreen = () => {
                 style={styles.input}
             />
 
-            <TextInput
-                placeholder="Category"
-                value={category}
-                onChangeText={setCategory}
-                style={styles.input}
-            />
+            <Picker
+                selectedValue={category}
+                onValueChange={(value) =>
+                    setCategory(value)
+                }
+                style={styles.picker}
+            >
+                {categories.map((category) => (
+                    <Picker.Item
+                        key={category}
+                        label={category}
+                        value={category}
+                    />
+                ))}
+            </Picker>
 
             <TextInput
                 placeholder="Description"
@@ -45,9 +150,7 @@ const AddExpenseScreen = () => {
 
             <Button
                 title="Add Expense"
-                onPress={() =>
-                    Alert.alert("Coming Next")
-                }
+                onPress={handleAddExpense}
             />
 
         </View>
@@ -69,6 +172,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 8,
         padding: 10,
+        marginBottom: 15,
+    },
+    picker: {
         marginBottom: 15,
     },
 });
