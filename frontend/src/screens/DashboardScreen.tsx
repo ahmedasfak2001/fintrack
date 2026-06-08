@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SummaryResponse } from "../types/SummaryResponse";
 import api from "../api/api";
+import { useFocusEffect } from "@react-navigation/native";
 
 const DashboardScreen = ({ navigation }: any) => {
 
@@ -15,11 +16,19 @@ const DashboardScreen = ({ navigation }: any) => {
         navigation.replace("Login");
     };
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        fetchSummary();
+    //     fetchSummary();
 
-    }, []);
+    // }, []);
+    useFocusEffect(
+        useCallback(() => {
+
+            fetchSummary();
+
+        }, [])
+    );
+
     const fetchSummary = async () => {
 
         try {
@@ -76,6 +85,36 @@ const DashboardScreen = ({ navigation }: any) => {
 
             </View>
 
+            <Text style={styles.sectionTitle}>
+                Category Breakdown
+            </Text>
+
+            {
+                summary &&
+                // Object.entries(summary.categoryBreakdown)
+                Object.entries(summary.categoryBreakdown)
+                    .sort(
+                        ([, amountA], [, amountB]) =>
+                            Number(amountB) - Number(amountA)
+                    )
+                    .map(([category, amount]) => (
+
+                        <View
+                            key={category}
+                            style={styles.breakdownRow}
+                        >
+                            <Text>
+                                {category}
+                            </Text>
+
+                            <Text>
+                                ₹ {amount}
+                            </Text>
+                        </View>
+
+                    ))
+            }
+
             <Button
                 title="Add Expense"
                 onPress={() =>
@@ -127,6 +166,19 @@ const styles = StyleSheet.create({
     cardValue: {
         fontSize: 24,
         fontWeight: "bold",
+    },
+    sectionTitle: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginTop: 20,
+        marginBottom: 10,
+    },
+
+    breakdownRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingVertical: 8,
+        borderBottomWidth: 1,
     },
 });
 
