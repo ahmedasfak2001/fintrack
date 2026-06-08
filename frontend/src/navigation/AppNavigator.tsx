@@ -7,6 +7,7 @@ import RegisterScreen from "../screens/RegisterScreen";
 import SplashScreen from "../screens/SplashScreen";
 import ExpenseListScreen from "../screens/ExpenseListScreen";
 import AddExpenseScreen from "../screens/AddExpenseScreen";
+import EditExpenseScreen from "../screens/EditExpenseScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,11 @@ export default function AppNavigator() {
                 <Stack.Screen
                     name="AddExpense"
                     component={AddExpenseScreen}
+                />
+
+                <Stack.Screen
+                    name="EditExpense"
+                    component={EditExpenseScreen}
                 />
 
             </Stack.Navigator>

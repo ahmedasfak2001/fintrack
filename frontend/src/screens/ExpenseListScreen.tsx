@@ -11,7 +11,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api/api";
 
-const ExpenseListScreen = () => {
+const ExpenseListScreen = ({ navigation }: any) => {
 
     const [expenses, setExpenses] = useState([]);
 
@@ -19,8 +19,20 @@ const ExpenseListScreen = () => {
     //     fetchExpenses();
     // }, []);
 
+    // useFocusEffect(
+    //     useCallback(() => {
+
+    //         fetchExpenses();
+
+    //     }, [])
+    // );
+
     useFocusEffect(
         useCallback(() => {
+
+            console.log(
+                "Expense List Refreshed"
+            );
 
             fetchExpenses();
 
@@ -143,6 +155,18 @@ const ExpenseListScreen = () => {
                         <Text>
                             {item.description}
                         </Text>
+
+                        <Button
+                            title="Edit"
+                            onPress={() =>
+                                navigation.navigate(
+                                    "EditExpense",
+                                    {
+                                        expense: item,
+                                    }
+                                )
+                            }
+                        />
 
                         <Button
                             title="Delete"
