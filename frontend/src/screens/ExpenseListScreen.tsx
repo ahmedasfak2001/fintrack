@@ -7,6 +7,7 @@ import {
     FlatList,
     Button,
     Alert,
+    RefreshControl
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api/api";
@@ -14,6 +15,15 @@ import api from "../api/api";
 const ExpenseListScreen = ({ navigation }: any) => {
 
     const [expenses, setExpenses] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = async () => {
+
+        setRefreshing(true);
+
+        await fetchExpenses();
+
+        setRefreshing(false);
+    };
 
     // useEffect(() => {
     //     fetchExpenses();
@@ -39,7 +49,8 @@ const ExpenseListScreen = ({ navigation }: any) => {
         }, [])
     );
 
-    const fetchExpenses = async () => {
+    // const fetchExpenses = async () => {
+    const fetchExpenses = async (): Promise<void> => {
 
         try {
 
@@ -124,6 +135,12 @@ const ExpenseListScreen = ({ navigation }: any) => {
 
             <FlatList
                 data={expenses}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
                 keyExtractor={(item: any) => item.id}
                 // renderItem={({ item }: any) => (
                 //     <View style={styles.card}>

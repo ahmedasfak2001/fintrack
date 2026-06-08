@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button, RefreshControl, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SummaryResponse } from "../types/SummaryResponse";
 import api from "../api/api";
@@ -8,6 +8,17 @@ import { useFocusEffect } from "@react-navigation/native";
 const DashboardScreen = ({ navigation }: any) => {
 
     const [summary, setSummary] = useState<SummaryResponse | null>(null);
+
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = async () => {
+
+        setRefreshing(true);
+
+        await fetchSummary();
+
+        setRefreshing(false);
+    };
 
     const logout = async () => {
 
@@ -55,8 +66,18 @@ const DashboardScreen = ({ navigation }: any) => {
         }
     };
 
+    // return (
+    //     <View style={styles.container}>
     return (
-        <View style={styles.container}>
+        <ScrollView
+            style={styles.container}
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                />
+            }
+        >
             <Text style={styles.title}>
                 Welcome to FinTrack Dashboard
             </Text>
@@ -114,34 +135,41 @@ const DashboardScreen = ({ navigation }: any) => {
 
                     ))
             }
-
-            <Button
-                title="Add Expense"
-                onPress={() =>
-                    navigation.navigate("AddExpense")
-                }
-            />
-
-            <Button
-                title="View Expenses"
-                onPress={() =>
-                    navigation.navigate("Expenses")
-                }
-            />
+            <View style={{ marginBottom: 10 }}>
+                <Button
+                    title="Add Expense"
+                    onPress={() =>
+                        navigation.navigate("AddExpense")
+                    }
+                />
+            </View>
+            <View style={{ marginBottom: 10 }}>
+                <Button
+                    title="View Expenses"
+                    onPress={() =>
+                        navigation.navigate("Expenses")
+                    }
+                />
+            </View>
 
             <Button
                 title="Logout"
                 onPress={logout}
             />
-        </View>
+        </ScrollView >
+        //  </View>
     );
 };
 
 const styles = StyleSheet.create({
+    // container: {
+    //     flex: 1,
+    //     justifyContent: "center",
+    //     alignItems: "center",
+    // },
     container: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        padding: 15,
     },
     title: {
         fontSize: 24,
@@ -175,6 +203,7 @@ const styles = StyleSheet.create({
     },
 
     breakdownRow: {
+        width: "100%",
         flexDirection: "row",
         justifyContent: "space-between",
         paddingVertical: 8,
