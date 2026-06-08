@@ -6,6 +6,7 @@ import DashboardScreen from "../screens/DashboardScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import SplashScreen from "../screens/SplashScreen";
 import ExpenseListScreen from "../screens/ExpenseListScreen";
+import AddExpenseScreen from "../screens/AddExpenseScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +38,11 @@ export default function AppNavigator() {
                 <Stack.Screen
                     name="Expenses"
                     component={ExpenseListScreen}
+                />
+
+                <Stack.Screen
+                    name="AddExpense"
+                    component={AddExpenseScreen}
                 />
 
             </Stack.Navigator>

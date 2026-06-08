@@ -14,8 +14,15 @@ const DashboardScreen = ({ navigation }: any) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>
-                Welcome to FinTrack
+                Welcome to FinTrack Dashboard
             </Text>
+
+            <Button
+                title="Add Expense"
+                onPress={() =>
+                    navigation.navigate("AddExpense")
+                }
+            />
 
             <Button
                 title="View Expenses"

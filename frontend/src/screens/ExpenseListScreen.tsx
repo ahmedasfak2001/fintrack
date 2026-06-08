@@ -1,17 +1,73 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
-    StyleSheet
+    StyleSheet,
+    FlatList,
 } from "react-native";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "../api/api";
 
 const ExpenseListScreen = () => {
 
+    const [expenses, setExpenses] = useState([]);
+
+    useEffect(() => {
+        fetchExpenses();
+    }, []);
+
+    const fetchExpenses = async () => {
+
+        try {
+
+            const token =
+                await AsyncStorage.getItem("token");
+
+            const response =
+                await api.get(
+                    "/api/expenses?page=0&size=10",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            console.log(response.data);
+
+            setExpenses(response.data.content);
+
+        } catch (error) {
+
+            console.error(error);
+        }
+    };
+
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>
-                Expense List
-            </Text>
+
+            <FlatList
+                data={expenses}
+                keyExtractor={(item: any) => item.id}
+                renderItem={({ item }: any) => (
+                    <View style={styles.card}>
+                        <Text>
+                            ₹ {item.amount}
+                        </Text>
+
+                        <Text>
+                            {item.category}
+                        </Text>
+
+                        <Text>
+                            {item.description}
+                        </Text>
+                    </View>
+                )}
+            />
+
         </View>
     );
 };
@@ -19,11 +75,13 @@ const ExpenseListScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        padding: 15,
     },
-    title: {
-        fontSize: 24,
+    card: {
+        padding: 15,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderRadius: 8,
     },
 });
 

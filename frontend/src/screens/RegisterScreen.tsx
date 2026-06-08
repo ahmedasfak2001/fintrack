@@ -70,7 +70,7 @@ const RegisterScreen = ({ navigation }: any) => {
 
                 Alert.alert(
                     "Registration Failed",
-                    "Something went wrong"
+                    "Something went wrong."
                 );
             }
         }
