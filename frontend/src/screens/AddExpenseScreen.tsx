@@ -14,7 +14,7 @@ import { Picker } from "@react-native-picker/picker";
 import api from "../api/api";
 import { AddExpenseRequest } from "../types/AddExpenseRequest";
 
-const AddExpenseScreen = () => {
+const AddExpenseScreen = ({ navigation }: any) => {
 
     const [amount, setAmount] = useState("");
     const [description, setDescription] = useState("");
@@ -87,9 +87,21 @@ const AddExpenseScreen = () => {
                     }
                 );
 
+            // Alert.alert(
+            //     "Success",
+            //     response.data
+            // );
+
             Alert.alert(
                 "Success",
-                response.data
+                response.data,
+                [
+                    {
+                        text: "OK",
+                        onPress: () =>
+                            navigation.navigate("Expenses"),
+                    },
+                ]
             );
 
             setAmount("");

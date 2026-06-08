@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
     View,
     Text,
     StyleSheet,
     FlatList,
 } from "react-native";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api/api";
 
@@ -13,9 +13,17 @@ const ExpenseListScreen = () => {
 
     const [expenses, setExpenses] = useState([]);
 
-    useEffect(() => {
-        fetchExpenses();
-    }, []);
+    // useEffect(() => {
+    //     fetchExpenses();
+    // }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+
+            fetchExpenses();
+
+        }, [])
+    );
 
     const fetchExpenses = async () => {
 
