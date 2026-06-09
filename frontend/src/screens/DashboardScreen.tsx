@@ -151,6 +151,14 @@ const DashboardScreen = ({ navigation }: any) => {
                     }
                 />
             </View>
+            <Button
+                title="Budget vs Actual"
+                onPress={() =>
+                    navigation.navigate(
+                        "Budget"
+                    )
+                }
+            />
             <View style={{ marginBottom: 10 }}>
                 <Button
 

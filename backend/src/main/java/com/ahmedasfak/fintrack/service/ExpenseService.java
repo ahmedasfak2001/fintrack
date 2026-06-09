@@ -23,6 +23,7 @@ import com.ahmedasfak.fintrack.dto.MonthlySummaryResponse;
 import com.ahmedasfak.fintrack.dto.SummaryResponse;
 import com.ahmedasfak.fintrack.dto.ExpenseResponse;
 import com.ahmedasfak.fintrack.dto.AddExpenseRequest;
+import com.ahmedasfak.fintrack.dto.BudgetSummaryResponse;
 import com.ahmedasfak.fintrack.entity.Expense;
 import com.ahmedasfak.fintrack.entity.ExpenseCategory;
 import com.ahmedasfak.fintrack.entity.User;
@@ -370,5 +371,47 @@ public class ExpenseService {
                 csvPrinter.flush();
 
                 return writer.toString();
+        }
+        // Get Budget Summary
+        public BudgetSummaryResponse getBudgetSummary(
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(
+                                                userDetails.getUsername())
+                                .orElseThrow(
+                                                () -> new RuntimeException(
+                                                                "User not found"));
+
+                YearMonth currentMonth = YearMonth.now();
+
+                List<Expense> expenses = expenseRepository.findByUser(user);
+
+                BigDecimal spent = expenses.stream()
+                                .filter(expense -> YearMonth.from(
+                                                expense.getExpenseDate())
+                                                .equals(currentMonth))
+                                .map(Expense::getAmount)
+                                .reduce(
+                                                BigDecimal.ZERO,
+                                                BigDecimal::add);
+
+                BigDecimal budget = BigDecimal.valueOf(25000);
+
+                BigDecimal remaining = budget.subtract(spent);
+
+                double usagePercentage = spent.doubleValue()
+                                / budget.doubleValue()
+                                * 100;
+
+                BudgetSummaryResponse response = new BudgetSummaryResponse();
+
+                response.setBudget(budget);
+                response.setSpent(spent);
+                response.setRemaining(remaining);
+                response.setUsagePercentage(
+                                usagePercentage);
+
+                return response;
         }
 }

@@ -19,6 +19,7 @@ import com.ahmedasfak.fintrack.entity.ExpenseCategory;
 import com.ahmedasfak.fintrack.dto.ExpenseResponse;
 import com.ahmedasfak.fintrack.dto.SummaryResponse;
 import com.ahmedasfak.fintrack.dto.AddExpenseRequest;
+import com.ahmedasfak.fintrack.dto.BudgetSummaryResponse;
 import com.ahmedasfak.fintrack.service.ExpenseService;
 import com.ahmedasfak.fintrack.dto.MonthlySummaryResponse;
 import com.ahmedasfak.fintrack.dto.MonthlyTrendResponse;
@@ -182,5 +183,16 @@ public class ExpenseController {
         public ExpenseCategory[] getCategories() {
 
                 return ExpenseCategory.values();
+        }
+
+        // Get Budget Summary Endpoint
+        @GetMapping("/budget-summary")
+        public BudgetSummaryResponse getBudgetSummary(
+
+                        @AuthenticationPrincipal UserDetails userDetails) {
+
+                return expenseService
+                                .getBudgetSummary(
+                                                userDetails);
         }
 }

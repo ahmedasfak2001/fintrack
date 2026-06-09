@@ -10,6 +10,7 @@ import AddExpenseScreen from "../screens/AddExpenseScreen";
 import EditExpenseScreen from "../screens/EditExpenseScreen";
 import MonthlySummaryScreen from "../screens/MonthlySummaryScreen";
 import TrendScreen from "../screens/TrendScreen";
+import BudgetScreen from "../screens/BudgetScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -61,6 +62,11 @@ export default function AppNavigator() {
                 <Stack.Screen
                     name="Trend"
                     component={TrendScreen}
+                />
+
+                <Stack.Screen
+                    name="Budget"
+                    component={BudgetScreen}
                 />
 
             </Stack.Navigator>

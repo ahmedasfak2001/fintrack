@@ -198,7 +198,7 @@ const ExpenseListScreen = ({ navigation }: any) => {
     return (
         <View style={styles.container}>
             <TextInput
-                placeholder="Search expenses..."
+                placeholder="🔍 Search Expenses..."
                 value={searchText}
                 onChangeText={setSearchText}
                 style={styles.searchInput}
