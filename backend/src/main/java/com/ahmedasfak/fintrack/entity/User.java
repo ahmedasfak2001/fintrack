@@ -1,6 +1,8 @@
 package com.ahmedasfak.fintrack.entity;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -16,9 +18,14 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    @Column
+    // (nullable = false)
+    private BigDecimal monthlyBudget = BigDecimal.valueOf(25000);
+
     private String password;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
 
     public User() {
     }
@@ -69,6 +76,15 @@ public class User {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public BigDecimal getMonthlyBudget() {
+        return monthlyBudget;
+    }
+
+    public void setMonthlyBudget(
+            BigDecimal monthlyBudget) {
+        this.monthlyBudget = monthlyBudget;
     }
 
 }

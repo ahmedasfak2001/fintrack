@@ -21,8 +21,10 @@ import org.apache.commons.csv.CSVPrinter;
 
 import com.ahmedasfak.fintrack.dto.MonthlySummaryResponse;
 import com.ahmedasfak.fintrack.dto.SummaryResponse;
+import com.ahmedasfak.fintrack.dto.UpdateBudgetRequest;
 import com.ahmedasfak.fintrack.dto.ExpenseResponse;
 import com.ahmedasfak.fintrack.dto.AddExpenseRequest;
+import com.ahmedasfak.fintrack.dto.BudgetResponse;
 import com.ahmedasfak.fintrack.dto.BudgetSummaryResponse;
 import com.ahmedasfak.fintrack.entity.Expense;
 import com.ahmedasfak.fintrack.entity.ExpenseCategory;
@@ -372,6 +374,7 @@ public class ExpenseService {
 
                 return writer.toString();
         }
+
         // Get Budget Summary
         public BudgetSummaryResponse getBudgetSummary(
                         UserDetails userDetails) {
@@ -396,7 +399,8 @@ public class ExpenseService {
                                                 BigDecimal.ZERO,
                                                 BigDecimal::add);
 
-                BigDecimal budget = BigDecimal.valueOf(25000);
+                // BigDecimal budget = BigDecimal.valueOf(25000);
+                BigDecimal budget = user.getMonthlyBudget();
 
                 BigDecimal remaining = budget.subtract(spent);
 
@@ -413,5 +417,44 @@ public class ExpenseService {
                                 usagePercentage);
 
                 return response;
+        }
+
+        // Get User Budget
+        public BudgetResponse getUserBudget(
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(
+                                                userDetails.getUsername())
+                                .orElseThrow(
+                                                () -> new RuntimeException(
+                                                                "User not found"));
+
+                BudgetResponse response = new BudgetResponse();
+
+                response.setMonthlyBudget(
+                                user.getMonthlyBudget());
+
+                return response;
+        }
+
+        // Update User Budget
+        public String updateUserBudget(
+                        UpdateBudgetRequest request,
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(
+                                                userDetails.getUsername())
+                                .orElseThrow(
+                                                () -> new RuntimeException(
+                                                                "User not found"));
+
+                user.setMonthlyBudget(
+                                request.getMonthlyBudget());
+
+                userRepository.save(user);
+
+                return "Budget updated successfully";
         }
 }

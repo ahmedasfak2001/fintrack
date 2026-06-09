@@ -8,6 +8,9 @@ import {
     Text,
     StyleSheet,
     ScrollView,
+    Alert,
+    TextInput,
+    Button,
 } from "react-native";
 
 import AsyncStorage
@@ -22,6 +25,41 @@ import * as Progress from "react-native-progress";
 
 const BudgetScreen = () => {
 
+    const [budget, setBudget] = useState("");
+
+    const [loading, setLoading] = useState(false);
+
+    const fetchBudget = async () => {
+
+        try {
+
+            const token =
+                await AsyncStorage.getItem(
+                    "token"
+                );
+
+            const response =
+                await api.get(
+                    "/api/expenses/budget",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            setBudget(
+                response.data.monthlyBudget
+                    .toString()
+            );
+
+        } catch (error) {
+
+            console.error(error);
+        }
+    };
+
     const [summary, setSummary] =
         useState<BudgetSummaryResponse | null>(
             null
@@ -30,6 +68,7 @@ const BudgetScreen = () => {
     useEffect(() => {
 
         fetchBudgetSummary();
+        fetchBudget();
 
     }, []);
 
@@ -62,6 +101,52 @@ const BudgetScreen = () => {
             }
         };
 
+    const updateBudget = async () => {
+
+        try {
+
+            setLoading(true);
+
+            const token =
+                await AsyncStorage.getItem(
+                    "token"
+                );
+
+            await api.put(
+                "/api/expenses/budget",
+                {
+                    monthlyBudget:
+                        Number(budget),
+                },
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`,
+                    },
+                }
+            );
+
+            await fetchBudgetSummary();
+
+            Alert.alert(
+                "Success",
+                "Budget updated"
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            Alert.alert(
+                "Error",
+                "Failed to update budget"
+            );
+        } finally {
+
+            setLoading(false);
+        }
+    };
+
     const usage =
         (summary?.usagePercentage ?? 0) / 100;
 
@@ -77,7 +162,25 @@ const BudgetScreen = () => {
             <Text style={styles.title}>
                 Budget vs Actual
             </Text>
+            <Text style={styles.label}>
+                Monthly Budget
+            </Text>
 
+            <TextInput
+                value={budget}
+                onChangeText={setBudget}
+                keyboardType="numeric"
+                style={styles.input}
+            />
+
+            <Button
+                title={
+                    loading
+                        ? "Updating..."
+                        : "Update Budget"
+                }
+                onPress={updateBudget}
+            />
             <View style={styles.progressContainer}>
 
                 <Text style={styles.progressText}>
@@ -218,6 +321,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
         marginBottom: 15,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 10,
+        padding: 10,
+        marginBottom: 10,
     },
 });
 
