@@ -277,12 +277,12 @@ public class ExpenseService {
                                                 endDate);
         }
 
-        // Get Expenses with Pagination
-        // Get Expenses with Pagination
+        // Get Expenses with Pagination and Optional Category Filter
         public Page<Expense> getExpenses(
                         UserDetails userDetails,
                         int page,
-                        int size) {
+                        int size,
+                        ExpenseCategory category) {
 
                 User user = userRepository
                                 .findByEmail(userDetails.getUsername())
@@ -293,8 +293,19 @@ public class ExpenseService {
                                 size,
                                 Sort.by("createdAt").descending());
 
+                if (category != null) {
+
+                        return expenseRepository
+                                        .findByUserAndCategory(
+                                                        user,
+                                                        category,
+                                                        pageable);
+                }
+
                 return expenseRepository
-                                .findByUser(user, pageable);
+                                .findByUser(
+                                                user,
+                                                pageable);
         }
 
         // Get Expenses by Date Range

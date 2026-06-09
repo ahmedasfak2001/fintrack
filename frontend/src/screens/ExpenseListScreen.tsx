@@ -10,11 +10,15 @@ import {
     RefreshControl
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from "@react-native-picker/picker";
 import api from "../api/api";
 
 const ExpenseListScreen = ({ navigation }: any) => {
 
     const [expenses, setExpenses] = useState([]);
+    const [categories, setCategories] = useState<string[]>([]);
+
+    const [selectedCategory, setSelectedCategory] = useState("");
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = async () => {
 
@@ -45,9 +49,16 @@ const ExpenseListScreen = ({ navigation }: any) => {
             );
 
             fetchExpenses();
+            fetchCategories();
 
         }, [])
     );
+
+    useEffect(() => {
+
+        fetchExpenses();
+
+    }, [selectedCategory]);
 
     // const fetchExpenses = async () => {
     const fetchExpenses = async (): Promise<void> => {
@@ -57,9 +68,17 @@ const ExpenseListScreen = ({ navigation }: any) => {
             const token =
                 await AsyncStorage.getItem("token");
 
+            // const response =
+            //     await api.get(
+            //         "/api/expenses?page=0&size=100",
+            const url =
+                selectedCategory
+                    ? `/api/expenses?page=0&size=100&category=${selectedCategory}`
+                    : "/api/expenses?page=0&size=100";
+
             const response =
                 await api.get(
-                    "/api/expenses?page=0&size=100",
+                    url,
                     {
                         headers: {
                             Authorization:
@@ -77,6 +96,33 @@ const ExpenseListScreen = ({ navigation }: any) => {
             console.error(error);
         }
     };
+
+    const fetchCategories = async () => {
+
+        try {
+
+            const token =
+                await AsyncStorage.getItem("token");
+
+            const response =
+                await api.get(
+                    "/api/expenses/categories",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            setCategories(response.data);
+
+        } catch (error) {
+
+            console.error(error);
+        }
+    };
+
     const confirmDelete = (
         expenseId: string
     ) => {
@@ -132,7 +178,27 @@ const ExpenseListScreen = ({ navigation }: any) => {
 
     return (
         <View style={styles.container}>
+            <Picker
+                selectedValue={selectedCategory}
+                onValueChange={setSelectedCategory}
+            >
 
+                <Picker.Item
+                    label="All Categories"
+                    value=""
+                />
+
+                {
+                    categories.map(category => (
+                        <Picker.Item
+                            key={category}
+                            label={category}
+                            value={category}
+                        />
+                    ))
+                }
+
+            </Picker>
             <FlatList
                 data={expenses}
                 refreshControl={

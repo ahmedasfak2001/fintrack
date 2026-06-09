@@ -49,7 +49,7 @@ public class ExpenseController {
 
         // return expenseService.getExpenses(userDetails);
         // }
-        // Get Expenses with Pagination Endpoint
+        // Get Expenses with Pagination Endpoint and Optional Category Filter
         @GetMapping
         public Page<Expense> getExpenses(
 
@@ -57,12 +57,15 @@ public class ExpenseController {
 
                         @RequestParam(defaultValue = "0") int page,
 
-                        @RequestParam(defaultValue = "10") int size) {
+                        @RequestParam(defaultValue = "100") int size,
+
+                        @RequestParam(required = false) ExpenseCategory category) {
 
                 return expenseService.getExpenses(
                                 userDetails,
                                 page,
-                                size);
+                                size,
+                                category);
         }
 
         // Delete Expense Endpoint

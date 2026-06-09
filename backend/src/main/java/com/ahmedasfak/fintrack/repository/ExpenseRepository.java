@@ -35,6 +35,11 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
                         User user,
                         Pageable pageable);
 
+        Page<Expense> findByUserAndCategory(
+                        User user,
+                        ExpenseCategory category,
+                        Pageable pageable);
+
         @Query("""
                         SELECT new com.ahmedasfak.fintrack.dto.MonthlyTrendResponse(
                             CAST(e.expenseDate AS string),
