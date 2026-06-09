@@ -8,7 +8,8 @@ import {
     Button,
     Alert,
     RefreshControl,
-    TextInput
+    TextInput,
+    TouchableOpacity
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
@@ -233,6 +234,12 @@ const ExpenseListScreen = ({ navigation }: any) => {
                     />
                 }
                 keyExtractor={(item: any) => item.id}
+
+                ListEmptyComponent={
+                    <Text style={styles.emptyText}>
+                        No expenses found
+                    </Text>
+                }
                 // renderItem={({ item }: any) => (
                 //     <View style={styles.card}>
                 //         <Text>
@@ -252,36 +259,56 @@ const ExpenseListScreen = ({ navigation }: any) => {
 
                     <View style={styles.card}>
 
-                        <Text>
-                            ₹ {item.amount}
-                        </Text>
+                        <View style={styles.cardHeader}>
 
-                        <Text>
-                            {item.category}
-                        </Text>
+                            <Text style={styles.categoryText}>
+                                {item.category}
+                            </Text>
 
-                        <Text>
+                            <Text style={styles.amountText}>
+                                ₹ {item.amount}
+                            </Text>
+
+                        </View>
+
+                        <Text style={styles.descriptionText}>
                             {item.description}
                         </Text>
 
-                        <Button
-                            title="Edit"
-                            onPress={() =>
-                                navigation.navigate(
-                                    "EditExpense",
-                                    {
-                                        expense: item,
-                                    }
-                                )
-                            }
-                        />
+                        <Text style={styles.dateText}>
+                            {item.expenseDate}
+                        </Text>
 
-                        <Button
-                            title="Delete"
-                            onPress={() =>
-                                confirmDelete(item.id)
-                            }
-                        />
+                        <View style={styles.actionRow}>
+
+                            <TouchableOpacity
+                                style={styles.editButton}
+                                onPress={() =>
+                                    navigation.navigate(
+                                        "EditExpense",
+                                        {
+                                            expense: item,
+                                        }
+                                    )
+                                }
+                            >
+                                <Text style={styles.actionText}>
+                                    ✏️ Edit
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={styles.deleteButton}
+                                onPress={() =>
+                                    confirmDelete(item.id)
+                                }
+                            >
+                                <Text style={styles.actionText}>
+                                    🗑 Delete
+                                </Text>
+                            </TouchableOpacity>
+
+                        </View>
 
                     </View>
                 )}
@@ -296,12 +323,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 15,
     },
-    card: {
-        padding: 15,
-        marginBottom: 10,
-        borderWidth: 1,
-        borderRadius: 8,
-    },
     searchInput: {
         borderWidth: 1,
         borderColor: "#ddd",
@@ -310,6 +331,76 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         marginBottom: 10,
         backgroundColor: "#fff",
+        fontSize: 16,
+    },
+    card: {
+
+        backgroundColor: "#FFFFFF",
+        borderRadius: 16,
+        padding: 16,
+        marginBottom: 12,
+        elevation: 3,
+    },
+
+    cardHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+
+    categoryText: {
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+
+    amountText: {
+        fontSize: 22,
+        fontWeight: "bold",
+    },
+
+    descriptionText: {
+        marginTop: 10,
+        fontSize: 15,
+    },
+
+    dateText: {
+        marginTop: 6,
+        color: "#64748B",
+        fontSize: 12,
+    },
+
+    actionRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 15,
+    },
+
+    editButton: {
+        flex: 1,
+        backgroundColor: "#2563EB",
+        padding: 10,
+        borderRadius: 10,
+        marginRight: 8,
+        alignItems: "center",
+    },
+
+    deleteButton: {
+        flex: 1,
+        backgroundColor: "#DC2626",
+        padding: 10,
+        borderRadius: 10,
+        alignItems: "center",
+    },
+
+    actionText: {
+        color: "#FFFFFF",
+        fontWeight: "bold",
+    },
+
+    emptyText: {
+        textAlign: "center",
+        marginTop: 40,
+        color: "#64748B",
         fontSize: 16,
     },
 });
