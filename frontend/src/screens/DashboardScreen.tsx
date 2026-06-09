@@ -6,6 +6,7 @@ import api from "../api/api";
 import { useFocusEffect } from "@react-navigation/native";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
+import { COLORS } from "../constants/colors";
 
 const DashboardScreen = ({ navigation }: any) => {
 
@@ -252,7 +253,8 @@ const styles = StyleSheet.create({
     // },
     container: {
         flex: 1,
-        padding: 15,
+        backgroundColor: COLORS.background,
+        padding: 16,
     },
     title: {
         fontSize: 24,
@@ -263,20 +265,27 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
 
+    // card: {
+    //     borderWidth: 1,
+    //     borderRadius: 10,
+    //     padding: 15,
+    //     marginBottom: 10,
+    // },
     card: {
-        borderWidth: 1,
-        borderRadius: 10,
-        padding: 15,
-        marginBottom: 10,
+        backgroundColor: COLORS.card,
+        borderRadius: 16,
+        padding: 20,
+        marginBottom: 12,
+        elevation: 3,
     },
-
     cardTitle: {
-        fontSize: 16,
+        fontSize: 14,
+        color: "#64748B",
     },
-
     cardValue: {
-        fontSize: 24,
+        fontSize: 30,
         fontWeight: "bold",
+        marginTop: 5,
     },
     sectionTitle: {
         fontSize: 20,
