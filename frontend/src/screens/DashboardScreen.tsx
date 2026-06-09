@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button, RefreshControl, ScrollView, Alert } from "react-native";
+import { View, Text, StyleSheet, Button, RefreshControl, ScrollView, Alert, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SummaryResponse } from "../types/SummaryResponse";
 import api from "../api/api";
 import { useFocusEffect } from "@react-navigation/native";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
+
 import { COLORS } from "../constants/colors";
 
 const DashboardScreen = ({ navigation }: any) => {
@@ -35,7 +36,6 @@ const DashboardScreen = ({ navigation }: any) => {
             const fileUri =
                 FileSystem.documentDirectory +
                 "expenses.csv";
-
             await FileSystem.writeAsStringAsync(
                 fileUri,
                 response.data,
@@ -44,13 +44,10 @@ const DashboardScreen = ({ navigation }: any) => {
                         FileSystem.EncodingType.UTF8,
                 }
             );
-
             await Sharing.shareAsync(fileUri);
 
         } catch (error) {
-
             console.error(error);
-
             Alert.alert(
                 "Error",
                 "Failed to export report"
@@ -58,31 +55,19 @@ const DashboardScreen = ({ navigation }: any) => {
         }
     };
     const onRefresh = async () => {
-
         setRefreshing(true);
-
         await fetchSummary();
-
         setRefreshing(false);
     };
 
     const logout = async () => {
-
         await AsyncStorage.removeItem("token");
-
         navigation.replace("Login");
     };
 
-    // useEffect(() => {
-
-    //     fetchSummary();
-
-    // }, []);
     useFocusEffect(
         useCallback(() => {
-
             fetchSummary();
-
         }, [])
     );
 
@@ -112,11 +97,12 @@ const DashboardScreen = ({ navigation }: any) => {
         }
     };
 
-    // return (
-    //     <View style={styles.container}>
     return (
         <ScrollView
             style={styles.container}
+            contentContainerStyle={
+                styles.contentContainer
+            }
             refreshControl={
                 <RefreshControl
                     refreshing={refreshing}
@@ -156,111 +142,156 @@ const DashboardScreen = ({ navigation }: any) => {
                 Category Breakdown
             </Text>
 
-            {
-                summary &&
-                Object.entries(summary.categoryBreakdown)
-                    .sort(
-                        ([, amountA], [, amountB]) =>
-                            Number(amountB) - Number(amountA)
-                    )
-                    .map(([category, amount]) => (
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingRight: 10,
+                }}
+            >
 
-                        <View
-                            key={category}
-                            style={styles.categoryCard}
-                        >
+                {
+                    summary &&
+                    Object.entries(summary.categoryBreakdown)
+                        .sort(
+                            ([, amountA], [, amountB]) =>
+                                Number(amountB) - Number(amountA)
+                        )
+                        .map(([category, amount]) => (
 
-                            <Text
-                                style={styles.categoryName}
+                            <View
+                                key={category}
+                                style={styles.categoryCard}
                             >
-                                {category}
 
-                            </Text>
+                                <Text
+                                    style={styles.categoryName}
+                                >
+                                    {category}
+                                </Text>
 
-                            <Text
-                                style={styles.categoryAmount}
-                            >
-                                ₹ {amount}
-                            </Text>
+                                <Text
+                                    style={styles.categoryAmount}
+                                >
+                                    ₹ {amount}
+                                </Text>
 
-                        </View>
+                            </View>
 
-                    ))
-            }
-            <View style={{ marginBottom: 10 }}>
-                <Button
-                    title="Add Expense"
-                    onPress={() =>
-                        navigation.navigate("AddExpense")
-                    }
-                />
-            </View>
-            <View style={{ marginBottom: 10 }}>
-                <Button
-                    title="View Expenses"
-                    onPress={() =>
-                        navigation.navigate("Expenses")
-                    }
-                />
-            </View>
-            <View style={{ marginBottom: 10 }}>
-                <Button
-                    title="Export CSV Report"
-                    onPress={exportReport}
-                />
-            </View>
-            <View style={{ marginBottom: 10 }}>
-                <Button
-                    title="Budget vs Actual"
+                        ))
+                }
+
+            </ScrollView>
+            <Text style={styles.sectionTitle}>
+                Quick Actions
+            </Text>
+
+            <View style={styles.actionGrid}>
+
+                <TouchableOpacity
+                    style={styles.actionCard}
                     onPress={() =>
                         navigation.navigate(
-                            "Budget"
+                            "AddExpense"
                         )
                     }
-                />
-            </View>
-            <View style={{ marginBottom: 10 }}>
-                <Button
+                >
+                    <Text style={styles.actionIcon}>
+                        ➕
+                    </Text>
 
-                    title="Monthly Summary"
+                    <Text style={styles.actionText}>
+                        Add Expense
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.actionCard}
+                    onPress={() =>
+                        navigation.navigate(
+                            "Expenses"
+                        )
+                    }
+                >
+                    <Text style={styles.actionIcon}>
+                        📋
+                    </Text>
+
+                    <Text style={styles.actionText}>
+                        Expenses
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.actionCard}
                     onPress={() =>
                         navigation.navigate(
                             "MonthlySummary"
                         )
                     }
-                />
-            </View>
-            <View style={{ marginBottom: 10 }}>
+                >
+                    <Text style={styles.actionIcon}>
+                        📊
+                    </Text>
 
-                <Button
-                    title="Monthly Trend"
+                    <Text style={styles.actionText}>
+                        Analytics
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.actionCard}
                     onPress={() =>
                         navigation.navigate(
-                            "Trend"
+                            "Budget"
                         )
                     }
-                />
-            </View>
+                >
+                    <Text style={styles.actionIcon}>
+                        💰
+                    </Text>
 
-            <Button
-                title="Logout"
-                onPress={logout}
-            />
+                    <Text style={styles.actionText}>
+                        Budget
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.actionCard}
+                    onPress={exportReport}
+                >
+                    <Text style={styles.actionIcon}>
+                        📄
+                    </Text>
+
+                    <Text style={styles.actionText}>
+                        Export
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.actionCard}
+                    onPress={logout}
+                >
+                    <Text style={styles.actionIcon}>
+                        🚪
+                    </Text>
+
+                    <Text style={styles.actionText}>
+                        Logout
+                    </Text>
+                </TouchableOpacity>
+
+            </View>
         </ScrollView >
-        //  </View>
     );
 };
 
 const styles = StyleSheet.create({
-    // container: {
-    //     flex: 1,
-    //     justifyContent: "center",
-    //     alignItems: "center",
-    // },
     container: {
         flex: 1,
         backgroundColor: COLORS.background,
-        padding: 16,
+        padding: 16
     },
     title: {
         fontSize: 24,
@@ -270,13 +301,6 @@ const styles = StyleSheet.create({
         width: "100%",
         marginBottom: 20,
     },
-
-    // card: {
-    //     borderWidth: 1,
-    //     borderRadius: 10,
-    //     padding: 15,
-    //     marginBottom: 10,
-    // },
     card: {
         backgroundColor: COLORS.card,
         borderRadius: 16,
@@ -299,24 +323,51 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 10,
     },
-
+    actionGrid: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+        marginTop: 10,
+    },
+    actionCard: {
+        width: "48%",
+        backgroundColor: "#FFFFFF",
+        borderRadius: 16,
+        paddingVertical: 20,
+        alignItems: "center",
+        marginBottom: 12,
+        elevation: 2,
+    },
+    actionIcon: {
+        fontSize: 28,
+        marginBottom: 8,
+    },
+    actionText: {
+        fontSize: 14,
+        fontWeight: "600",
+    },
+    contentContainer: {
+        paddingBottom: 40,
+    },
     categoryCard: {
+        width: 140,
         backgroundColor: "#FFFFFF",
         padding: 16,
         borderRadius: 14,
-        marginBottom: 10,
+        marginRight: 12,
         elevation: 2,
+        justifyContent: "center",
+        alignItems: "center",
     },
-
     categoryName: {
-        fontSize: 16,
+        fontSize: 14,
+        color: "#64748B",
         fontWeight: "600",
     },
-
     categoryAmount: {
         fontSize: 22,
         fontWeight: "bold",
-        marginTop: 6,
+        marginTop: 8,
     },
 });
 
