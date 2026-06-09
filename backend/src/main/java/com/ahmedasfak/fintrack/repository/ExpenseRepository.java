@@ -18,42 +18,47 @@ import com.ahmedasfak.fintrack.entity.User;
 
 public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
 
-        List<Expense> findByUser(User user);
+    List<Expense> findByUser(User user);
 
-        Optional<Expense> findByIdAndUser(UUID id, User user);
+    Optional<Expense> findByIdAndUser(UUID id, User user);
 
-        List<Expense> findByUserAndCategory(
-                        User user,
-                        ExpenseCategory category);
+    List<Expense> findByUserAndCategory(
+            User user,
+            ExpenseCategory category);
 
-        List<Expense> findByUserAndExpenseDateBetween(
-                        User user,
-                        LocalDate startDate,
-                        LocalDate endDate);
+    List<Expense> findByUserAndExpenseDateBetween(
+            User user,
+            LocalDate startDate,
+            LocalDate endDate);
 
-        Page<Expense> findByUser(
-                        User user,
-                        Pageable pageable);
+    Page<Expense> findByUser(
+            User user,
+            Pageable pageable);
 
-        Page<Expense> findByUserAndCategory(
-                        User user,
-                        ExpenseCategory category,
-                        Pageable pageable);
+    Page<Expense> findByUserAndCategory(
+            User user,
+            ExpenseCategory category,
+            Pageable pageable);
 
-        @Query("""
-                        SELECT new com.ahmedasfak.fintrack.dto.MonthlyTrendResponse(
-                            CAST(e.expenseDate AS string),
-                            SUM(e.amount)
-                        )
-                        FROM Expense e
-                        WHERE e.user = :user
-                        AND MONTH(e.expenseDate) = :month
-                        AND YEAR(e.expenseDate) = :year
-                        GROUP BY e.expenseDate
-                        ORDER BY e.expenseDate
-                        """)
-        List<MonthlyTrendResponse> getMonthlyTrend(
-                        @Param("user") User user,
-                        @Param("month") int month,
-                        @Param("year") int year);
+    Page<Expense> findByUserAndDescriptionContainingIgnoreCase(
+            User user,
+            String description,
+            Pageable pageable);
+
+    @Query("""
+            SELECT new com.ahmedasfak.fintrack.dto.MonthlyTrendResponse(
+                CAST(e.expenseDate AS string),
+                SUM(e.amount)
+            )
+            FROM Expense e
+            WHERE e.user = :user
+            AND MONTH(e.expenseDate) = :month
+            AND YEAR(e.expenseDate) = :year
+            GROUP BY e.expenseDate
+            ORDER BY e.expenseDate
+            """)
+    List<MonthlyTrendResponse> getMonthlyTrend(
+            @Param("user") User user,
+            @Param("month") int month,
+            @Param("year") int year);
 }

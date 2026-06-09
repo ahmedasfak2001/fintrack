@@ -277,12 +277,13 @@ public class ExpenseService {
                                                 endDate);
         }
 
-        // Get Expenses with Pagination and Optional Category Filter
+        // Get Expenses with Pagination and Optional Category Filter and Search
         public Page<Expense> getExpenses(
                         UserDetails userDetails,
                         int page,
                         int size,
-                        ExpenseCategory category) {
+                        ExpenseCategory category,
+                        String search) {
 
                 User user = userRepository
                                 .findByEmail(userDetails.getUsername())
@@ -292,6 +293,16 @@ public class ExpenseService {
                                 page,
                                 size,
                                 Sort.by("createdAt").descending());
+
+                if (search != null &&
+                                !search.isBlank()) {
+
+                        return expenseRepository
+                                        .findByUserAndDescriptionContainingIgnoreCase(
+                                                        user,
+                                                        search,
+                                                        pageable);
+                }
 
                 if (category != null) {
 

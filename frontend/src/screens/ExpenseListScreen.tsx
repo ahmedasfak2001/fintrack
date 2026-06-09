@@ -7,7 +7,8 @@ import {
     FlatList,
     Button,
     Alert,
-    RefreshControl
+    RefreshControl,
+    TextInput
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
@@ -19,6 +20,7 @@ const ExpenseListScreen = ({ navigation }: any) => {
     const [categories, setCategories] = useState<string[]>([]);
 
     const [selectedCategory, setSelectedCategory] = useState("");
+    const [searchText, setSearchText] = useState("");
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = async () => {
 
@@ -58,7 +60,10 @@ const ExpenseListScreen = ({ navigation }: any) => {
 
         fetchExpenses();
 
-    }, [selectedCategory]);
+    }, [
+        selectedCategory,
+        searchText,
+    ]);
 
     // const fetchExpenses = async () => {
     const fetchExpenses = async (): Promise<void> => {
@@ -71,10 +76,24 @@ const ExpenseListScreen = ({ navigation }: any) => {
             // const response =
             //     await api.get(
             //         "/api/expenses?page=0&size=100",
-            const url =
-                selectedCategory
-                    ? `/api/expenses?page=0&size=100&category=${selectedCategory}`
-                    : "/api/expenses?page=0&size=100";
+            // const url =
+            //     selectedCategory
+            //         ? `/api/expenses?page=0&size=100&category=${selectedCategory}`
+            //         : "/api/expenses?page=0&size=100";
+            let url =
+                "/api/expenses?page=0&size=100";
+
+            if (selectedCategory) {
+
+                url +=
+                    `&category=${selectedCategory}`;
+            }
+
+            if (searchText.trim()) {
+
+                url +=
+                    `&search=${searchText.trim()}`;
+            }
 
             const response =
                 await api.get(
@@ -178,6 +197,12 @@ const ExpenseListScreen = ({ navigation }: any) => {
 
     return (
         <View style={styles.container}>
+            <TextInput
+                placeholder="Search expenses..."
+                value={searchText}
+                onChangeText={setSearchText}
+                style={styles.searchInput}
+            />
             <Picker
                 selectedValue={selectedCategory}
                 onValueChange={setSelectedCategory}
@@ -276,6 +301,16 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         borderWidth: 1,
         borderRadius: 8,
+    },
+    searchInput: {
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 10,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        marginBottom: 10,
+        backgroundColor: "#fff",
+        fontSize: 16,
     },
 });
 

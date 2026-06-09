@@ -59,13 +59,16 @@ public class ExpenseController {
 
                         @RequestParam(defaultValue = "100") int size,
 
-                        @RequestParam(required = false) ExpenseCategory category) {
+                        @RequestParam(required = false) ExpenseCategory category,
+
+                        @RequestParam(required = false) String search) {
 
                 return expenseService.getExpenses(
                                 userDetails,
                                 page,
                                 size,
-                                category);
+                                category,
+                                search);
         }
 
         // Delete Expense Endpoint
