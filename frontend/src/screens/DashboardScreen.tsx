@@ -158,7 +158,6 @@ const DashboardScreen = ({ navigation }: any) => {
 
             {
                 summary &&
-                // Object.entries(summary.categoryBreakdown)
                 Object.entries(summary.categoryBreakdown)
                     .sort(
                         ([, amountA], [, amountB]) =>
@@ -168,15 +167,22 @@ const DashboardScreen = ({ navigation }: any) => {
 
                         <View
                             key={category}
-                            style={styles.breakdownRow}
+                            style={styles.categoryCard}
                         >
-                            <Text>
+
+                            <Text
+                                style={styles.categoryName}
+                            >
                                 {category}
+
                             </Text>
 
-                            <Text>
+                            <Text
+                                style={styles.categoryAmount}
+                            >
                                 ₹ {amount}
                             </Text>
+
                         </View>
 
                     ))
@@ -294,12 +300,23 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
 
-    breakdownRow: {
-        width: "100%",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingVertical: 8,
-        borderBottomWidth: 1,
+    categoryCard: {
+        backgroundColor: "#FFFFFF",
+        padding: 16,
+        borderRadius: 14,
+        marginBottom: 10,
+        elevation: 2,
+    },
+
+    categoryName: {
+        fontSize: 16,
+        fontWeight: "600",
+    },
+
+    categoryAmount: {
+        fontSize: 22,
+        fontWeight: "bold",
+        marginTop: 6,
     },
 });
 
