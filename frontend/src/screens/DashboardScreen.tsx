@@ -151,6 +151,17 @@ const DashboardScreen = ({ navigation }: any) => {
                     }
                 />
             </View>
+            <View style={{ marginBottom: 10 }}>
+                <Button
+
+                    title="Monthly Summary"
+                    onPress={() =>
+                        navigation.navigate(
+                            "MonthlySummary"
+                        )
+                    }
+                />
+            </View>
 
             <Button
                 title="Logout"
