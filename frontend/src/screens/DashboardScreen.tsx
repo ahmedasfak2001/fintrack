@@ -162,6 +162,17 @@ const DashboardScreen = ({ navigation }: any) => {
                     }
                 />
             </View>
+            <View style={{ marginBottom: 10 }}>
+
+                <Button
+                    title="Monthly Trend"
+                    onPress={() =>
+                        navigation.navigate(
+                            "Trend"
+                        )
+                    }
+                />
+            </View>
 
             <Button
                 title="Logout"

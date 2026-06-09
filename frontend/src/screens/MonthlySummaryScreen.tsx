@@ -8,8 +8,11 @@ import {
     Text,
     StyleSheet,
     ScrollView,
-    RefreshControl
+    RefreshControl,
+    Dimensions,
 } from "react-native";
+
+import { PieChart } from "react-native-chart-kit";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -61,6 +64,36 @@ const MonthlySummaryScreen = () => {
             console.error(error);
         }
     };
+    const screenWidth =
+        Dimensions.get("window").width;
+
+    const chartData =
+        summary
+            ? Object.entries(
+                summary.categoryBreakdown
+            ).map(
+                ([category, amount], index) => ({
+                    name: category,
+                    amount: Number(amount),
+
+                    color: [
+                        "#FF6384",
+                        "#36A2EB",
+                        "#FFCE56",
+                        "#4BC0C0",
+                        "#9966FF",
+                        "#FF9F40",
+                        "#8BC34A",
+                        "#E91E63",
+                        "#009688",
+                        "#795548",
+                    ][index % 10],
+
+                    legendFontColor: "#333",
+                    legendFontSize: 12,
+                })
+            )
+            : [];
 
     return (
 
@@ -108,7 +141,28 @@ const MonthlySummaryScreen = () => {
                     {summary?.expenseCount ?? 0}
                 </Text>
             </View>
+            <Text style={styles.sectionTitle}>
+                Expense Distribution
+            </Text>
 
+            {
+                chartData.length > 0 && (
+
+                    <PieChart
+                        data={chartData}
+                        width={screenWidth - 40}
+                        height={220}
+                        chartConfig={{
+                            color: () => "#000",
+                        }}
+                        accessor="amount"
+                        backgroundColor="transparent"
+                        paddingLeft="15"
+                        absolute
+                    />
+
+                )
+            }
             <Text style={styles.sectionTitle}>
                 Category Breakdown
             </Text>

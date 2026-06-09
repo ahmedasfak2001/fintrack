@@ -29,6 +29,7 @@ import com.ahmedasfak.fintrack.entity.User;
 import com.ahmedasfak.fintrack.repository.ExpenseRepository;
 import com.ahmedasfak.fintrack.repository.UserRepository;
 import com.ahmedasfak.fintrack.dto.UpdateExpenseRequest;
+import com.ahmedasfak.fintrack.dto.MonthlyTrendResponse;
 
 @Service
 public class ExpenseService {
@@ -192,6 +193,24 @@ public class ExpenseService {
                 response.setCategoryBreakdown(categoryBreakdown);
 
                 return response;
+        }
+
+        // Get Monthly Trend
+        public List<MonthlyTrendResponse> getMonthlyTrend(
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(
+                                                userDetails.getUsername())
+                                .orElseThrow(
+                                                () -> new RuntimeException("User not found"));
+
+                LocalDate now = LocalDate.now();
+
+                return expenseRepository.getMonthlyTrend(
+                                user,
+                                now.getMonthValue(),
+                                now.getYear());
         }
 
         // Update Expense

@@ -21,6 +21,7 @@ import com.ahmedasfak.fintrack.dto.SummaryResponse;
 import com.ahmedasfak.fintrack.dto.AddExpenseRequest;
 import com.ahmedasfak.fintrack.service.ExpenseService;
 import com.ahmedasfak.fintrack.dto.MonthlySummaryResponse;
+import com.ahmedasfak.fintrack.dto.MonthlyTrendResponse;
 
 @RestController
 @RequestMapping("/api/expenses")
@@ -87,6 +88,15 @@ public class ExpenseController {
                         @AuthenticationPrincipal UserDetails userDetails) {
 
                 return expenseService.getMonthlySummary(userDetails);
+        }
+
+        // Get Monthly Trend Endpoint
+        @GetMapping("/summary/trend")
+        public List<MonthlyTrendResponse> getMonthlyTrend(
+                        @AuthenticationPrincipal UserDetails userDetails) {
+
+                return expenseService
+                                .getMonthlyTrend(userDetails);
         }
 
         // Update Expense Endpoint
