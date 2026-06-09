@@ -1,16 +1,61 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button, RefreshControl, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Button, RefreshControl, ScrollView, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SummaryResponse } from "../types/SummaryResponse";
 import api from "../api/api";
 import { useFocusEffect } from "@react-navigation/native";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from "expo-sharing";
 
 const DashboardScreen = ({ navigation }: any) => {
 
     const [summary, setSummary] = useState<SummaryResponse | null>(null);
 
     const [refreshing, setRefreshing] = useState(false);
+    const exportReport = async () => {
 
+        try {
+
+            const token =
+                await AsyncStorage.getItem("token");
+
+            const response =
+                await api.get(
+                    "/api/expenses/export",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                        responseType: "text",
+                    }
+                );
+
+            const fileUri =
+                FileSystem.documentDirectory +
+                "expenses.csv";
+
+            await FileSystem.writeAsStringAsync(
+                fileUri,
+                response.data,
+                {
+                    encoding:
+                        FileSystem.EncodingType.UTF8,
+                }
+            );
+
+            await Sharing.shareAsync(fileUri);
+
+        } catch (error) {
+
+            console.error(error);
+
+            Alert.alert(
+                "Error",
+                "Failed to export report"
+            );
+        }
+    };
     const onRefresh = async () => {
 
         setRefreshing(true);
@@ -151,14 +196,22 @@ const DashboardScreen = ({ navigation }: any) => {
                     }
                 />
             </View>
-            <Button
-                title="Budget vs Actual"
-                onPress={() =>
-                    navigation.navigate(
-                        "Budget"
-                    )
-                }
-            />
+            <View style={{ marginBottom: 10 }}>
+                <Button
+                    title="Export CSV Report"
+                    onPress={exportReport}
+                />
+            </View>
+            <View style={{ marginBottom: 10 }}>
+                <Button
+                    title="Budget vs Actual"
+                    onPress={() =>
+                        navigation.navigate(
+                            "Budget"
+                        )
+                    }
+                />
+            </View>
             <View style={{ marginBottom: 10 }}>
                 <Button
 

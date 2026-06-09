@@ -176,7 +176,10 @@ public class ExpenseController {
                                 .header(
                                                 HttpHeaders.CONTENT_DISPOSITION,
                                                 "attachment; filename=expenses.csv")
-                                .contentType(MediaType.TEXT_PLAIN)
+                                // .contentType(MediaType.TEXT_PLAIN)
+                                // .contentType(MediaType.TEXT_CSV)
+                                .contentType(
+                                                MediaType.parseMediaType("text/csv"))
                                 .body(csvData);
         }
 
