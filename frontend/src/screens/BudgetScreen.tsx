@@ -11,6 +11,7 @@ import {
     Alert,
     TextInput,
     Button,
+    TouchableOpacity
 } from "react-native";
 
 import AsyncStorage
@@ -22,6 +23,7 @@ import {
     BudgetSummaryResponse,
 } from "../types/BudgetSummaryResponse";
 import * as Progress from "react-native-progress";
+import { COLORS } from "../constants/colors";
 
 const BudgetScreen = () => {
 
@@ -173,18 +175,26 @@ const BudgetScreen = () => {
                 style={styles.input}
             />
 
-            <Button
-                title={
-                    loading
-                        ? "Updating..."
-                        : "Update Budget"
-                }
+            <TouchableOpacity
+                style={[
+                    styles.updateButton,
+                    loading && { opacity: 0.7 }
+                ]}
                 onPress={updateBudget}
-            />
+                disabled={loading}
+            >
+                <Text style={styles.updateButtonText}>
+                    {
+                        loading
+                            ? "Updating..."
+                            : "Update Budget"
+                    }
+                </Text>
+            </TouchableOpacity>
             <View style={styles.progressContainer}>
 
                 <Text style={styles.progressText}>
-                    Budget Usage
+                    {usagePercentage.toFixed(0)}% Used
                 </Text>
 
                 <Progress.Bar
@@ -194,23 +204,36 @@ const BudgetScreen = () => {
                     borderRadius={10}
                 />
                 {
-                    usagePercentage >= 80 &&
-                    usagePercentage < 100 && (
+                    usagePercentage >= 100 ? (
 
-                        <Text style={styles.warning}>
-                            ⚠️ Warning:
-                            You have used more than
-                            80% of your budget.
-                        </Text>
-                    )
-                }
-                {
-                    usagePercentage >= 100 && (
+                        <View
+                            style={styles.dangerCard}
+                        >
+                            <Text style={styles.statusText}>
+                                🔴 Budget Exceeded
+                            </Text>
+                        </View>
 
-                        <Text style={styles.danger}>
-                            🚨 Budget Exceeded!
-                            Reduce spending immediately.
-                        </Text>
+                    ) : usagePercentage >= 80 ? (
+
+                        <View
+                            style={styles.warningCard}
+                        >
+                            <Text style={styles.statusText}>
+                                🟡 Near Budget Limit
+                            </Text>
+                        </View>
+
+                    ) : (
+
+                        <View
+                            style={styles.safeCard}
+                        >
+                            <Text style={styles.statusText}>
+                                🟢 On Track
+                            </Text>
+                        </View>
+
                     )
                 }
 
@@ -219,48 +242,51 @@ const BudgetScreen = () => {
                 </Text>
 
             </View>
+            <Text style={styles.remainingHighlight}>
+                Remaining: ₹ {summary?.remaining ?? 0}
+            </Text>
+            <View style={styles.summaryGrid}>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>
-                    Monthly Budget
-                </Text>
+                <View style={styles.summaryCard}>
+                    <Text style={styles.cardTitle}>
+                        Budget
+                    </Text>
 
-                <Text style={styles.value}>
-                    ₹ {summary?.budget ?? 0}
-                </Text>
-            </View>
+                    <Text style={styles.cardValue}>
+                        ₹ {summary?.budget ?? 0}
+                    </Text>
+                </View>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>
-                    Spent
-                </Text>
+                <View style={styles.summaryCard}>
+                    <Text style={styles.cardTitle}>
+                        Spent
+                    </Text>
 
-                <Text style={styles.value}>
-                    ₹ {summary?.spent ?? 0}
-                </Text>
-            </View>
+                    <Text style={styles.cardValue}>
+                        ₹ {summary?.spent ?? 0}
+                    </Text>
+                </View>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>
-                    Remaining
-                </Text>
+                <View style={styles.summaryCard}>
+                    <Text style={styles.cardTitle}>
+                        Remaining
+                    </Text>
 
-                <Text style={styles.value}>
-                    ₹ {summary?.remaining ?? 0}
-                </Text>
-            </View>
+                    <Text style={styles.cardValue}>
+                        ₹ {summary?.remaining ?? 0}
+                    </Text>
+                </View>
 
-            <View style={styles.card}>
-                <Text style={styles.label}>
-                    Usage %
-                </Text>
+                <View style={styles.summaryCard}>
+                    <Text style={styles.cardTitle}>
+                        Usage
+                    </Text>
 
-                <Text style={styles.value}>
-                    {
-                        summary?.usagePercentage
-                            ?.toFixed(2)
-                    } %
-                </Text>
+                    <Text style={styles.cardValue}>
+                        {summary?.usagePercentage?.toFixed(0)}%
+                    </Text>
+                </View>
+
             </View>
 
         </ScrollView>
@@ -271,6 +297,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
+        backgroundColor: COLORS.background,
         padding: 20,
     },
 
@@ -281,24 +308,16 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
 
-    card: {
-        borderWidth: 1,
-        borderRadius: 10,
-        padding: 15,
-        marginBottom: 15,
-    },
-
     label: {
         fontSize: 16,
     },
 
-    value: {
-        fontSize: 24,
-        fontWeight: "bold",
-        marginTop: 5,
-    },
     progressContainer: {
+        backgroundColor: COLORS.card,
+        borderRadius: 16,
+        padding: 16,
         marginBottom: 20,
+        elevation: 3,
     },
 
     progressText: {
@@ -312,23 +331,90 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
 
-    warning: {
-        fontSize: 16,
-        marginBottom: 15,
-    },
-
     danger: {
         fontSize: 16,
         fontWeight: "bold",
         marginBottom: 15,
     },
     input: {
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 10,
-        padding: 10,
-        marginBottom: 10,
+        backgroundColor: COLORS.card,
+        borderRadius: 12,
+        padding: 14,
+        marginBottom: 12,
+        elevation: 2,
     },
+    summaryGrid: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+        marginTop: 20,
+    },
+
+    summaryCard: {
+        width: "48%",
+        backgroundColor: COLORS.card,
+        borderRadius: 16,
+        padding: 16,
+        marginBottom: 12,
+        elevation: 3,
+    },
+
+    cardTitle: {
+        color: "#64748B",
+        fontSize: 14,
+    },
+
+    cardValue: {
+        fontSize: 24,
+        fontWeight: "bold",
+        marginTop: 5,
+    },
+
+    updateButton: {
+        backgroundColor: COLORS.primary,
+        padding: 15,
+        borderRadius: 12,
+        alignItems: "center",
+        marginBottom: 20,
+    },
+
+    updateButtonText: {
+        color: "#FFFFFF",
+        fontWeight: "bold",
+        fontSize: 16,
+    },
+
+    safeCard: {
+        backgroundColor: "#DCFCE7",
+        padding: 14,
+        borderRadius: 12,
+        marginVertical: 15,
+    },
+
+    warningCard: {
+        backgroundColor: "#FEF3C7",
+        padding: 14,
+        borderRadius: 12,
+        marginVertical: 15,
+    },
+
+    dangerCard: {
+        backgroundColor: "#FEE2E2",
+        padding: 14,
+        borderRadius: 12,
+        marginVertical: 15,
+    },
+
+    statusText: {
+        fontWeight: "bold",
+        textAlign: "center",
+    },
+    remainingHighlight: {
+        textAlign: "center",
+        fontSize: 22,
+        fontWeight: "bold",
+        marginVertical: 15,
+    }
 });
 
 export default BudgetScreen;
