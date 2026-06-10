@@ -6,6 +6,8 @@ import {
     Button,
     Alert,
     StyleSheet,
+    ScrollView,
+    TouchableOpacity
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,6 +15,7 @@ import { Picker } from "@react-native-picker/picker";
 
 import api from "../api/api";
 import { AddExpenseRequest } from "../types/AddExpenseRequest";
+import { COLORS } from "../constants/colors";
 
 const AddExpenseScreen = ({ navigation }: any) => {
 
@@ -123,20 +126,29 @@ const AddExpenseScreen = ({ navigation }: any) => {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView
+            style={styles.container}
+            contentContainerStyle={{
+                paddingBottom: 30,
+            }}
+        >
 
             <Text style={styles.title}>
                 Add Expense
             </Text>
-
+            <Text style={styles.label}>
+                Amount
+            </Text>
             <TextInput
-                placeholder="Amount"
+                placeholder="₹ Enter amount"
                 value={amount}
                 onChangeText={setAmount}
                 keyboardType="numeric"
                 style={styles.input}
             />
-
+            <Text style={styles.label}>
+                Category
+            </Text>
             <Picker
                 selectedValue={category}
                 onValueChange={(value) =>
@@ -152,42 +164,77 @@ const AddExpenseScreen = ({ navigation }: any) => {
                     />
                 ))}
             </Picker>
-
+            <Text style={styles.label}>
+                Description
+            </Text>
             <TextInput
-                placeholder="Description"
+                placeholder="Enter description"
                 value={description}
                 onChangeText={setDescription}
                 style={styles.input}
             />
 
-            <Button
-                title="Add Expense"
+            <TouchableOpacity
+                style={styles.addButton}
                 onPress={handleAddExpense}
-            />
+            >
+                <Text style={styles.addButtonText}>
+                    Add Expense
+                </Text>
+            </TouchableOpacity>
 
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: COLORS.background,
         padding: 20,
-        justifyContent: "center",
     },
+
     title: {
-        fontSize: 24,
-        marginBottom: 20,
+        fontSize: 28,
+        fontWeight: "bold",
+        marginBottom: 25,
         textAlign: "center",
     },
-    input: {
-        borderWidth: 1,
-        borderRadius: 8,
-        padding: 10,
-        marginBottom: 15,
+
+    label: {
+        fontSize: 14,
+        fontWeight: "600",
+        marginBottom: 8,
+        color: "#64748B",
     },
+
+    input: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: 12,
+        padding: 14,
+        marginBottom: 18,
+        elevation: 2,
+    },
+
     picker: {
-        marginBottom: 15,
+        backgroundColor: "#FFFFFF",
+        borderRadius: 12,
+        marginBottom: 18,
+        elevation: 2,
+    },
+
+    addButton: {
+        backgroundColor: COLORS.primary,
+        padding: 16,
+        borderRadius: 14,
+        alignItems: "center",
+        marginTop: 10,
+    },
+
+    addButtonText: {
+        color: "#FFFFFF",
+        fontSize: 16,
+        fontWeight: "bold",
     },
 });
 
