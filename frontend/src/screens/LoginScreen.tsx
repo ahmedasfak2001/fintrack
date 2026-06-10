@@ -38,6 +38,7 @@ const LoginScreen = ({ navigation }: any) => {
       await AsyncStorage.setItem(
         "token",
         response.data.token
+        //  "invalid-token-test"
       );
 
       const savedToken =

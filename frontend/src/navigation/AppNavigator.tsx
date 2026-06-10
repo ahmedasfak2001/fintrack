@@ -11,12 +11,13 @@ import EditExpenseScreen from "../screens/EditExpenseScreen";
 import MonthlySummaryScreen from "../screens/MonthlySummaryScreen";
 import TrendScreen from "../screens/TrendScreen";
 import BudgetScreen from "../screens/BudgetScreen";
+import { navigationRef } from "../utils/NavigationService";
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
     return (
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
             <Stack.Navigator initialRouteName="Splash">
 
                 <Stack.Screen
