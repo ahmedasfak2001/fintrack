@@ -8,12 +8,19 @@ import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 
 import { COLORS } from "../constants/colors";
+import { MonthlyComparisonResponse } from "../types/MonthlyComparisonResponse";
 
 const DashboardScreen = ({ navigation }: any) => {
 
     const [summary, setSummary] = useState<SummaryResponse | null>(null);
 
     const [refreshing, setRefreshing] = useState(false);
+
+    const [comparison,
+        setComparison] =
+        useState<
+            MonthlyComparisonResponse | null
+        >(null);
     const exportReport = async () => {
 
         try {
@@ -91,6 +98,21 @@ const DashboardScreen = ({ navigation }: any) => {
 
             setSummary(response.data);
 
+            const comparisonResponse =
+                await api.get(
+                    "/api/expenses/comparison",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            setComparison(
+                comparisonResponse.data
+            );
+
         } catch (error) {
 
             console.error(error);
@@ -137,7 +159,42 @@ const DashboardScreen = ({ navigation }: any) => {
                 </View>
 
             </View>
+            <View style={styles.comparisonCard}>
 
+                <Text style={styles.cardTitle}>
+                    Monthly Comparison
+                </Text>
+
+                <Text style={styles.compareText}>
+                    Current: ₹
+                    {comparison?.currentMonthExpense ?? 0}
+                </Text>
+
+                <Text style={styles.compareText}>
+                    Previous: ₹
+                    {comparison?.previousMonthExpense ?? 0}
+                </Text>
+
+                {(comparison?.previousMonthExpense ?? 0) > 0 ? (
+
+                    <Text style={styles.compareResult}>
+                        {(comparison?.percentageChange ?? 0) >= 0
+                            ? "▲"
+                            : "▼"}{" "}
+                        {Math.abs(
+                            comparison?.percentageChange ?? 0
+                        ).toFixed(2)}%
+                    </Text>
+
+                ) : (
+
+                    <Text style={styles.compareResult}>
+                        First month of tracking
+                    </Text>
+
+                )}
+
+            </View>
             <Text style={styles.sectionTitle}>
                 Category Breakdown
             </Text>
@@ -368,6 +425,24 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: "bold",
         marginTop: 8,
+    },
+    comparisonCard: {
+        backgroundColor: COLORS.card,
+        borderRadius: 16,
+        padding: 20,
+        marginBottom: 15,
+        elevation: 3,
+    },
+
+    compareText: {
+        fontSize: 16,
+        marginTop: 4,
+    },
+
+    compareResult: {
+        fontSize: 22,
+        fontWeight: "bold",
+        marginTop: 10,
     },
 });
 

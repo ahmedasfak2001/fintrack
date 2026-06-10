@@ -17,6 +17,7 @@ import com.ahmedasfak.fintrack.dto.UpdateExpenseRequest;
 import com.ahmedasfak.fintrack.entity.Expense;
 import com.ahmedasfak.fintrack.entity.ExpenseCategory;
 import com.ahmedasfak.fintrack.dto.ExpenseResponse;
+import com.ahmedasfak.fintrack.dto.MonthlyComparisonResponse;
 import com.ahmedasfak.fintrack.dto.SummaryResponse;
 import com.ahmedasfak.fintrack.dto.UpdateBudgetRequest;
 import com.ahmedasfak.fintrack.dto.AddExpenseRequest;
@@ -223,6 +224,17 @@ public class ExpenseController {
                 return expenseService
                                 .updateUserBudget(
                                                 request,
+                                                userDetails);
+        }
+
+        // Get Monthly Comparison Endpoint
+        @GetMapping("/comparison")
+        public MonthlyComparisonResponse getMonthlyComparison(
+
+                        @AuthenticationPrincipal UserDetails userDetails) {
+
+                return expenseService
+                                .getMonthlyComparison(
                                                 userDetails);
         }
 }

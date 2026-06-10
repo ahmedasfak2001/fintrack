@@ -3,6 +3,7 @@ package com.ahmedasfak.fintrack.service;
 import java.util.List;
 import java.util.UUID;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import com.ahmedasfak.fintrack.dto.MonthlySummaryResponse;
 import com.ahmedasfak.fintrack.dto.SummaryResponse;
 import com.ahmedasfak.fintrack.dto.UpdateBudgetRequest;
 import com.ahmedasfak.fintrack.dto.ExpenseResponse;
+import com.ahmedasfak.fintrack.dto.MonthlyComparisonResponse;
 import com.ahmedasfak.fintrack.dto.AddExpenseRequest;
 import com.ahmedasfak.fintrack.dto.BudgetResponse;
 import com.ahmedasfak.fintrack.dto.BudgetSummaryResponse;
@@ -456,5 +458,70 @@ public class ExpenseService {
                 userRepository.save(user);
 
                 return "Budget updated successfully";
+        }
+        // Get Monthly Comparison
+        public MonthlyComparisonResponse getMonthlyComparison(
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(
+                                                userDetails.getUsername())
+                                .orElseThrow(
+                                                () -> new RuntimeException(
+                                                                "User not found"));
+
+                List<Expense> expenses = expenseRepository.findByUser(user);
+
+                YearMonth currentMonth = YearMonth.now();
+
+                YearMonth previousMonth = currentMonth.minusMonths(1);
+
+                BigDecimal currentTotal = expenses.stream()
+                                .filter(expense -> YearMonth.from(
+                                                expense.getExpenseDate())
+                                                .equals(currentMonth))
+                                .map(Expense::getAmount)
+                                .reduce(
+                                                BigDecimal.ZERO,
+                                                BigDecimal::add);
+
+                BigDecimal previousTotal = expenses.stream()
+                                .filter(expense -> YearMonth.from(
+                                                expense.getExpenseDate())
+                                                .equals(previousMonth))
+                                .map(Expense::getAmount)
+                                .reduce(
+                                                BigDecimal.ZERO,
+                                                BigDecimal::add);
+
+                double percentageChange = 0;
+
+                if (previousTotal.compareTo(
+                                BigDecimal.ZERO) > 0) {
+
+                        percentageChange = currentTotal
+                                        .subtract(previousTotal)
+                                        .divide(
+                                                        previousTotal,
+                                                        4,
+                                                        RoundingMode.HALF_UP)
+                                        .multiply(
+                                                        BigDecimal.valueOf(
+                                                                        100))
+                                        .doubleValue();
+                }
+
+                MonthlyComparisonResponse response = new MonthlyComparisonResponse();
+
+                response.setCurrentMonthExpense(
+                                currentTotal);
+
+                response.setPreviousMonthExpense(
+                                previousTotal);
+
+                response.setPercentageChange(
+                                percentageChange);
+
+                return response;
         }
 }
