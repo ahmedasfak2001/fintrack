@@ -6,10 +6,13 @@ import {
     Button,
     Alert,
     StyleSheet,
+    ActivityIndicator,
+    TouchableOpacity,
 } from "react-native";
 
 import api from "../api/api";
 import { RegisterRequest } from "../types/RegisterRequest";
+import { COLORS } from "../constants/colors";
 
 const RegisterScreen = ({ navigation }: any) => {
 
@@ -17,13 +20,16 @@ const RegisterScreen = ({ navigation }: any) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const [loading, setLoading] =
+        useState(false);
+
     //   const handleRegister = () => {
     //     Alert.alert("Register Clicked");
     //   };
 
     const handleRegister = async () => {
         try {
-
+            setLoading(true);
             const request: RegisterRequest = {
                 name,
                 email,
@@ -73,6 +79,9 @@ const RegisterScreen = ({ navigation }: any) => {
                     "Something went wrong."
                 );
             }
+        } finally {
+
+            setLoading(false);
         }
     };
 
@@ -106,10 +115,42 @@ const RegisterScreen = ({ navigation }: any) => {
                 style={styles.input}
             />
 
-            <Button
+            {/* <Button
                 title="Register"
                 onPress={handleRegister}
-            />
+            /> */}
+
+            <TouchableOpacity
+                style={[
+                    styles.registerButton,
+                    loading &&
+                    styles.disabledButton,
+                ]}
+                onPress={handleRegister}
+                disabled={loading}
+            >
+
+                {
+                    loading ? (
+
+                        <ActivityIndicator
+                            color="#FFFFFF"
+                        />
+
+                    ) : (
+
+                        <Text
+                            style={
+                                styles.registerButtonText
+                            }
+                        >
+                            Register
+                        </Text>
+
+                    )
+                }
+
+            </TouchableOpacity>
 
             <View style={{ marginTop: 10 }}>
 
@@ -140,6 +181,24 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 15,
         borderRadius: 5,
+    },
+    registerButton: {
+        backgroundColor:
+            COLORS.primary,
+        paddingVertical: 14,
+        borderRadius: 12,
+        alignItems: "center",
+        marginTop: 20,
+    },
+
+    disabledButton: {
+        opacity: 0.7,
+    },
+
+    registerButtonText: {
+        color: "#FFFFFF",
+        fontSize: 16,
+        fontWeight: "bold",
     },
 });
 
