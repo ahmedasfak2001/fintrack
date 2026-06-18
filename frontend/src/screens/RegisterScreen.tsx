@@ -23,6 +23,16 @@ const RegisterScreen = ({ navigation }: any) => {
     const [loading, setLoading] =
         useState(false);
 
+    const validateEmail = (
+        email: string
+    ) => {
+
+        const regex =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        return regex.test(email);
+    };
+
     //   const handleRegister = () => {
     //     Alert.alert("Register Clicked");
     //   };
@@ -30,6 +40,49 @@ const RegisterScreen = ({ navigation }: any) => {
     const handleRegister = async () => {
         try {
             setLoading(true);
+            if (
+                name.trim().length < 3
+            ) {
+
+                Alert.alert(
+                    "Validation Error",
+                    "Username must be at least 3 characters"
+                );
+
+                return;
+            }
+
+            if (!email.trim()) {
+
+                Alert.alert(
+                    "Validation Error",
+                    "Email is required"
+                );
+
+                return;
+            }
+
+            if (!validateEmail(email)) {
+
+                Alert.alert(
+                    "Validation Error",
+                    "Please enter a valid email address"
+                );
+
+                return;
+            }
+
+            if (
+                password.length < 6
+            ) {
+
+                Alert.alert(
+                    "Validation Error",
+                    "Password must be at least 6 characters"
+                );
+
+                return;
+            }
             const request: RegisterRequest = {
                 name,
                 email,

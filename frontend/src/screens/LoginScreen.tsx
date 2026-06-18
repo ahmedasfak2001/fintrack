@@ -25,10 +25,49 @@ const LoginScreen = ({ navigation }: any) => {
   // const handleLogin = () => {
   //   Alert.alert("Login", "Button Clicked");
   // };
+  const validateEmail = (
+    email: string
+  ) => {
+
+    const regex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    return regex.test(email);
+  };
 
   const handleLogin = async () => {
     try {
       setLoading(true);
+      if (!email.trim()) {
+
+        Alert.alert(
+          "Validation Error",
+          "Email is required"
+        );
+
+        return;
+      }
+
+      if (!validateEmail(email)) {
+
+        Alert.alert(
+          "Validation Error",
+          "Please enter a valid email address"
+        );
+
+        return;
+      }
+
+      if (!password.trim()) {
+
+        Alert.alert(
+          "Validation Error",
+          "Password is required"
+        );
+
+        return;
+      }
+      
       const request: LoginRequest = {
         email,
         password,
