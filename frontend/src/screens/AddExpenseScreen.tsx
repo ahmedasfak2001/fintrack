@@ -7,7 +7,8 @@ import {
     Alert,
     StyleSheet,
     ScrollView,
-    TouchableOpacity
+    TouchableOpacity,
+    ActivityIndicator
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -24,6 +25,8 @@ const AddExpenseScreen = ({ navigation }: any) => {
 
     const [category, setCategory] = useState("");
     const [categories, setCategories] = useState<string[]>([]);
+
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchCategories();
@@ -65,7 +68,7 @@ const AddExpenseScreen = ({ navigation }: any) => {
     const handleAddExpense = async () => {
 
         try {
-
+            setLoading(true);
             const token =
                 await AsyncStorage.getItem("token");
 
@@ -122,7 +125,11 @@ const AddExpenseScreen = ({ navigation }: any) => {
                 "Error",
                 "Failed to add expense"
             );
+        } finally {
+
+            setLoading(false);
         }
+
     };
 
     return (
@@ -174,13 +181,44 @@ const AddExpenseScreen = ({ navigation }: any) => {
                 style={styles.input}
             />
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={styles.addButton}
                 onPress={handleAddExpense}
             >
                 <Text style={styles.addButtonText}>
                     Add Expense
                 </Text>
+            </TouchableOpacity> */}
+            <TouchableOpacity
+                style={[
+                    styles.saveButton,
+                    loading &&
+                    styles.disabledButton,
+                ]}
+                onPress={handleAddExpense}
+                disabled={loading}
+            >
+
+                {
+                    loading ? (
+
+                        <ActivityIndicator
+                            color="#FFFFFF"
+                        />
+
+                    ) : (
+
+                        <Text
+                            style={
+                                styles.saveButtonText
+                            }
+                        >
+                            Save Expense
+                        </Text>
+
+                    )
+                }
+
             </TouchableOpacity>
 
         </ScrollView>
@@ -232,6 +270,24 @@ const styles = StyleSheet.create({
     },
 
     addButtonText: {
+        color: "#FFFFFF",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+    saveButton: {
+        backgroundColor:
+            COLORS.primary,
+        paddingVertical: 14,
+        borderRadius: 12,
+        alignItems: "center",
+        marginTop: 20,
+    },
+
+    disabledButton: {
+        opacity: 0.7,
+    },
+
+    saveButtonText: {
         color: "#FFFFFF",
         fontSize: 16,
         fontWeight: "bold",
