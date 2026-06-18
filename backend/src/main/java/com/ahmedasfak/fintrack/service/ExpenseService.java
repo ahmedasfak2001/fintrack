@@ -27,6 +27,7 @@ import com.ahmedasfak.fintrack.dto.UpdateBudgetRequest;
 import com.ahmedasfak.fintrack.dto.ExpenseResponse;
 import com.ahmedasfak.fintrack.dto.MonthlyComparisonResponse;
 import com.ahmedasfak.fintrack.dto.AddExpenseRequest;
+import com.ahmedasfak.fintrack.dto.BiggestExpenseResponse;
 import com.ahmedasfak.fintrack.dto.BudgetResponse;
 import com.ahmedasfak.fintrack.dto.BudgetSummaryResponse;
 import com.ahmedasfak.fintrack.dto.DailyAverageResponse;
@@ -610,6 +611,48 @@ public class ExpenseService {
                         response.setMessage(
                                         "ℹ️ Spending is exactly the same as last month.");
                 }
+
+                return response;
+        }
+
+        // Get Biggest Expense of the Month
+        public BiggestExpenseResponse getBiggestExpense(
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(
+                                                userDetails.getUsername())
+                                .orElseThrow(
+                                                () -> new RuntimeException(
+                                                                "User not found"));
+
+                YearMonth currentMonth = YearMonth.now();
+
+                List<Expense> monthlyExpenses = expenseRepository.findByUser(user)
+                                .stream()
+                                .filter(expense -> YearMonth.from(
+                                                expense.getExpenseDate())
+                                                .equals(currentMonth))
+                                .toList();
+
+                BiggestExpenseResponse response = new BiggestExpenseResponse();
+
+                monthlyExpenses.stream()
+                                .max((a, b) -> a.getAmount()
+                                                .compareTo(
+                                                                b.getAmount()))
+                                .ifPresent(expense -> {
+
+                                        response.setAmount(
+                                                        expense.getAmount());
+
+                                        response.setDescription(
+                                                        expense.getDescription());
+
+                                        response.setCategory(
+                                                        expense.getCategory()
+                                                                        .name());
+                                });
 
                 return response;
         }

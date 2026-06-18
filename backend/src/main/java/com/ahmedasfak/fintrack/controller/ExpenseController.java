@@ -21,6 +21,7 @@ import com.ahmedasfak.fintrack.dto.MonthlyComparisonResponse;
 import com.ahmedasfak.fintrack.dto.SummaryResponse;
 import com.ahmedasfak.fintrack.dto.UpdateBudgetRequest;
 import com.ahmedasfak.fintrack.dto.AddExpenseRequest;
+import com.ahmedasfak.fintrack.dto.BiggestExpenseResponse;
 import com.ahmedasfak.fintrack.dto.BudgetResponse;
 import com.ahmedasfak.fintrack.dto.BudgetSummaryResponse;
 import com.ahmedasfak.fintrack.dto.DailyAverageResponse;
@@ -259,6 +260,17 @@ public class ExpenseController {
 
                 return expenseService
                                 .getSpendingInsight(
+                                                userDetails);
+        }
+
+        // Get Biggest Expense Endpoint
+        @GetMapping("/biggest-expense")
+        public BiggestExpenseResponse getBiggestExpense(
+
+                        @AuthenticationPrincipal UserDetails userDetails) {
+
+                return expenseService
+                                .getBiggestExpense(
                                                 userDetails);
         }
 }

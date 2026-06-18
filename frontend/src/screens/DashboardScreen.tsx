@@ -11,6 +11,7 @@ import { COLORS } from "../constants/colors";
 import { MonthlyComparisonResponse } from "../types/MonthlyComparisonResponse";
 import { DailyAverageResponse } from "../types/DailyAverageResponse";
 import { SpendingInsightResponse } from "../types/SpendingInsightResponse";
+import { BiggestExpenseResponse } from "../types/BiggestExpenseResponse";
 
 const DashboardScreen = ({ navigation }: any) => {
 
@@ -27,6 +28,11 @@ const DashboardScreen = ({ navigation }: any) => {
         setInsight] =
         useState<
             SpendingInsightResponse | null
+        >(null);
+    const [biggestExpense,
+        setBiggestExpense] =
+        useState<
+            BiggestExpenseResponse | null
         >(null);
     const exportReport = async () => {
 
@@ -155,6 +161,21 @@ const DashboardScreen = ({ navigation }: any) => {
                 insightResponse.data
             );
 
+            const biggestExpenseResponse =
+                await api.get(
+                    "/api/expenses/biggest-expense",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            setBiggestExpense(
+                biggestExpenseResponse.data
+            );
+
         } catch (error) {
 
             console.error(error);
@@ -261,6 +282,24 @@ const DashboardScreen = ({ navigation }: any) => {
                     {insight?.message ??
                         "Loading..."}
                 </Text>
+            </View>
+            <View style={styles.insightCard}>
+
+                <Text style={styles.cardTitle}>
+                    Biggest Expense This Month
+                </Text>
+
+                <Text style={styles.cardValue}>
+                    ₹ {biggestExpense?.amount ?? 0}
+                </Text>
+
+                <Text style={styles.compareText}>
+                    {
+                        biggestExpense?.description
+                        ?? "No expenses"
+                    }
+                </Text>
+
             </View>
             <Text style={styles.sectionTitle}>
                 Category Breakdown
