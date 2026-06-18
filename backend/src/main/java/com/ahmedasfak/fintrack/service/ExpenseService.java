@@ -38,6 +38,7 @@ import com.ahmedasfak.fintrack.repository.ExpenseRepository;
 import com.ahmedasfak.fintrack.repository.UserRepository;
 import com.ahmedasfak.fintrack.dto.UpdateExpenseRequest;
 import com.ahmedasfak.fintrack.dto.MonthlyTrendResponse;
+import com.ahmedasfak.fintrack.dto.SavingsPotentialResponse;
 import com.ahmedasfak.fintrack.dto.SpendingInsightResponse;
 
 @Service
@@ -653,6 +654,49 @@ public class ExpenseService {
                                                         expense.getCategory()
                                                                         .name());
                                 });
+
+                return response;
+        }
+
+        // Get potential savings
+        public SavingsPotentialResponse getSavingsPotential(
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(
+                                                userDetails.getUsername())
+                                .orElseThrow(
+                                                () -> new RuntimeException(
+                                                                "User not found"));
+
+                MonthlySummaryResponse summary = getMonthlySummary(
+                                userDetails);
+
+                BigDecimal budget = user.getMonthlyBudget();
+
+                BigDecimal spent = summary.getTotalExpense();
+
+                BigDecimal remaining = budget.subtract(spent);
+
+                SavingsPotentialResponse response = new SavingsPotentialResponse();
+
+                if (remaining.compareTo(
+                                BigDecimal.ZERO) > 0) {
+
+                        response.setAmount(
+                                        remaining);
+
+                        response.setMessage(
+                                        "You can still save");
+
+                } else {
+
+                        response.setAmount(
+                                        BigDecimal.ZERO);
+
+                        response.setMessage(
+                                        "Budget already exceeded");
+                }
 
                 return response;
         }

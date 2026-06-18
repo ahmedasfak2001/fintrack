@@ -28,6 +28,7 @@ import com.ahmedasfak.fintrack.dto.DailyAverageResponse;
 import com.ahmedasfak.fintrack.service.ExpenseService;
 import com.ahmedasfak.fintrack.dto.MonthlySummaryResponse;
 import com.ahmedasfak.fintrack.dto.MonthlyTrendResponse;
+import com.ahmedasfak.fintrack.dto.SavingsPotentialResponse;
 import com.ahmedasfak.fintrack.dto.SpendingInsightResponse;
 
 @RestController
@@ -271,6 +272,17 @@ public class ExpenseController {
 
                 return expenseService
                                 .getBiggestExpense(
+                                                userDetails);
+        }
+
+        // Get Potential Savings Endpoint
+        @GetMapping("/savings-potential")
+        public SavingsPotentialResponse getSavingsPotential(
+
+                        @AuthenticationPrincipal UserDetails userDetails) {
+
+                return expenseService
+                                .getSavingsPotential(
                                                 userDetails);
         }
 }

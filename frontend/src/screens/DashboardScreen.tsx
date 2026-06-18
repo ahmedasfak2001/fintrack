@@ -12,6 +12,7 @@ import { MonthlyComparisonResponse } from "../types/MonthlyComparisonResponse";
 import { DailyAverageResponse } from "../types/DailyAverageResponse";
 import { SpendingInsightResponse } from "../types/SpendingInsightResponse";
 import { BiggestExpenseResponse } from "../types/BiggestExpenseResponse";
+import { SavingsPotentialResponse } from "../types/SavingsPotentialResponse";
 
 const DashboardScreen = ({ navigation }: any) => {
 
@@ -97,6 +98,12 @@ const DashboardScreen = ({ navigation }: any) => {
             DailyAverageResponse | null
         >(null);
 
+    const [savingsPotential,
+        setSavingsPotential] =
+        useState<
+            SavingsPotentialResponse | null
+        >(null);
+
     const fetchSummary = async () => {
 
         try {
@@ -175,6 +182,20 @@ const DashboardScreen = ({ navigation }: any) => {
             setBiggestExpense(
                 biggestExpenseResponse.data
             );
+
+            const savingsResponse =
+                await api.get(
+                    "/api/expenses/savings-potential",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            setSavingsPotential(
+                savingsResponse.data);
 
         } catch (error) {
 
@@ -298,6 +319,21 @@ const DashboardScreen = ({ navigation }: any) => {
                         biggestExpense?.description
                         ?? "No expenses"
                     }
+                </Text>
+
+            </View>
+            <View style={styles.insightCard}>
+
+                <Text style={styles.cardTitle}>
+                    Savings Potential
+                </Text>
+
+                <Text style={styles.cardValue}>
+                    ₹ {savingsPotential?.amount ?? 0}
+                </Text>
+
+                <Text style={styles.compareText}>
+                    {savingsPotential?.message}
                 </Text>
 
             </View>
