@@ -23,6 +23,7 @@ import com.ahmedasfak.fintrack.dto.UpdateBudgetRequest;
 import com.ahmedasfak.fintrack.dto.AddExpenseRequest;
 import com.ahmedasfak.fintrack.dto.BudgetResponse;
 import com.ahmedasfak.fintrack.dto.BudgetSummaryResponse;
+import com.ahmedasfak.fintrack.dto.DailyAverageResponse;
 import com.ahmedasfak.fintrack.service.ExpenseService;
 import com.ahmedasfak.fintrack.dto.MonthlySummaryResponse;
 import com.ahmedasfak.fintrack.dto.MonthlyTrendResponse;
@@ -235,6 +236,16 @@ public class ExpenseController {
 
                 return expenseService
                                 .getMonthlyComparison(
+                                                userDetails);
+        }
+        // Get Daily Average Endpoint
+        @GetMapping("/daily-average")
+        public DailyAverageResponse getDailyAverage(
+
+                        @AuthenticationPrincipal UserDetails userDetails) {
+
+                return expenseService
+                                .getDailyAverage(
                                                 userDetails);
         }
 }

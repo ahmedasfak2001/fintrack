@@ -9,6 +9,7 @@ import * as Sharing from "expo-sharing";
 
 import { COLORS } from "../constants/colors";
 import { MonthlyComparisonResponse } from "../types/MonthlyComparisonResponse";
+import { DailyAverageResponse } from "../types/DailyAverageResponse";
 
 const DashboardScreen = ({ navigation }: any) => {
 
@@ -78,6 +79,12 @@ const DashboardScreen = ({ navigation }: any) => {
         }, [])
     );
 
+    const [dailyAverage,
+        setDailyAverage] =
+        useState<
+            DailyAverageResponse | null
+        >(null);
+
     const fetchSummary = async () => {
 
         try {
@@ -111,6 +118,21 @@ const DashboardScreen = ({ navigation }: any) => {
 
             setComparison(
                 comparisonResponse.data
+            );
+
+            const dailyAverageResponse =
+                await api.get(
+                    "/api/expenses/daily-average",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            setDailyAverage(
+                dailyAverageResponse.data
             );
 
         } catch (error) {
@@ -148,6 +170,8 @@ const DashboardScreen = ({ navigation }: any) => {
                     </Text>
                 </View>
 
+
+
                 <View style={styles.card}>
                     <Text style={styles.cardTitle}>
                         Total Entries
@@ -158,6 +182,21 @@ const DashboardScreen = ({ navigation }: any) => {
                     </Text>
                 </View>
 
+            </View>
+            <View style={styles.comparisonCard}>
+                <Text style={styles.cardTitle}>
+                    Daily Average Spending
+                </Text>
+                <Text style={styles.cardValue}>
+                    ₹
+                    {
+                        dailyAverage?.dailyAverage
+                            ?.toFixed(2) ?? "0.00"
+                    }
+                </Text>
+                <Text style={styles.compareText}>
+                    Per Day
+                </Text>
             </View>
             <View style={styles.comparisonCard}>
 

@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.time.LocalDate;
+import java.math.RoundingMode;
 import java.time.YearMonth;
 import java.io.StringWriter;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import com.ahmedasfak.fintrack.dto.MonthlyComparisonResponse;
 import com.ahmedasfak.fintrack.dto.AddExpenseRequest;
 import com.ahmedasfak.fintrack.dto.BudgetResponse;
 import com.ahmedasfak.fintrack.dto.BudgetSummaryResponse;
+import com.ahmedasfak.fintrack.dto.DailyAverageResponse;
 import com.ahmedasfak.fintrack.entity.Expense;
 import com.ahmedasfak.fintrack.entity.ExpenseCategory;
 import com.ahmedasfak.fintrack.entity.User;
@@ -459,6 +461,7 @@ public class ExpenseService {
 
                 return "Budget updated successfully";
         }
+
         // Get Monthly Comparison
         public MonthlyComparisonResponse getMonthlyComparison(
                         UserDetails userDetails) {
@@ -521,6 +524,47 @@ public class ExpenseService {
 
                 response.setPercentageChange(
                                 percentageChange);
+
+                return response;
+        }
+        // Get Daily Average
+        public DailyAverageResponse getDailyAverage(
+                        UserDetails userDetails) {
+
+                User user = userRepository
+                                .findByEmail(
+                                                userDetails.getUsername())
+                                .orElseThrow(
+                                                () -> new RuntimeException(
+                                                                "User not found"));
+
+                List<Expense> expenses = expenseRepository.findByUser(user);
+
+                YearMonth currentMonth = YearMonth.now();
+
+                BigDecimal monthlyTotal = expenses.stream()
+                                .filter(expense -> YearMonth.from(
+                                                expense.getExpenseDate())
+                                                .equals(currentMonth))
+                                .map(Expense::getAmount)
+                                .reduce(
+                                                BigDecimal.ZERO,
+                                                BigDecimal::add);
+
+                int currentDay = LocalDate.now().getDayOfMonth();
+
+                BigDecimal average = currentDay > 0
+                                ? monthlyTotal.divide(
+                                                BigDecimal.valueOf(
+                                                                currentDay),
+                                                2,
+                                                RoundingMode.HALF_UP)
+                                : BigDecimal.ZERO;
+
+                DailyAverageResponse response = new DailyAverageResponse();
+
+                response.setDailyAverage(
+                                average);
 
                 return response;
         }
