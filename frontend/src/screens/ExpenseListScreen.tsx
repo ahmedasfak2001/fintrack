@@ -9,11 +9,13 @@ import {
     Alert,
     RefreshControl,
     TextInput,
-    TouchableOpacity
+    TouchableOpacity,
+    ActivityIndicator
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import api from "../api/api";
+import { COLORS } from "../constants/colors";
 
 const ExpenseListScreen = ({ navigation }: any) => {
 
@@ -23,6 +25,7 @@ const ExpenseListScreen = ({ navigation }: any) => {
     const [selectedCategory, setSelectedCategory] = useState("");
     const [searchText, setSearchText] = useState("");
     const [refreshing, setRefreshing] = useState(false);
+    const [loading, setLoading] = useState(true);
     const onRefresh = async () => {
 
         setRefreshing(true);
@@ -71,6 +74,8 @@ const ExpenseListScreen = ({ navigation }: any) => {
 
         try {
 
+            setLoading(true);
+
             const token =
                 await AsyncStorage.getItem("token");
 
@@ -114,6 +119,9 @@ const ExpenseListScreen = ({ navigation }: any) => {
         } catch (error) {
 
             console.error(error);
+        } finally {
+
+            setLoading(false);
         }
     };
 
@@ -195,7 +203,32 @@ const ExpenseListScreen = ({ navigation }: any) => {
             );
         }
     };
+    if (loading) {
 
+        return (
+
+            <View
+                style={
+                    styles.loadingContainer
+                }
+            >
+
+                <ActivityIndicator
+                    size="large"
+                    color={COLORS.primary}
+                />
+
+                <Text
+                    style={
+                        styles.loadingText
+                    }
+                >
+                    Loading Expenses...
+                </Text>
+
+            </View>
+        );
+    }
     return (
         <View style={styles.container}>
             <TextInput
@@ -402,6 +435,20 @@ const styles = StyleSheet.create({
         marginTop: 40,
         color: "#64748B",
         fontSize: 16,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor:
+            COLORS.background,
+    },
+
+    loadingText: {
+        marginTop: 15,
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#64748B",
     },
 });
 
