@@ -4,7 +4,8 @@ import {
     Text,
     StyleSheet,
     ScrollView,
-    TouchableOpacity
+    TouchableOpacity,
+    ActivityIndicator
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api/api";
@@ -35,6 +36,9 @@ const EditExpenseScreen = ({
 
     const [categories, setCategories] =
         useState<string[]>([]);
+
+    const [loading, setLoading] =
+        useState(false);
 
     useEffect(() => {
         fetchCategories();
@@ -69,7 +73,7 @@ const EditExpenseScreen = ({
     const handleUpdateExpense = async () => {
 
         try {
-
+            setLoading(true);
             const token =
                 await AsyncStorage.getItem("token");
             const request = {
@@ -121,6 +125,9 @@ const EditExpenseScreen = ({
                 "Error",
                 "Failed to update expense"
             );
+        } finally {
+
+            setLoading(false);
         }
         // catch (error: any) {
 
@@ -198,13 +205,44 @@ const EditExpenseScreen = ({
                     )
                 }
             /> */}
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={styles.updateButton}
                 onPress={handleUpdateExpense}
             >
                 <Text style={styles.updateButtonText}>
                     Update Expense
                 </Text>
+            </TouchableOpacity> */}
+            <TouchableOpacity
+                style={[
+                    styles.updateButton,
+                    loading &&
+                    styles.disabledButton,
+                ]}
+                onPress={handleUpdateExpense}
+                disabled={loading}
+            >
+
+                {
+                    loading ? (
+
+                        <ActivityIndicator
+                            color="#FFFFFF"
+                        />
+
+                    ) : (
+
+                        <Text
+                            style={
+                                styles.updateButtonText
+                            }
+                        >
+                            Update Expense
+                        </Text>
+
+                    )
+                }
+
             </TouchableOpacity>
 
         </ScrollView>
@@ -247,23 +285,28 @@ const styles = StyleSheet.create({
         marginBottom: 18,
     },
 
+    subtitle: {
+        textAlign: "center",
+        color: "#64748B",
+        marginBottom: 20,
+    },
     updateButton: {
-        backgroundColor: COLORS.primary,
-        padding: 16,
-        borderRadius: 14,
+        backgroundColor:
+            COLORS.primary,
+        paddingVertical: 14,
+        borderRadius: 12,
         alignItems: "center",
-        marginTop: 10,
+        marginTop: 20,
+    },
+
+    disabledButton: {
+        opacity: 0.7,
     },
 
     updateButtonText: {
         color: "#FFFFFF",
         fontSize: 16,
         fontWeight: "bold",
-    },
-    subtitle: {
-        textAlign: "center",
-        color: "#64748B",
-        marginBottom: 20,
     },
 });
 
