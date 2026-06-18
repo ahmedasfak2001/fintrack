@@ -10,6 +10,7 @@ import * as Sharing from "expo-sharing";
 import { COLORS } from "../constants/colors";
 import { MonthlyComparisonResponse } from "../types/MonthlyComparisonResponse";
 import { DailyAverageResponse } from "../types/DailyAverageResponse";
+import { SpendingInsightResponse } from "../types/SpendingInsightResponse";
 
 const DashboardScreen = ({ navigation }: any) => {
 
@@ -21,6 +22,11 @@ const DashboardScreen = ({ navigation }: any) => {
         setComparison] =
         useState<
             MonthlyComparisonResponse | null
+        >(null);
+    const [insight,
+        setInsight] =
+        useState<
+            SpendingInsightResponse | null
         >(null);
     const exportReport = async () => {
 
@@ -134,6 +140,20 @@ const DashboardScreen = ({ navigation }: any) => {
             setDailyAverage(
                 dailyAverageResponse.data
             );
+            const insightResponse =
+                await api.get(
+                    "/api/expenses/spending-insight",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            setInsight(
+                insightResponse.data
+            );
 
         } catch (error) {
 
@@ -183,21 +203,7 @@ const DashboardScreen = ({ navigation }: any) => {
                 </View>
 
             </View>
-            <View style={styles.comparisonCard}>
-                <Text style={styles.cardTitle}>
-                    Daily Average Spending
-                </Text>
-                <Text style={styles.cardValue}>
-                    ₹
-                    {
-                        dailyAverage?.dailyAverage
-                            ?.toFixed(2) ?? "0.00"
-                    }
-                </Text>
-                <Text style={styles.compareText}>
-                    Per Day
-                </Text>
-            </View>
+
             <View style={styles.comparisonCard}>
 
                 <Text style={styles.cardTitle}>
@@ -230,9 +236,31 @@ const DashboardScreen = ({ navigation }: any) => {
                     <Text style={styles.compareResult}>
                         First month of tracking
                     </Text>
-
                 )}
-
+            </View>
+            <View style={styles.comparisonCard}>
+                <Text style={styles.cardTitle}>
+                    Daily Average Spending
+                </Text>
+                <Text style={styles.cardValue}>
+                    ₹
+                    {
+                        dailyAverage?.dailyAverage
+                            ?.toFixed(2) ?? "0.00"
+                    }
+                </Text>
+                <Text style={styles.compareText}>
+                    Per Day
+                </Text>
+            </View>
+            <View style={styles.insightCard}>
+                <Text style={styles.cardTitle}>
+                    Spending Insight
+                </Text>
+                <Text style={styles.insightText}>
+                    {insight?.message ??
+                        "Loading..."}
+                </Text>
             </View>
             <Text style={styles.sectionTitle}>
                 Category Breakdown
@@ -278,6 +306,7 @@ const DashboardScreen = ({ navigation }: any) => {
                 }
 
             </ScrollView>
+
             <Text style={styles.sectionTitle}>
                 Quick Actions
             </Text>
@@ -482,6 +511,19 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: "bold",
         marginTop: 10,
+    },
+    insightCard: {
+        backgroundColor: COLORS.card,
+        borderRadius: 16,
+        padding: 20,
+        marginTop: 12,
+        elevation: 3,
+    },
+
+    insightText: {
+        fontSize: 16,
+        marginTop: 8,
+        lineHeight: 24,
     },
 });
 

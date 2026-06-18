@@ -37,6 +37,7 @@ import com.ahmedasfak.fintrack.repository.ExpenseRepository;
 import com.ahmedasfak.fintrack.repository.UserRepository;
 import com.ahmedasfak.fintrack.dto.UpdateExpenseRequest;
 import com.ahmedasfak.fintrack.dto.MonthlyTrendResponse;
+import com.ahmedasfak.fintrack.dto.SpendingInsightResponse;
 
 @Service
 public class ExpenseService {
@@ -527,6 +528,7 @@ public class ExpenseService {
 
                 return response;
         }
+
         // Get Daily Average
         public DailyAverageResponse getDailyAverage(
                         UserDetails userDetails) {
@@ -565,6 +567,49 @@ public class ExpenseService {
 
                 response.setDailyAverage(
                                 average);
+
+                return response;
+        }
+
+        // Get Spending Insight
+        public SpendingInsightResponse getSpendingInsight(
+                        UserDetails userDetails) {
+
+                MonthlyComparisonResponse comparison = getMonthlyComparison(
+                                userDetails);
+
+                SpendingInsightResponse response = new SpendingInsightResponse();
+
+                if (comparison.getPreviousMonthExpense()
+                                .compareTo(BigDecimal.ZERO) == 0) {
+
+                        response.setMessage(
+                                        "No comparison data available yet.");
+
+                        return response;
+                }
+
+                double change = comparison.getPercentageChange();
+
+                if (change > 0) {
+
+                        response.setMessage(
+                                        String.format(
+                                                        "📈 You are spending %.2f%% more than last month.",
+                                                        change));
+
+                } else if (change < 0) {
+
+                        response.setMessage(
+                                        String.format(
+                                                        "✅ Great job! You reduced spending by %.2f%% compared to last month.",
+                                                        Math.abs(change)));
+
+                } else {
+
+                        response.setMessage(
+                                        "ℹ️ Spending is exactly the same as last month.");
+                }
 
                 return response;
         }
