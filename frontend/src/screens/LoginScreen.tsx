@@ -6,6 +6,7 @@ import {
   Button,
   Alert,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 
 import api from "../api/api";
@@ -13,10 +14,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { LoginRequest } from "../types/LoginRequest";
 import { AuthResponse } from "../types/AuthResponse";
+import { COLORS } from "../constants/colors";
 
 const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // const handleLogin = () => {
   //   Alert.alert("Login", "Button Clicked");
@@ -24,6 +27,7 @@ const LoginScreen = ({ navigation }: any) => {
 
   const handleLogin = async () => {
     try {
+      setLoading(true);
       const request: LoginRequest = {
         email,
         password,
@@ -66,6 +70,9 @@ const LoginScreen = ({ navigation }: any) => {
       );
 
       console.error(error);
+    } finally {
+
+      setLoading(false);
     }
   };
 
@@ -88,10 +95,28 @@ const LoginScreen = ({ navigation }: any) => {
         style={styles.input}
       />
 
-      <Button
+      {/* <Button
         title="Login"
         onPress={handleLogin}
-      />
+      /> */}
+
+      <TouchableOpacity
+        style={[
+          styles.loginButton,
+          loading &&
+          styles.loginButtonDisabled,
+        ]}
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        <Text style={styles.loginText}>
+          {
+            loading
+              ? "Signing In..."
+              : "Login"
+          }
+        </Text>
+      </TouchableOpacity>
 
       <View style={{ marginTop: 10 }}>
         <Button
@@ -121,6 +146,23 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
+  },
+  loginButton: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 10,
+  },
+
+  loginButtonDisabled: {
+    opacity: 0.7,
+  },
+
+  loginText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

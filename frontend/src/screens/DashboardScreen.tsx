@@ -1,5 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button, RefreshControl, ScrollView, Alert, TouchableOpacity } from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    Button,
+    RefreshControl,
+    ScrollView,
+    Alert,
+    TouchableOpacity,
+    ActivityIndicator,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SummaryResponse } from "../types/SummaryResponse";
 import api from "../api/api";
@@ -19,6 +29,8 @@ const DashboardScreen = ({ navigation }: any) => {
     const [summary, setSummary] = useState<SummaryResponse | null>(null);
 
     const [refreshing, setRefreshing] = useState(false);
+
+    const [loading, setLoading] = useState(true);
 
     const [comparison,
         setComparison] =
@@ -107,7 +119,7 @@ const DashboardScreen = ({ navigation }: any) => {
     const fetchSummary = async () => {
 
         try {
-
+            setLoading(true);
             const token =
                 await AsyncStorage.getItem("token");
 
@@ -200,8 +212,37 @@ const DashboardScreen = ({ navigation }: any) => {
         } catch (error) {
 
             console.error(error);
+        } finally {
+
+            setLoading(false);
         }
     };
+    if (loading) {
+
+        return (
+
+            <View
+                style={
+                    styles.loadingContainer
+                }
+            >
+
+                <ActivityIndicator
+                    size="large"
+                    color={COLORS.primary}
+                />
+
+                <Text
+                    style={
+                        styles.loadingText
+                    }
+                >
+                    Loading Dashboard...
+                </Text>
+
+            </View>
+        );
+    }
 
     return (
         <ScrollView
@@ -599,6 +640,20 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginTop: 8,
         lineHeight: 24,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor:
+            COLORS.background,
+    },
+
+    loadingText: {
+        marginTop: 15,
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#64748B",
     },
 });
 
