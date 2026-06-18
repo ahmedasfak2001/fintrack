@@ -269,9 +269,34 @@ const ExpenseListScreen = ({ navigation }: any) => {
                 keyExtractor={(item: any) => item.id}
 
                 ListEmptyComponent={
-                    <Text style={styles.emptyText}>
-                        No expenses found
-                    </Text>
+                    <View style={styles.emptyContainer}>
+
+                        <Text style={styles.emptyIcon}>
+                            📭
+                        </Text>
+
+                        <Text style={styles.emptyTitle}>
+                            No Expenses Found
+                        </Text>
+
+                        <Text style={styles.emptySubtitle}>
+                            Start tracking your spending by adding your first expense.
+                        </Text>
+
+                        <TouchableOpacity
+                            style={styles.emptyButton}
+                            onPress={() =>
+                                navigation.navigate(
+                                    "AddExpense"
+                                )
+                            }
+                        >
+                            <Text style={styles.emptyButtonText}>
+                                ➕ Add Expense
+                            </Text>
+                        </TouchableOpacity>
+
+                    </View>
                 }
                 // renderItem={({ item }: any) => (
                 //     <View style={styles.card}>
@@ -449,6 +474,43 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "600",
         color: "#64748B",
+    },
+    emptyContainer: {
+        alignItems: "center",
+        marginTop: 80,
+        paddingHorizontal: 20,
+    },
+
+    emptyIcon: {
+        fontSize: 60,
+        marginBottom: 15,
+    },
+
+    emptyTitle: {
+        fontSize: 22,
+        fontWeight: "bold",
+        marginBottom: 8,
+    },
+
+    emptySubtitle: {
+        textAlign: "center",
+        color: "#64748B",
+        fontSize: 15,
+        lineHeight: 22,
+        marginBottom: 20,
+    },
+
+    emptyButton: {
+        backgroundColor: COLORS.primary,
+        paddingHorizontal: 24,
+        paddingVertical: 12,
+        borderRadius: 12,
+    },
+
+    emptyButtonText: {
+        color: "#FFFFFF",
+        fontWeight: "bold",
+        fontSize: 16,
     },
 });
 
