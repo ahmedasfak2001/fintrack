@@ -7,6 +7,7 @@ import {
   Alert,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 
 import api from "../api/api";
@@ -104,18 +105,32 @@ const LoginScreen = ({ navigation }: any) => {
         style={[
           styles.loginButton,
           loading &&
-          styles.loginButtonDisabled,
+          styles.disabledButton,
         ]}
         onPress={handleLogin}
         disabled={loading}
       >
-        <Text style={styles.loginText}>
-          {
-            loading
-              ? "Signing In..."
-              : "Login"
-          }
-        </Text>
+
+        {
+          loading ? (
+
+            <ActivityIndicator
+              color="#FFFFFF"
+            />
+
+          ) : (
+
+            <Text
+              style={
+                styles.loginButtonText
+              }
+            >
+              Login
+            </Text>
+
+          )
+        }
+
       </TouchableOpacity>
 
       <View style={{ marginTop: 10 }}>
@@ -147,19 +162,30 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 5,
   },
-  loginButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 10,
-  },
 
   loginButtonDisabled: {
     opacity: 0.7,
   },
 
   loginText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  loginButton: {
+    backgroundColor:
+      COLORS.primary,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 20,
+  },
+
+  disabledButton: {
+    opacity: 0.7,
+  },
+
+  loginButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
