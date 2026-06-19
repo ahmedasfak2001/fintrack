@@ -14,7 +14,8 @@ import { Alert } from "react-native";
 import { navigate } from "../utils/NavigationService";
 
 const api = axios.create({
-  baseURL: "http://192.168.31.80:8080",
+  // baseURL: "http://192.168.31.80:8080",
+  baseURL: "https://fintrack-production-2c67.up.railway.app",
   headers: {
     "Content-Type": "application/json",
   },
