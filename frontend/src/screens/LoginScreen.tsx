@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LoginRequest } from "../types/LoginRequest";
 import { AuthResponse } from "../types/AuthResponse";
 import { COLORS } from "../constants/colors";
+import { showError, showSuccess } from "../utils/toast";
 
 const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
@@ -40,18 +41,24 @@ const LoginScreen = ({ navigation }: any) => {
       setLoading(true);
       if (!email.trim()) {
 
-        Alert.alert(
-          "Validation Error",
+        // Alert.alert(
+        //   "Validation Error",
+        //   "Email is required"
+        // );
+        showError(
           "Email is required"
         );
-
+        setLoading(false);
         return;
       }
 
       if (!validateEmail(email)) {
 
-        Alert.alert(
-          "Validation Error",
+        // Alert.alert(
+        //   "Validation Error",
+        //   "Please enter a valid email address"
+        // );
+        showError(
           "Please enter a valid email address"
         );
 
@@ -60,14 +67,17 @@ const LoginScreen = ({ navigation }: any) => {
 
       if (!password.trim()) {
 
-        Alert.alert(
-          "Validation Error",
+        // Alert.alert(
+        //   "Validation Error",
+        //   "Password is required"
+        // );
+        showError(
           "Password is required"
         );
 
         return;
       }
-      
+
       const request: LoginRequest = {
         email,
         password,
@@ -94,7 +104,9 @@ const LoginScreen = ({ navigation }: any) => {
       //   "Success",
       //   "Login Successful"
       // );
-
+      showSuccess(
+        "Login Successful"
+      );
       navigation.replace("Dashboard");
 
       console.log(
@@ -104,8 +116,11 @@ const LoginScreen = ({ navigation }: any) => {
 
     } catch (error) {
 
-      Alert.alert(
-        "Error",
+      // Alert.alert(
+      //   "Error",
+      //   "Invalid email or password"
+      // );
+      showError(
         "Invalid email or password"
       );
 

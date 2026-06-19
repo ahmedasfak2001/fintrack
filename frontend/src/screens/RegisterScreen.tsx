@@ -13,6 +13,7 @@ import {
 import api from "../api/api";
 import { RegisterRequest } from "../types/RegisterRequest";
 import { COLORS } from "../constants/colors";
+import { showError, showSuccess } from "../utils/toast";
 
 const RegisterScreen = ({ navigation }: any) => {
 
@@ -44,31 +45,40 @@ const RegisterScreen = ({ navigation }: any) => {
                 name.trim().length < 3
             ) {
 
-                Alert.alert(
-                    "Validation Error",
+                // Alert.alert(
+                //     "Validation Error",
+                //     "Username must be at least 3 characters"
+                // );
+                showError(
                     "Username must be at least 3 characters"
                 );
-
+                setLoading(false);
                 return;
             }
 
             if (!email.trim()) {
 
-                Alert.alert(
-                    "Validation Error",
+                // Alert.alert(
+                //     "Validation Error",
+                //     "Email is required"
+                // );
+                showError(
                     "Email is required"
                 );
-
+                setLoading(false);
                 return;
             }
 
             if (!validateEmail(email)) {
 
-                Alert.alert(
-                    "Validation Error",
+                // Alert.alert(
+                //     "Validation Error",
+                //     "Please enter a valid email address"
+                // );
+                showError(
                     "Please enter a valid email address"
                 );
-
+                setLoading(false);
                 return;
             }
 
@@ -76,11 +86,14 @@ const RegisterScreen = ({ navigation }: any) => {
                 password.length < 6
             ) {
 
-                Alert.alert(
-                    "Validation Error",
+                // Alert.alert(
+                //     "Validation Error",
+                //     "Password must be at least 6 characters"
+                // );
+                showError(
                     "Password must be at least 6 characters"
                 );
-
+                setLoading(false);
                 return;
             }
             const request: RegisterRequest = {
@@ -94,17 +107,26 @@ const RegisterScreen = ({ navigation }: any) => {
                 request
             );
 
-            Alert.alert(
-                "Success",
-                "User registered successfully",
-                [
-                    {
-                        text: "OK",
-                        onPress: () =>
-                            navigation.navigate("Login"),
-                    },
-                ]
+            // Alert.alert(
+            //     "Success",
+            //     "User registered successfully",
+            //     [
+            //         {
+            //             text: "OK",
+            //             onPress: () =>
+            //                 navigation.navigate("Login"),
+            //         },
+            //     ]
+            // );
+
+            showSuccess(
+                "User registered successfully"
             );
+
+            setTimeout(() => {
+                navigation.navigate("Login");
+            }, 1500);
+
 
         }
         // catch (error) {
@@ -120,15 +142,21 @@ const RegisterScreen = ({ navigation }: any) => {
 
             if (error.response?.status === 403) {
 
-                Alert.alert(
-                    "Registration Failed",
+                // Alert.alert(
+                //     "Registration Failed",
+                //     "Email already registered"
+                // );
+                showError(
                     "Email already registered"
                 );
 
             } else {
 
-                Alert.alert(
-                    "Registration Failed",
+                // Alert.alert(
+                //     "Registration Failed",
+                //     "Something went wrong."
+                // );
+                showError(
                     "Something went wrong."
                 );
             }

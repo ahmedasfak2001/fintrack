@@ -23,6 +23,7 @@ import { DailyAverageResponse } from "../types/DailyAverageResponse";
 import { SpendingInsightResponse } from "../types/SpendingInsightResponse";
 import { BiggestExpenseResponse } from "../types/BiggestExpenseResponse";
 import { SavingsPotentialResponse } from "../types/SavingsPotentialResponse";
+import { showError, showSuccess } from "../utils/toast";
 
 const DashboardScreen = ({ navigation }: any) => {
 
@@ -78,11 +79,17 @@ const DashboardScreen = ({ navigation }: any) => {
                 }
             );
             await Sharing.shareAsync(fileUri);
+            showSuccess(
+                "Report exported successfully"
+            );
 
         } catch (error) {
             console.error(error);
-            Alert.alert(
-                "Error",
+            // Alert.alert(
+            //     "Error",
+            //     "Failed to export report"
+            // );
+            showError(
                 "Failed to export report"
             );
         }
@@ -95,6 +102,9 @@ const DashboardScreen = ({ navigation }: any) => {
 
     const logout = async () => {
         await AsyncStorage.removeItem("token");
+        showSuccess(
+            "Logged out successfully"
+        );
         navigation.replace("Login");
     };
 
@@ -212,6 +222,9 @@ const DashboardScreen = ({ navigation }: any) => {
         } catch (error) {
 
             console.error(error);
+            showError(
+                "Failed to load dashboard data"
+            );
         } finally {
 
             setLoading(false);

@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import api from "../api/api";
 import { COLORS } from "../constants/colors";
+import { showError, showSuccess } from "../utils/toast";
 
 const ExpenseListScreen = ({ navigation }: any) => {
 
@@ -119,6 +120,9 @@ const ExpenseListScreen = ({ navigation }: any) => {
         } catch (error) {
 
             console.error(error);
+            showError(
+                "Failed to load expenses"
+            );
         } finally {
 
             setLoading(false);
@@ -148,6 +152,9 @@ const ExpenseListScreen = ({ navigation }: any) => {
         } catch (error) {
 
             console.error(error);
+            showError(
+                "Failed to load categories"
+            );
         }
     };
 
@@ -190,15 +197,21 @@ const ExpenseListScreen = ({ navigation }: any) => {
                     },
                 }
             );
-
+            showSuccess(
+                "Expense deleted successfully"
+            );
             fetchExpenses();
 
         } catch (error) {
 
             console.error(error);
 
-            Alert.alert(
-                "Error",
+            // Alert.alert(
+            //     "Error",
+            //     "Failed to delete expense"
+            // );
+
+            showError(
                 "Failed to delete expense"
             );
         }

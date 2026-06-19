@@ -16,6 +16,7 @@ import {
     Alert,
 } from "react-native";
 import { COLORS } from "../constants/colors";
+import { showError, showSuccess } from "../utils/toast";
 
 
 const EditExpenseScreen = ({
@@ -94,35 +95,38 @@ const EditExpenseScreen = ({
                     }
                 );
 
-            Alert.alert(
-                "Success",
-                response.data,
-                [
-                    {
-                        text: "OK",
-                        // onPress: () =>
-                        //     navigation.navigate(
-                        //         "Expenses"
-                        //     ),
-                        onPress: () => {
+            // Alert.alert(
+            //     "Success",
+            //     response.data,
+            //     [
+            //         {
+            //             text: "OK",
+            //             onPress: () => {
 
-                            setTimeout(() => {
+            //                 setTimeout(() => {
 
-                                navigation.goBack();
+            //                     navigation.goBack();
 
-                            }, 500);
-                        },
-                    },
-                ]
-            );
+            //                 }, 500);
+            //             },
+            //         },
+            //     ]
+            // );
+            showSuccess(response.data);
+            setTimeout(() => {
+                navigation.goBack();
+            }, 1500);
 
         }
         catch (error) {
 
             console.error(error);
 
-            Alert.alert(
-                "Error",
+            // Alert.alert(
+            //     "Error",
+            //     "Failed to update expense"
+            // );
+            showError(
                 "Failed to update expense"
             );
         } finally {

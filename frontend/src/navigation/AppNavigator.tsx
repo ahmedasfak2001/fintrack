@@ -12,65 +12,70 @@ import MonthlySummaryScreen from "../screens/MonthlySummaryScreen";
 import TrendScreen from "../screens/TrendScreen";
 import BudgetScreen from "../screens/BudgetScreen";
 import { navigationRef } from "../utils/NavigationService";
+import Toast from "react-native-toast-message";
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
     return (
-        <NavigationContainer ref={navigationRef}>
-            <Stack.Navigator initialRouteName="Splash">
+        <>
+            <NavigationContainer ref={navigationRef}>
+                <Stack.Navigator initialRouteName="Splash">
 
-                <Stack.Screen
-                    name="Splash"
-                    component={SplashScreen}
-                />
+                    <Stack.Screen
+                        name="Splash"
+                        component={SplashScreen}
+                    />
 
-                <Stack.Screen
-                    name="Login"
-                    component={LoginScreen}
-                />
+                    <Stack.Screen
+                        name="Login"
+                        component={LoginScreen}
+                    />
 
-                <Stack.Screen
-                    name="Register"
-                    component={RegisterScreen}
-                />
+                    <Stack.Screen
+                        name="Register"
+                        component={RegisterScreen}
+                    />
 
-                <Stack.Screen
-                    name="Dashboard"
-                    component={DashboardScreen}
-                />
+                    <Stack.Screen
+                        name="Dashboard"
+                        component={DashboardScreen}
+                    />
 
-                <Stack.Screen
-                    name="Expenses"
-                    component={ExpenseListScreen}
-                />
+                    <Stack.Screen
+                        name="Expenses"
+                        component={ExpenseListScreen}
+                    />
 
-                <Stack.Screen
-                    name="AddExpense"
-                    component={AddExpenseScreen}
-                />
+                    <Stack.Screen
+                        name="AddExpense"
+                        component={AddExpenseScreen}
+                    />
 
-                <Stack.Screen
-                    name="EditExpense"
-                    component={EditExpenseScreen}
-                />
+                    <Stack.Screen
+                        name="EditExpense"
+                        component={EditExpenseScreen}
+                    />
 
-                <Stack.Screen
-                    name="MonthlySummary"
-                    component={MonthlySummaryScreen}
-                />
+                    <Stack.Screen
+                        name="MonthlySummary"
+                        component={MonthlySummaryScreen}
+                    />
 
-                <Stack.Screen
-                    name="Trend"
-                    component={TrendScreen}
-                />
+                    <Stack.Screen
+                        name="Trend"
+                        component={TrendScreen}
+                    />
 
-                <Stack.Screen
-                    name="Budget"
-                    component={BudgetScreen}
-                />
+                    <Stack.Screen
+                        name="Budget"
+                        component={BudgetScreen}
+                    />
 
-            </Stack.Navigator>
-        </NavigationContainer>
+                </Stack.Navigator>
+            </NavigationContainer>
+
+            <Toast />
+        </>
     );
 }

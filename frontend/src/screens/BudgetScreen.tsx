@@ -24,6 +24,7 @@ import {
 } from "../types/BudgetSummaryResponse";
 import * as Progress from "react-native-progress";
 import { COLORS } from "../constants/colors";
+import { showError, showSuccess } from "../utils/toast";
 
 const BudgetScreen = () => {
 
@@ -96,6 +97,15 @@ const BudgetScreen = () => {
                     );
 
                 setSummary(response.data);
+                console.log(
+                    "Budget Summary:",
+                    response.data
+                );
+
+                console.log(
+                    "Usage Type:",
+                    typeof response.data.usagePercentage
+                );
 
             } catch (error) {
 
@@ -130,8 +140,11 @@ const BudgetScreen = () => {
 
             await fetchBudgetSummary();
 
-            Alert.alert(
-                "Success",
+            // Alert.alert(
+            //     "Success",
+            //     "Budget updated"
+            // );
+            showSuccess(
                 "Budget updated"
             );
 
@@ -139,8 +152,11 @@ const BudgetScreen = () => {
 
             console.error(error);
 
-            Alert.alert(
-                "Error",
+            // Alert.alert(
+            //     "Error",
+            //     "Failed to update budget"
+            // );
+            showError(
                 "Failed to update budget"
             );
         } finally {
@@ -149,11 +165,20 @@ const BudgetScreen = () => {
         }
     };
 
-    const usage =
-        (summary?.usagePercentage ?? 0) / 100;
+    // const usage =
+    //     (summary?.usagePercentage ?? 0) / 100;
 
+    // const usagePercentage =
+    //     summary?.usagePercentage ?? 0;
     const usagePercentage =
-        summary?.usagePercentage ?? 0;
+        parseFloat(
+            String(
+                summary?.usagePercentage ?? 0
+            )
+        ) || 0;
+
+    const usage =
+        usagePercentage / 100;
 
     return (
 
@@ -193,8 +218,11 @@ const BudgetScreen = () => {
             </TouchableOpacity>
             <View style={styles.progressContainer}>
 
-                <Text style={styles.progressText}>
+                {/* <Text style={styles.progressText}>
                     {usagePercentage.toFixed(0)}% Used
+                </Text> */}
+                <Text style={styles.progressText}>
+                    {(usagePercentage ?? 0).toFixed(0)}% Used
                 </Text>
 
                 <Progress.Bar
@@ -237,8 +265,11 @@ const BudgetScreen = () => {
                     )
                 }
 
-                <Text style={styles.percentage}>
+                {/* <Text style={styles.percentage}>
                     {usagePercentage.toFixed(2)}%
+                </Text> */}
+                <Text style={styles.percentage}>
+                    {(usagePercentage ?? 0).toFixed(2)}%
                 </Text>
 
             </View>
@@ -282,8 +313,13 @@ const BudgetScreen = () => {
                         Usage
                     </Text>
 
-                    <Text style={styles.cardValue}>
+                    {/* <Text style={styles.cardValue}>
                         {summary?.usagePercentage?.toFixed(0)}%
+                    </Text> */}
+                    <Text style={styles.cardValue}>
+                        {Number(
+                            summary?.usagePercentage ?? 0
+                        ).toFixed(0)}%
                     </Text>
                 </View>
 

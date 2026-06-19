@@ -17,6 +17,7 @@ import { Picker } from "@react-native-picker/picker";
 import api from "../api/api";
 import { AddExpenseRequest } from "../types/AddExpenseRequest";
 import { COLORS } from "../constants/colors";
+import { showError, showSuccess } from "../utils/toast";
 
 const AddExpenseScreen = ({ navigation }: any) => {
 
@@ -98,17 +99,21 @@ const AddExpenseScreen = ({ navigation }: any) => {
             //     response.data
             // );
 
-            Alert.alert(
-                "Success",
-                response.data,
-                [
-                    {
-                        text: "OK",
-                        onPress: () =>
-                            navigation.goBack(),
-                    },
-                ]
-            );
+            // Alert.alert(
+            //     "Success",
+            //     response.data,
+            //     [
+            //         {
+            //             text: "OK",
+            //             onPress: () =>
+            //                 navigation.goBack(),
+            //         },
+            //     ]
+            // );
+            showSuccess(response.data);
+            setTimeout(() => {
+                navigation.goBack();
+            }, 1500);
 
             setAmount("");
             setDescription("");
@@ -121,8 +126,11 @@ const AddExpenseScreen = ({ navigation }: any) => {
 
             console.error(error);
 
-            Alert.alert(
-                "Error",
+            // Alert.alert(
+            //     "Error",
+            //     "Failed to add expense"
+            // );
+            showError(
                 "Failed to add expense"
             );
         } finally {
