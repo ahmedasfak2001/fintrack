@@ -125,11 +125,22 @@ const DashboardScreen = ({ navigation }: any) => {
         useState<
             SavingsPotentialResponse | null
         >(null);
+    const [welcomeMessage,
+        setWelcomeMessage] =
+        useState("");
 
     const fetchSummary = async () => {
 
         try {
             setLoading(true);
+            const message =
+                await AsyncStorage.getItem(
+                    "welcomeMessage"
+                );
+
+            if (message) {
+                setWelcomeMessage(message);
+            }
             const token =
                 await AsyncStorage.getItem("token");
 
@@ -270,8 +281,11 @@ const DashboardScreen = ({ navigation }: any) => {
                 />
             }
         >
-            <Text style={styles.title}>
+            {/* <Text style={styles.title}>
                 Welcome to FinTrack Dashboard
+            </Text> */}
+            <Text style={styles.title}>
+                {welcomeMessage}
             </Text>
 
             <View style={styles.summaryContainer}>

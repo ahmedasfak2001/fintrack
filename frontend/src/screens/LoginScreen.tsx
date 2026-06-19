@@ -94,6 +94,35 @@ const LoginScreen = ({ navigation }: any) => {
         response.data.token
         //  "invalid-token-test"
       );
+      await AsyncStorage.setItem(
+        "userName",
+        response.data.name
+      );
+      const hasLoggedInBefore =
+        await AsyncStorage.getItem(
+          "hasLoggedInBefore"
+        );
+
+      if (!hasLoggedInBefore) {
+
+        await AsyncStorage.setItem(
+          "welcomeMessage",
+          `Welcome ${response.data.name}`
+        );
+
+        await AsyncStorage.setItem(
+          "hasLoggedInBefore",
+          "true"
+        );
+
+      } else {
+
+        await AsyncStorage.setItem(
+          "welcomeMessage",
+          `Welcome Back ${response.data.name}`
+        );
+      }
+
 
       const savedToken =
         await AsyncStorage.getItem("token");

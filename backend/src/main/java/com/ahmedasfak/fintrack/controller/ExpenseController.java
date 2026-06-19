@@ -61,23 +61,46 @@ public class ExpenseController {
         @GetMapping
         public Page<Expense> getExpenses(
 
-                        @AuthenticationPrincipal UserDetails userDetails,
+        @AuthenticationPrincipal UserDetails userDetails,
 
-                        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "0") int page,
 
-                        @RequestParam(defaultValue = "100") int size,
+        @RequestParam(defaultValue = "100") int size,
 
-                        @RequestParam(required = false) ExpenseCategory category,
+        @RequestParam(required = false) ExpenseCategory category,
 
-                        @RequestParam(required = false) String search) {
+        @RequestParam(required = false) String search) {
 
-                return expenseService.getExpenses(
-                                userDetails,
-                                page,
-                                size,
-                                category,
-                                search);
+        return expenseService.getExpenses(
+        userDetails,
+        page,
+        size,
+        category,
+        search);
         }
+        // @GetMapping
+        // public Page<Expense> getExpenses(
+
+        //                 @AuthenticationPrincipal UserDetails userDetails,
+
+        //                 @RequestParam(defaultValue = "0") int page,
+
+        //                 @RequestParam(defaultValue = "100") int size,
+
+        //                 @RequestParam(required = false) ExpenseCategory category,
+
+        //                 @RequestParam(required = false) String search,
+
+        //                 @RequestParam(defaultValue = "date_desc") String sort) {
+
+        //         return expenseService.getExpenses(
+        //                         userDetails,
+        //                         page,
+        //                         size,
+        //                         category,
+        //                         search,
+        //                         sort);
+        // }
 
         // Delete Expense Endpoint
         @DeleteMapping("/{id}")
