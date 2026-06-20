@@ -15,7 +15,7 @@ import { navigate } from "../utils/NavigationService";
 
 const api = axios.create({
   // baseURL: "http://192.168.31.80:8080",
-  baseURL: "https://fintrack-production-mdaaq.up.railway.app",
+  baseURL: "https://fintrack-0la1.onrender.com",
   headers: {
     "Content-Type": "application/json",
   },
