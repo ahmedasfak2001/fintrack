@@ -44,8 +44,8 @@ public class EmailService {
 
                         SimpleMailMessage message = new SimpleMailMessage();
 
-                        // message.setFrom("fintrack.expensetrack@gmail.com");
-                        message.setFrom("af7ae7001@smtp-brevo.com");
+                        message.setFrom("fintrack.expensetrack@gmail.com");
+                        // message.setFrom("af7ae7001@smtp-brevo.com");
                         message.setTo(toEmail);
                         message.setSubject("Verify Your FinTrack Account");
 
@@ -111,8 +111,8 @@ public class EmailService {
 
                         SimpleMailMessage message = new SimpleMailMessage();
 
-                        // message.setFrom("fintrack.expensetrack@gmail.com");
-                        message.setFrom("af7ae7001@smtp-brevo.com");
+                        message.setFrom("fintrack.expensetrack@gmail.com");
+                        // message.setFrom("af7ae7001@smtp-brevo.com");
                         message.setTo(toEmail);
 
                         message.setSubject(
