@@ -13,8 +13,8 @@ const api = axios.create({
 let isSessionAlertVisible = false;
 
 api.interceptors.response.use(
-
-  (response) => response,
+  
+(response) => response,
 
   async (error) => {
 
