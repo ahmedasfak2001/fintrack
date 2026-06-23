@@ -1,20 +1,9 @@
-// import axios from "axios";
-
-// const api = axios.create({
-//   baseURL: "http://192.168.31.80:8080",
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
-
-// export default api;
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { navigate } from "../utils/NavigationService";
 
 const api = axios.create({
-  // baseURL: "http://192.168.31.80:8080",
   baseURL: "https://fintrack-0la1.onrender.com",
   headers: {
     "Content-Type": "application/json",

@@ -11,14 +11,12 @@ import EditExpenseScreen from "../screens/EditExpenseScreen";
 import MonthlySummaryScreen from "../screens/MonthlySummaryScreen";
 import TrendScreen from "../screens/TrendScreen";
 import BudgetScreen from "../screens/BudgetScreen";
-import { navigationRef } from "../utils/NavigationService";
-import Toast from "react-native-toast-message";
 import ResendVerificationScreen from "../screens/ResendVerificationScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 
-// import linking from "./linking";
-
+import { navigationRef } from "../utils/NavigationService";
+import Toast from "react-native-toast-message";
 
 const Stack = createNativeStackNavigator();
 

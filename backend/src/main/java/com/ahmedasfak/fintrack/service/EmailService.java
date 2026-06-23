@@ -40,27 +40,30 @@ public class EmailService {
 
                 try {
 
-                        System.out.println("Sending email to: " + toEmail);
+                        System.out.println("EMAIL START");
 
                         SimpleMailMessage message = new SimpleMailMessage();
 
-                        message.setFrom("fintrack.expensetrack@gmail.com");
+                        message.setFrom(
+                                        "fintrack.expensetrack@gmail.com");
+
                         message.setTo(toEmail);
 
                         message.setSubject(
                                         "Verify Your FinTrack Account");
 
                         message.setText(
-                                        "Click the link below to verify your account:\n\n"
+                                        "Click the link below:\n\n"
                                                         + verificationLink);
 
                         mailSender.send(message);
 
-                        System.out.println("EMAIL SENT SUCCESSFULLY");
+                        System.out.println("EMAIL SENT SUCCESS");
 
                 } catch (Exception e) {
 
                         System.out.println("EMAIL FAILED");
+
                         e.printStackTrace();
 
                         throw e;

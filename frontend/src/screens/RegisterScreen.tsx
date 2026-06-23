@@ -21,8 +21,7 @@ const RegisterScreen = ({ navigation }: any) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const [loading, setLoading] =
-        useState(false);
+    const [loading, setLoading] = useState(false);
 
     const validateEmail = (
         email: string
@@ -148,11 +147,6 @@ const RegisterScreen = ({ navigation }: any) => {
                 onChangeText={setPassword}
                 style={styles.input}
             />
-
-            {/* <Button
-                title="Register"
-                onPress={handleRegister}
-            /> */}
 
             <TouchableOpacity
                 style={[
