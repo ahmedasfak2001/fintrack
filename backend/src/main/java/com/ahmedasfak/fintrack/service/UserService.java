@@ -90,9 +90,6 @@ public class UserService {
                 verificationTokenRepository.save(
                                 verificationToken);
 
-                // Create verification link
-                // String verificationLink = "http://localhost:8080/api/users/verify?token="
-                // + token;
                 String verificationLink = "https://fintrack-0la1.onrender.com/api/users/verify?token="
                                 + token;
 
@@ -219,8 +216,6 @@ public class UserService {
 
                 String verificationLink = "https://fintrack-0la1.onrender.com/api/users/verify?token="
                                 + token;
-                // String verificationLink = "http://192.168.31.80:8080/api/users/verify?token="
-                // + token;
 
                 emailService.sendVerificationEmail(
                                 user.getEmail(),
@@ -262,10 +257,11 @@ public class UserService {
                 // String resetLink = "http://localhost:8080/api/users/reset-password?token="
                 // + token;
 
-                // String resetLink = "fintrack://reset-password?token="
-                // + token;
-                String resetLink = "http://192.168.31.80:8080/api/users/reset-password?token="
+                String resetLink = "https://fintrack-0la1.onrender.com/api/users/reset-password?token="
                                 + token;
+                // String resetLink =
+                // "http://192.168.31.80:8080/api/users/reset-password?token="
+                // + token;
 
                 emailService.sendPasswordResetEmail(
                                 user.getEmail(),

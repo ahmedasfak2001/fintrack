@@ -42,6 +42,8 @@ public class EmailService {
 
                         System.out.println("EMAIL START");
 
+                        System.out.println("FINTRACK BUILD 2026-06-23 SMTP TEST");
+
                         SimpleMailMessage message = new SimpleMailMessage();
 
                         message.setFrom(
