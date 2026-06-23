@@ -13,13 +13,28 @@ import TrendScreen from "../screens/TrendScreen";
 import BudgetScreen from "../screens/BudgetScreen";
 import { navigationRef } from "../utils/NavigationService";
 import Toast from "react-native-toast-message";
+import ResendVerificationScreen from "../screens/ResendVerificationScreen";
+import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
+import ResetPasswordScreen from "../screens/ResetPasswordScreen";
+
+// import linking from "./linking";
+
 
 const Stack = createNativeStackNavigator();
+
+const linking = {
+    prefixes: ["fintrack://"],
+    config: {
+        screens: {
+            ResetPassword: "reset-password"
+        }
+    }
+};
 
 export default function AppNavigator() {
     return (
         <>
-            <NavigationContainer ref={navigationRef}>
+            <NavigationContainer ref={navigationRef} linking={linking}>
                 <Stack.Navigator initialRouteName="Splash">
 
                     <Stack.Screen
@@ -70,6 +85,21 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="Budget"
                         component={BudgetScreen}
+                    />
+
+                    <Stack.Screen
+                        name="ResendVerification"
+                        component={ResendVerificationScreen}
+                    />
+
+                    <Stack.Screen
+                        name="ForgotPassword"
+                        component={ForgotPasswordScreen}
+                    />
+
+                    <Stack.Screen
+                        name="ResetPassword"
+                        component={ResetPasswordScreen}
                     />
 
                 </Stack.Navigator>

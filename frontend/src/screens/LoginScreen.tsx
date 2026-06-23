@@ -215,7 +215,35 @@ const LoginScreen = ({ navigation }: any) => {
         }
 
       </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate(
+            "ForgotPassword"
+          )
+        }
+      >
+        <Text
+          style={{
+            textAlign: "center",
+            marginTop: 15,
+            color: COLORS.primary
+          }}
+        >
+          Forgot Password?
+        </Text>
 
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate(
+            "ResendVerification"
+          )
+        }
+      >
+        <Text>
+          Resend Verification Email
+        </Text>
+      </TouchableOpacity>
       <View style={{ marginTop: 10 }}>
         <Button
           title="Create Account"

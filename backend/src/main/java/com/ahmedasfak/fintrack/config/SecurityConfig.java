@@ -47,7 +47,11 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
                                                                 "/api/users/register",
-                                                                "/api/users/login")
+                                                                "/api/users/login",
+                                                                "/api/users/verify/**",
+                                                                "/api/users/resend-verification",
+                                                                "/api/users/forgot-password",
+                                                                "/api/users/reset-password")
                                                 .permitAll()
 
                                                 .anyRequest().authenticated())

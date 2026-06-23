@@ -1,65 +1,7 @@
-// Old splash screen without animations
-// import React, { useEffect } from "react";
-// import {
-//   View,
-//   Text,
-//   StyleSheet
-// } from "react-native";
-
-// import AsyncStorage
-// from "@react-native-async-storage/async-storage";
-
-// const SplashScreen = ({ navigation }: any) => {
-
-//   useEffect(() => {
-
-//     checkLogin();
-
-//   }, []);
-
-//   const checkLogin = async () => {
-
-//     const token =
-//       await AsyncStorage.getItem("token");
-
-//     if (token) {
-
-//       navigation.replace("Dashboard");
-
-//     } else {
-
-//       navigation.replace("Login");
-//     }
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.text}>
-//         FinTrack
-//       </Text>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   text: {
-//     fontSize: 28,
-//     fontWeight: "bold",
-//   },
-// });
-
-// export default SplashScreen;
-
-
-// new splash screen with animations and typing effect
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Animated, Easing } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Linking from "expo-linking";
 
 const SplashScreen = ({ navigation }: any) => {
   const [text, setText] = useState("");
@@ -126,15 +68,54 @@ const SplashScreen = ({ navigation }: any) => {
   };
 
   // ⏩ Navigation delay
+  // const navigateAfterDelay = async () => {
+  //   const token = await AsyncStorage.getItem("token");
+
+  //   setTimeout(() => {
+  //     if (token) {
+  //       navigation.replace("Dashboard");
+  //     } else {
+  //       navigation.replace("Login");
+  //     }
+  //   }, 2800);
+  // };
+
   const navigateAfterDelay = async () => {
+
     const token = await AsyncStorage.getItem("token");
 
+    const initialUrl = await Linking.getInitialURL();
+
+    console.log("Initial URL:", initialUrl);
+
     setTimeout(() => {
+
+      // If app was opened from reset password link
+      if (
+        initialUrl &&
+        initialUrl.includes("reset-password")
+      ) {
+
+        const tokenFromUrl =
+          initialUrl.split("token=")[1];
+
+        navigation.replace(
+          "ResetPassword",
+          {
+            token: tokenFromUrl,
+          }
+        );
+
+        return;
+      }
+
+      // Normal flow
       if (token) {
         navigation.replace("Dashboard");
       } else {
         navigation.replace("Login");
       }
+
     }, 2800);
   };
 

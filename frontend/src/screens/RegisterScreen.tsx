@@ -34,21 +34,12 @@ const RegisterScreen = ({ navigation }: any) => {
         return regex.test(email);
     };
 
-    //   const handleRegister = () => {
-    //     Alert.alert("Register Clicked");
-    //   };
-
     const handleRegister = async () => {
         try {
             setLoading(true);
             if (
                 name.trim().length < 3
             ) {
-
-                // Alert.alert(
-                //     "Validation Error",
-                //     "Username must be at least 3 characters"
-                // );
                 showError(
                     "Username must be at least 3 characters"
                 );
@@ -57,11 +48,6 @@ const RegisterScreen = ({ navigation }: any) => {
             }
 
             if (!email.trim()) {
-
-                // Alert.alert(
-                //     "Validation Error",
-                //     "Email is required"
-                // );
                 showError(
                     "Email is required"
                 );
@@ -70,11 +56,6 @@ const RegisterScreen = ({ navigation }: any) => {
             }
 
             if (!validateEmail(email)) {
-
-                // Alert.alert(
-                //     "Validation Error",
-                //     "Please enter a valid email address"
-                // );
                 showError(
                     "Please enter a valid email address"
                 );
@@ -85,11 +66,6 @@ const RegisterScreen = ({ navigation }: any) => {
             if (
                 password.length < 6
             ) {
-
-                // Alert.alert(
-                //     "Validation Error",
-                //     "Password must be at least 6 characters"
-                // );
                 showError(
                     "Password must be at least 6 characters"
                 );
@@ -107,55 +83,32 @@ const RegisterScreen = ({ navigation }: any) => {
                 request
             );
 
-            // Alert.alert(
-            //     "Success",
-            //     "User registered successfully",
-            //     [
-            //         {
-            //             text: "OK",
-            //             onPress: () =>
-            //                 navigation.navigate("Login"),
-            //         },
-            //     ]
-            // );
+            Alert.alert(
+                "Registration Successful 🎉",
+                `We've sent a verification email to:
 
-            showSuccess(
-                "User registered successfully"
+            ${email}
+
+            Please verify your email before logging in.`,
+                [
+                    {
+                        text: "Go To Login",
+                        onPress: () =>
+                            navigation.navigate("Login"),
+                    },
+                ]
             );
-
-            setTimeout(() => {
-                navigation.navigate("Login");
-            }, 1500);
 
 
         }
-        // catch (error) {
-
-        //         Alert.alert(
-        //             "Error",
-        //             "Registration failed"
-        //         );
-
-        //         console.error(error);
-        //     }
         catch (error: any) {
 
-            if (error.response?.status === 403) {
-
-                // Alert.alert(
-                //     "Registration Failed",
-                //     "Email already registered"
-                // );
+            if (error.response?.status === 409) {
                 showError(
                     "Email already registered"
                 );
 
             } else {
-
-                // Alert.alert(
-                //     "Registration Failed",
-                //     "Something went wrong."
-                // );
                 showError(
                     "Something went wrong."
                 );

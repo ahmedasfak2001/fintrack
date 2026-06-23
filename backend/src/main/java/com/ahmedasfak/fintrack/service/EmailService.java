@@ -1,0 +1,73 @@
+package com.ahmedasfak.fintrack.service;
+
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+
+@Service
+public class EmailService {
+
+    private final JavaMailSender mailSender;
+
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    public void sendVerificationEmail(
+            String toEmail,
+            String verificationLink) {
+
+        System.out.println("Sending email to: " + toEmail);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setFrom("fintrack.expensetrack@gmail.com");
+
+        message.setTo(toEmail);
+
+        message.setSubject(
+                "Verify Your FinTrack Account");
+
+        message.setText(
+                "Click the link below to verify your account:\n\n"
+                        + verificationLink);
+
+        mailSender.send(message);
+    }
+
+    public void sendPasswordResetEmail(
+            String toEmail,
+            String resetLink) {
+
+        System.out.println(
+                "Sending password reset email to: "
+                        + toEmail);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("fintrack.expensetrack@gmail.com");
+        message.setTo(toEmail);
+
+        message.setSubject(
+                "Reset Your FinTrack Password");
+
+        message.setText(
+                """
+                        You requested a password reset for your FinTrack account.
+
+                        Click the link below to reset your password:
+
+                        """
+                        + resetLink
+                        +
+                        """
+
+                                This link will expire in 24 hours.
+
+                                If you did not request this change, please ignore this email.
+
+                                Team FinTrack
+                                """);
+
+        mailSender.send(message);
+    }
+}
