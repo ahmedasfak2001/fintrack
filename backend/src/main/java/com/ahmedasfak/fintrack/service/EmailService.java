@@ -183,7 +183,7 @@ public class EmailService {
                                         "sender",
                                         Map.of(
                                                         "name", "FinTrack",
-                                                        "email", "af7ae7001@smtp-brevo.com"),
+                                                        "email", "fintrack.expensetrack@gmail.com"),
 
                                         "to",
                                         List.of(
