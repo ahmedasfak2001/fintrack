@@ -7,67 +7,131 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+        private final JavaMailSender mailSender;
 
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
+        public EmailService(JavaMailSender mailSender) {
+                this.mailSender = mailSender;
+        }
 
-    public void sendVerificationEmail(
-            String toEmail,
-            String verificationLink) {
+        // public void sendVerificationEmail(
+        // String toEmail,
+        // String verificationLink) {
 
-        System.out.println("Sending email to: " + toEmail);
+        // System.out.println("Sending email to: " + toEmail);
 
-        SimpleMailMessage message = new SimpleMailMessage();
+        // SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setFrom("fintrack.expensetrack@gmail.com");
+        // message.setFrom("fintrack.expensetrack@gmail.com");
 
-        message.setTo(toEmail);
+        // message.setTo(toEmail);
 
-        message.setSubject(
-                "Verify Your FinTrack Account");
+        // message.setSubject(
+        // "Verify Your FinTrack Account");
 
-        message.setText(
-                "Click the link below to verify your account:\n\n"
-                        + verificationLink);
+        // message.setText(
+        // "Click the link below to verify your account:\n\n"
+        // + verificationLink);
 
-        mailSender.send(message);
-    }
+        // mailSender.send(message);
+        // }
+        public void sendVerificationEmail(
+                        String toEmail,
+                        String verificationLink) {
 
-    public void sendPasswordResetEmail(
-            String toEmail,
-            String resetLink) {
+                try {
 
-        System.out.println(
-                "Sending password reset email to: "
-                        + toEmail);
+                        System.out.println("Sending email to: " + toEmail);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("fintrack.expensetrack@gmail.com");
-        message.setTo(toEmail);
+                        SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setSubject(
-                "Reset Your FinTrack Password");
+                        // message.setFrom("fintrack.expensetrack@gmail.com");
+                        message.setFrom("af7ae7001@smtp-brevo.com");
+                        message.setTo(toEmail);
+                        message.setSubject("Verify Your FinTrack Account");
 
-        message.setText(
-                """
-                        You requested a password reset for your FinTrack account.
+                        message.setText(
+                                        "Click the link below to verify your account:\n\n"
+                                                        + verificationLink);
 
-                        Click the link below to reset your password:
+                        mailSender.send(message);
 
-                        """
-                        + resetLink
-                        +
-                        """
+                        System.out.println("Verification email sent successfully");
 
-                                This link will expire in 24 hours.
+                } catch (Exception e) {
 
-                                If you did not request this change, please ignore this email.
+                        System.out.println("EMAIL ERROR");
+                        e.printStackTrace();
+                }
+        }
 
-                                Team FinTrack
-                                """);
+        // public void sendPasswordResetEmail(
+        // String toEmail,
+        // String resetLink) {
 
-        mailSender.send(message);
-    }
+        // System.out.println(
+        // "Sending password reset email to: "
+        // + toEmail);
+
+        // SimpleMailMessage message = new SimpleMailMessage();
+        // message.setFrom("fintrack.expensetrack@gmail.com");
+        // message.setTo(toEmail);
+
+        // message.setSubject(
+        // "Reset Your FinTrack Password");
+
+        // message.setText(
+        // """
+        // You requested a password reset for your FinTrack account.
+
+        // Click the link below to reset your password:
+
+        // """
+        // + resetLink
+        // +
+        // """
+
+        // This link will expire in 24 hours.
+
+        // If you did not request this change, please ignore this email.
+
+        // Team FinTrack
+        // """);
+
+        // mailSender.send(message);
+        // }
+        public void sendPasswordResetEmail(
+                        String toEmail,
+                        String resetLink) {
+
+                try {
+
+                        System.out.println(
+                                        "Sending password reset email to: "
+                                                        + toEmail);
+
+                        SimpleMailMessage message = new SimpleMailMessage();
+
+                        // message.setFrom("fintrack.expensetrack@gmail.com");
+                        message.setFrom("af7ae7001@smtp-brevo.com");
+                        message.setTo(toEmail);
+
+                        message.setSubject(
+                                        "Reset Your FinTrack Password");
+
+                        message.setText(
+                                        "Reset Link:\n\n" + resetLink);
+
+                        mailSender.send(message);
+
+                        System.out.println(
+                                        "Password reset email sent successfully");
+
+                } catch (Exception e) {
+
+                        System.out.println(
+                                        "PASSWORD RESET EMAIL ERROR");
+
+                        e.printStackTrace();
+                }
+        }
 }

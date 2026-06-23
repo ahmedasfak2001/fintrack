@@ -50,13 +50,6 @@ public class ExpenseController {
                 return expenseService.addExpense(request, userDetails);
         }
 
-        // Get Expenses Endpoint
-        // @GetMapping
-        // public List<ExpenseResponse> getExpenses(
-        // @AuthenticationPrincipal UserDetails userDetails) {
-
-        // return expenseService.getExpenses(userDetails);
-        // }
         // Get Expenses with Pagination Endpoint and Optional Category Filter
         @GetMapping
         public Page<Expense> getExpenses(
@@ -78,29 +71,6 @@ public class ExpenseController {
                                 category,
                                 search);
         }
-        // @GetMapping
-        // public Page<Expense> getExpenses(
-
-        // @AuthenticationPrincipal UserDetails userDetails,
-
-        // @RequestParam(defaultValue = "0") int page,
-
-        // @RequestParam(defaultValue = "100") int size,
-
-        // @RequestParam(required = false) ExpenseCategory category,
-
-        // @RequestParam(required = false) String search,
-
-        // @RequestParam(defaultValue = "date_desc") String sort) {
-
-        // return expenseService.getExpenses(
-        // userDetails,
-        // page,
-        // size,
-        // category,
-        // search,
-        // sort);
-        // }
 
         // Delete Expense Endpoint
         @DeleteMapping("/{id}")
@@ -204,8 +174,6 @@ public class ExpenseController {
                                 .header(
                                                 HttpHeaders.CONTENT_DISPOSITION,
                                                 "attachment; filename=expenses.csv")
-                                // .contentType(MediaType.TEXT_PLAIN)
-                                // .contentType(MediaType.TEXT_CSV)
                                 .contentType(
                                                 MediaType.parseMediaType("text/csv"))
                                 .body(csvData);
@@ -214,16 +182,13 @@ public class ExpenseController {
         // Get Expense Categories Endpoint
         @GetMapping("/categories")
         public ExpenseCategory[] getCategories() {
-
                 return ExpenseCategory.values();
         }
 
         // Get Budget Summary Endpoint
         @GetMapping("/budget-summary")
         public BudgetSummaryResponse getBudgetSummary(
-
                         @AuthenticationPrincipal UserDetails userDetails) {
-
                 return expenseService
                                 .getBudgetSummary(
                                                 userDetails);
@@ -232,9 +197,7 @@ public class ExpenseController {
         // Get Budget Endpoint
         @GetMapping("/budget")
         public BudgetResponse getBudget(
-
                         @AuthenticationPrincipal UserDetails userDetails) {
-
                 return expenseService
                                 .getUserBudget(
                                                 userDetails);
@@ -243,11 +206,8 @@ public class ExpenseController {
         // Update Budget Endpoint
         @PutMapping("/budget")
         public String updateBudget(
-
                         @RequestBody UpdateBudgetRequest request,
-
                         @AuthenticationPrincipal UserDetails userDetails) {
-
                 return expenseService
                                 .updateUserBudget(
                                                 request,
@@ -257,9 +217,7 @@ public class ExpenseController {
         // Get Monthly Comparison Endpoint
         @GetMapping("/comparison")
         public MonthlyComparisonResponse getMonthlyComparison(
-
                         @AuthenticationPrincipal UserDetails userDetails) {
-
                 return expenseService
                                 .getMonthlyComparison(
                                                 userDetails);
@@ -268,9 +226,7 @@ public class ExpenseController {
         // Get Daily Average Endpoint
         @GetMapping("/daily-average")
         public DailyAverageResponse getDailyAverage(
-
                         @AuthenticationPrincipal UserDetails userDetails) {
-
                 return expenseService
                                 .getDailyAverage(
                                                 userDetails);
@@ -279,9 +235,7 @@ public class ExpenseController {
         // Get Spending Insight Endpoint
         @GetMapping("/spending-insight")
         public SpendingInsightResponse getSpendingInsight(
-
                         @AuthenticationPrincipal UserDetails userDetails) {
-
                 return expenseService
                                 .getSpendingInsight(
                                                 userDetails);
@@ -290,9 +244,7 @@ public class ExpenseController {
         // Get Biggest Expense Endpoint
         @GetMapping("/biggest-expense")
         public BiggestExpenseResponse getBiggestExpense(
-
                         @AuthenticationPrincipal UserDetails userDetails) {
-
                 return expenseService
                                 .getBiggestExpense(
                                                 userDetails);
@@ -301,9 +253,7 @@ public class ExpenseController {
         // Get Potential Savings Endpoint
         @GetMapping("/savings-potential")
         public SavingsPotentialResponse getSavingsPotential(
-
                         @AuthenticationPrincipal UserDetails userDetails) {
-
                 return expenseService
                                 .getSavingsPotential(
                                                 userDetails);

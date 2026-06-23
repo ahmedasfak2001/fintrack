@@ -15,80 +15,79 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserService userService;
+        private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+        public UserController(UserService userService) {
+                this.userService = userService;
+        }
 
-    @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest request) {
-        System.out.println("REGISTER API HIT");
-        return userService.register(request);
-    }
+        @PostMapping("/register")
+        public String register(@RequestBody RegisterRequest request) {
+                System.out.println("REGISTER API HIT");
+                return userService.register(request);
+        }
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(
-            @RequestBody LoginRequest request) {
+        @PostMapping("/login")
+        public ResponseEntity<AuthResponse> login(
+                        @RequestBody LoginRequest request) {
 
-        return ResponseEntity.ok(
-                userService.login(request));
-    }
+                return ResponseEntity.ok(
+                                userService.login(request));
+        }
 
-    // verify user endpoint
-    @GetMapping("/verify")
-    public ResponseEntity<String> verify(
-            @RequestParam String token) {
+        // verify user endpoint
+        @GetMapping("/verify")
+        public ResponseEntity<String> verify(
+                        @RequestParam String token) {
 
-        String message = userService.verifyAccount(token);
+                String message = userService.verifyAccount(token);
 
-        return ResponseEntity.ok(message);
-    }
+                return ResponseEntity.ok(message);
+        }
 
-    // reverification endpoint
-    @PostMapping("/resend-verification")
-    public ResponseEntity<String> resendVerification(
-            @RequestBody ResendVerificationRequest request) {
+        // re-verification endpoint
+        @PostMapping("/resend-verification")
+        public ResponseEntity<String> resendVerification(
+                        @RequestBody ResendVerificationRequest request) {
+                return ResponseEntity.ok(
+                                userService.resendVerificationEmail(
+                                                request.getEmail()));
+        }
 
-        return ResponseEntity.ok(
-                userService.resendVerificationEmail(
-                        request.getEmail()));
-    }
+        // forgot password endpoint
+        @PostMapping("/forgot-password")
+        public ResponseEntity<String> forgotPassword(
+                        @RequestBody ForgotPasswordRequest request) {
 
-    // forgot password endpoint
-    @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(
-            @RequestBody ForgotPasswordRequest request) {
+                return ResponseEntity.ok(
+                                userService.forgotPassword(
+                                                request.getEmail()));
+        }
 
-        return ResponseEntity.ok(
-                userService.forgotPassword(
-                        request.getEmail()));
-    }
+        // reset password endpoint
+        @PostMapping("/reset-password")
+        public ResponseEntity<String> resetPassword(
+                        @RequestBody ResetPasswordRequest request) {
 
-    // reset password endpoint
-    @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(
-            @RequestBody ResetPasswordRequest request) {
+                return ResponseEntity.ok(
+                                userService.resetPassword(
+                                                request.getToken(),
+                                                request.getNewPassword()));
+        }
 
-        return ResponseEntity.ok(
-                userService.resetPassword(
-                        request.getToken(),
-                        request.getNewPassword()));
-    }
+        @GetMapping("/reset-password")
+        public ResponseEntity<Void> resetPasswordPage(
+                        @RequestParam String token) {
 
-    @GetMapping("/reset-password")
-    public ResponseEntity<Void> resetPasswordPage(
-            @RequestParam String token) {
+                String deepLink = "fintrack://reset-password?token="
+                                + token;
 
-        String deepLink = "fintrack://reset-password?token="
-                + token;
+                System.out.println("Redirecting to: " + deepLink);
 
-        System.out.println("Redirecting to: " + deepLink);
-
-        return ResponseEntity
-                .status(302)
-                .header("Location", deepLink)
-                .build();
-    }
+                return ResponseEntity
+                                .status(302)
+                                .header("Location", deepLink)
+                                .build();
+        }
 
 }
