@@ -66,7 +66,7 @@ public class EmailService {
 
                         e.printStackTrace();
 
-                        throw e;
+                        // throw e;
                 }
         }
         // public void sendPasswordResetEmail(
