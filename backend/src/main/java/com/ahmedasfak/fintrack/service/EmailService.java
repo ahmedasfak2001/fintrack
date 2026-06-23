@@ -45,9 +45,10 @@ public class EmailService {
                         SimpleMailMessage message = new SimpleMailMessage();
 
                         message.setFrom("fintrack.expensetrack@gmail.com");
-                        // message.setFrom("af7ae7001@smtp-brevo.com");
                         message.setTo(toEmail);
-                        message.setSubject("Verify Your FinTrack Account");
+
+                        message.setSubject(
+                                        "Verify Your FinTrack Account");
 
                         message.setText(
                                         "Click the link below to verify your account:\n\n"
@@ -55,15 +56,16 @@ public class EmailService {
 
                         mailSender.send(message);
 
-                        System.out.println("Verification email sent successfully");
+                        System.out.println("EMAIL SENT SUCCESSFULLY");
 
                 } catch (Exception e) {
 
-                        System.out.println("EMAIL ERROR");
+                        System.out.println("EMAIL FAILED");
                         e.printStackTrace();
+
+                        throw e;
                 }
         }
-
         // public void sendPasswordResetEmail(
         // String toEmail,
         // String resetLink) {

@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "FinTrack",
-    "slug": "frontend",
+    "slug": "fintrack",
     "scheme": "fintrack",
     "version": "1.0.0",
     "orientation": "portrait",
