@@ -23,14 +23,10 @@ const ResetPasswordScreen = () => {
 
     const route = useRoute<any>();
     const navigation = useNavigation<any>();
-
     const token = route.params?.token;
-
-    const [password, setPassword] =
-        useState("");
-
-    const [confirmPassword, setConfirmPassword] =
-        useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleReset = async () => {
 
@@ -62,7 +58,7 @@ const ResetPasswordScreen = () => {
         }
 
         try {
-
+            setLoading(true);
             await api.post(
                 "/api/users/reset-password",
                 {
@@ -80,15 +76,8 @@ const ResetPasswordScreen = () => {
             );
 
         }
-        // catch (error: any) {
-
-        //     showError(
-        //         error?.response?.data?.message ||
-        //         "Password reset failed"
-        //     );
-        // }
         catch (error: any) {
-
+            setLoading(false);
             console.log(
                 "RESET PASSWORD ERROR",
                 error.response?.data
@@ -104,6 +93,8 @@ const ResetPasswordScreen = () => {
                 JSON.stringify(error.response?.data) ||
                 "Password reset failed"
             );
+        } finally {
+            setLoading(false);
         }
     };
 

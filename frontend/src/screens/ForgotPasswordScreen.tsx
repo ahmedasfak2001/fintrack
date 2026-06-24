@@ -35,17 +35,6 @@ const ForgotPasswordScreen = () => {
             );
 
         }
-        // catch (error: any) {
-
-        //     showError(
-        //         error.response?.data?.message ||
-        //         "Failed to send reset email"
-        //     );
-
-        // } finally {
-
-        //     setLoading(false);
-        // }
         catch (error: any) {
             console.log(
                 "FORGOT PASSWORD ERROR",
@@ -63,8 +52,7 @@ const ForgotPasswordScreen = () => {
                 "Something went wrong"
             );
         } finally {
-            setLoading(false);
-            
+            setLoading(false);   
         }
     };
 

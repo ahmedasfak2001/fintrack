@@ -85,10 +85,6 @@ const DashboardScreen = ({ navigation }: any) => {
 
         } catch (error) {
             console.error(error);
-            // Alert.alert(
-            //     "Error",
-            //     "Failed to export report"
-            // );
             showError(
                 "Failed to export report"
             );
@@ -281,9 +277,6 @@ const DashboardScreen = ({ navigation }: any) => {
                 />
             }
         >
-            {/* <Text style={styles.title}>
-                Welcome to FinTrack Dashboard
-            </Text> */}
             <Text style={styles.title}>
                 {welcomeMessage}
             </Text>
@@ -299,8 +292,6 @@ const DashboardScreen = ({ navigation }: any) => {
                         ₹ {summary?.totalExpense ?? 0}
                     </Text>
                 </View>
-
-
 
                 <View style={styles.card}>
                     <Text style={styles.cardTitle}>

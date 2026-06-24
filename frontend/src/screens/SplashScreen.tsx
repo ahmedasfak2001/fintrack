@@ -111,7 +111,8 @@ const SplashScreen = ({ navigation }: any) => {
 
       // Normal flow
       if (token) {
-        navigation.replace("Dashboard");
+        // navigation.replace("Dashboard");
+        navigation.replace("MainApp");
       } else {
         navigation.replace("Login");
       }

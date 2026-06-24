@@ -5,7 +5,6 @@ import {
     Text,
     StyleSheet,
     FlatList,
-    Button,
     Alert,
     RefreshControl,
     TextInput,
@@ -14,6 +13,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
+
 import api from "../api/api";
 import { COLORS } from "../constants/colors";
 import { showError, showSuccess } from "../utils/toast";
@@ -35,18 +35,6 @@ const ExpenseListScreen = ({ navigation }: any) => {
 
         setRefreshing(false);
     };
-
-    // useEffect(() => {
-    //     fetchExpenses();
-    // }, []);
-
-    // useFocusEffect(
-    //     useCallback(() => {
-
-    //         fetchExpenses();
-
-    //     }, [])
-    // );
 
     useFocusEffect(
         useCallback(() => {
@@ -80,13 +68,6 @@ const ExpenseListScreen = ({ navigation }: any) => {
             const token =
                 await AsyncStorage.getItem("token");
 
-            // const response =
-            //     await api.get(
-            //         "/api/expenses?page=0&size=100",
-            // const url =
-            //     selectedCategory
-            //         ? `/api/expenses?page=0&size=100&category=${selectedCategory}`
-            //         : "/api/expenses?page=0&size=100";
             let url =
                 "/api/expenses?page=0&size=100";
 

@@ -1,6 +1,9 @@
+// Import necessary packages
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
+
+// import necessary pages
 import { navigate } from "../utils/NavigationService";
 
 const api = axios.create({
@@ -13,8 +16,8 @@ const api = axios.create({
 let isSessionAlertVisible = false;
 
 api.interceptors.response.use(
-  
-(response) => response,
+
+  (response) => response,
 
   async (error) => {
 

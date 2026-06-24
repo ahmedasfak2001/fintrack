@@ -66,11 +66,6 @@ const LoginScreen = ({ navigation }: any) => {
       }
 
       if (!password.trim()) {
-
-        // Alert.alert(
-        //   "Validation Error",
-        //   "Password is required"
-        // );
         showError(
           "Password is required"
         );
@@ -136,7 +131,8 @@ const LoginScreen = ({ navigation }: any) => {
       showSuccess(
         "Login Successful"
       );
-      navigation.replace("Dashboard");
+      // navigation.replace("Dashboard");
+      navigation.replace("MainApp");
 
       console.log(
         "JWT Token:",

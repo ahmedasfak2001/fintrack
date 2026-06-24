@@ -29,9 +29,7 @@ const TrendScreen = () => {
         Dimensions.get("window").width;
 
     useEffect(() => {
-
         fetchTrend();
-
     }, []);
 
     const fetchTrend = async () => {
@@ -100,29 +98,6 @@ const TrendScreen = () => {
                             screenWidth - 30
                         }
                         height={220}
-                        // chartConfig={{
-                        //     decimalPlaces: 0,
-
-                        //     color: (
-                        //         opacity = 1
-                        //     ) =>
-                        //         `rgba(
-                        //             37,
-                        //             99,
-                        //             235,
-                        //             ${opacity}
-                        //         )`,
-
-                        //     labelColor: (
-                        //         opacity = 1
-                        //     ) =>
-                        //         `rgba(
-                        //             0,
-                        //             0,
-                        //             0,
-                        //             ${opacity}
-                        //         )`,
-                        // }}
                         chartConfig={{
                             backgroundColor: "#ffffff",
                             backgroundGradientFrom: "#ffffff",

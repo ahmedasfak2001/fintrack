@@ -1,5 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Toast from "react-native-toast-message";
 
 import LoginScreen from "../screens/LoginScreen";
 import DashboardScreen from "../screens/DashboardScreen";
@@ -16,7 +17,7 @@ import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 
 import { navigationRef } from "../utils/NavigationService";
-import Toast from "react-native-toast-message";
+import BottomTabNavigator from "./BottomTabNavigator";
 
 const Stack = createNativeStackNavigator();
 
@@ -50,9 +51,15 @@ export default function AppNavigator() {
                         component={RegisterScreen}
                     />
 
-                    <Stack.Screen
+                    {/* <Stack.Screen
                         name="Dashboard"
                         component={DashboardScreen}
+                    /> */}
+
+                    <Stack.Screen
+                        name="MainApp"
+                        component={BottomTabNavigator}
+                        options={{ headerShown: false }}
                     />
 
                     <Stack.Screen

@@ -139,11 +139,7 @@ const BudgetScreen = () => {
             );
 
             await fetchBudgetSummary();
-
-            // Alert.alert(
-            //     "Success",
-            //     "Budget updated"
-            // );
+            
             showSuccess(
                 "Budget updated"
             );
