@@ -5,6 +5,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Alert,
+    ActivityIndicator,
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,6 +14,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import { useFocusEffect } from "@react-navigation/native";
 import { showError, showSuccess } from "../utils/toast";
+import { COLORS } from "../constants/colors";
 
 const ProfileScreen = ({ navigation }: any) => {
 
@@ -27,7 +29,7 @@ const ProfileScreen = ({ navigation }: any) => {
     const [enabled, setEnabled] = useState(false);
     const remainingBudget = monthlyBudget - currentExpense;
 
-     const exportReport = async () => {
+    const exportReport = async () => {
 
         try {
 
@@ -159,14 +161,21 @@ const ProfileScreen = ({ navigation }: any) => {
         return (
 
             <View
-                style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center"
-                }}
+                style={
+                    styles.loadingContainer
+                }
             >
 
-                <Text>
+                <ActivityIndicator
+                    size="large"
+                    color={COLORS.primary}
+                />
+
+                <Text
+                    style={
+                        styles.loadingText
+                    }
+                >
                     Loading Profile...
                 </Text>
 
@@ -247,15 +256,15 @@ const ProfileScreen = ({ navigation }: any) => {
                 <Text style={styles.sectionTitle}>
                     Account
                 </Text>
-                {/* <TouchableOpacity onPress={() =>
+                <TouchableOpacity onPress={() =>
                     navigation.navigate(
-                        "ResetPassword"
+                        "ChangePassword"
                     )
-                }> */}
-                <Text style={styles.menuItem}>
-                    🔒 Change Password
-                </Text>
-                {/* </TouchableOpacity> */}
+                }>
+                    <Text style={styles.menuItem}>
+                        🔒 Change Password
+                    </Text>
+                </TouchableOpacity>
 
                 <TouchableOpacity onPress={() =>
                     navigation.navigate(
@@ -267,7 +276,7 @@ const ProfileScreen = ({ navigation }: any) => {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    
+
                     onPress={exportReport}
                 >
 
@@ -374,5 +383,18 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontWeight: "600",
     },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor:
+            COLORS.background,
+    },
+    loadingText: {
+        marginTop: 15,
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#64748B",
+    }
 
 });

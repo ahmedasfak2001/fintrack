@@ -15,6 +15,7 @@ import BudgetScreen from "../screens/BudgetScreen";
 import ResendVerificationScreen from "../screens/ResendVerificationScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import ResetPasswordScreen from "../screens/ResetPasswordScreen";
+import ChangePasswordScreen from "../screens/ChangePasswordScreen";
 
 import { navigationRef } from "../utils/NavigationService";
 import BottomTabNavigator from "./BottomTabNavigator";
@@ -105,6 +106,11 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="ResetPassword"
                         component={ResetPasswordScreen}
+                    />
+
+                    <Stack.Screen
+                        name="ChangePassword"
+                        component={ChangePasswordScreen}
                     />
 
                 </Stack.Navigator>
