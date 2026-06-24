@@ -7,8 +7,10 @@ import com.ahmedasfak.fintrack.dto.ResendVerificationRequest;
 import com.ahmedasfak.fintrack.service.UserService;
 import com.ahmedasfak.fintrack.dto.ForgotPasswordRequest;
 import com.ahmedasfak.fintrack.dto.ResetPasswordRequest;
+import com.ahmedasfak.fintrack.dto.UserProfileResponse;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -88,6 +90,15 @@ public class UserController {
                                 .status(302)
                                 .header("Location", deepLink)
                                 .build();
+        }
+
+        @GetMapping("/profile")
+        public UserProfileResponse getProfile(
+                        Authentication authentication) {
+
+                String email = authentication.getName();
+
+                return userService.getProfile(email);
         }
 
 }

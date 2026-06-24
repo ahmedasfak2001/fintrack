@@ -5,6 +5,7 @@ import com.ahmedasfak.fintrack.security.JwtService;
 
 import com.ahmedasfak.fintrack.dto.LoginRequest;
 import com.ahmedasfak.fintrack.dto.RegisterRequest;
+import com.ahmedasfak.fintrack.dto.UserProfileResponse;
 import com.ahmedasfak.fintrack.entity.User;
 import com.ahmedasfak.fintrack.repository.UserRepository;
 import com.ahmedasfak.fintrack.entity.VerificationToken;
@@ -315,5 +316,17 @@ public class UserService {
 
                                 You can now login using your new password.
                                 """;
+        }
+
+        public UserProfileResponse getProfile(String email) {
+
+                User user = userRepository
+                                .findByEmail(email)
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                return new UserProfileResponse(
+                                user.getName(),
+                                user.getEmail(),
+                                user.getMonthlyBudget());
         }
 }
