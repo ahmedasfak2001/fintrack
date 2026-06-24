@@ -7,21 +7,25 @@ import {
     StyleSheet,
     ActivityIndicator,
     TouchableOpacity,
-    ImageBackground,
 } from "react-native";
+
+import { Ionicons } from "@expo/vector-icons";
 
 import api from "../api/api";
 import { RegisterRequest } from "../types/RegisterRequest";
-import { COLORS } from "../constants/colors";
 import { showError } from "../utils/toast";
+import AuthLayout from "../components/AuthLayout";
+import { authStyles } from "../styles/authStyles";
 
 const RegisterScreen = ({ navigation }: any) => {
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const validateEmail = (email: string) => {
 
@@ -73,6 +77,15 @@ const RegisterScreen = ({ navigation }: any) => {
                 return;
             }
 
+            if (password !== confirmPassword) {
+
+                showError(
+                    "Passwords do not match"
+                );
+
+                return;
+            }
+
             const request: RegisterRequest = {
                 name,
                 email,
@@ -118,194 +131,146 @@ const RegisterScreen = ({ navigation }: any) => {
     };
 
     return (
+        <AuthLayout>
 
-        <ImageBackground
-            source={require("../assets/register-bg.png")}
-            style={styles.background}
-            resizeMode="cover"
-        >
+            <Text style={authStyles.title}>
+                Welcome to FinTrack
+            </Text>
 
-            <View style={styles.overlay}>
+            <Text style={authStyles.subtitle}>
+                Track every rupee. Build better habits.
+            </Text>
 
-                <View style={styles.card}>
+            <TextInput
+                placeholder="Full Name"
+                value={name}
+                onChangeText={setName}
+                style={authStyles.input}
+                placeholderTextColor="#94A3B8"
+            />
 
-                    <Text style={styles.title}>
-                        Welcome to FinTrack
-                    </Text>
+            <TextInput
+                placeholder="Email Address"
+                value={email}
+                onChangeText={setEmail}
+                style={authStyles.input}
+                placeholderTextColor="#94A3B8"
+                autoCapitalize="none"
+            />
 
-                    <Text style={styles.subtitle}>
-                        Track every rupee. Build better habits.
-                    </Text>
+            <View style={styles.passwordContainer}>
 
-                    <TextInput
-                        placeholder="Full Name"
-                        value={name}
-                        onChangeText={setName}
-                        style={styles.input}
-                        placeholderTextColor="#94A3B8"
-                    />
+                <TextInput
+                    placeholder="Password"
+                    secureTextEntry={!showPassword}
+                    value={password}
+                    onChangeText={setPassword}
+                    style={styles.passwordInput}
+                    placeholderTextColor="#94A3B8"
+                />
 
-                    <TextInput
-                        placeholder="Email Address"
-                        value={email}
-                        onChangeText={setEmail}
-                        style={styles.input}
-                        placeholderTextColor="#94A3B8"
-                        autoCapitalize="none"
-                    />
-
-                    <TextInput
-                        placeholder="Password"
-                        secureTextEntry
-                        value={password}
-                        onChangeText={setPassword}
-                        style={styles.input}
-                        placeholderTextColor="#94A3B8"
-                    />
-
-                    <TouchableOpacity
-                        style={[
-                            styles.registerButton,
-                            loading &&
-                            styles.disabledButton,
-                        ]}
-                        onPress={handleRegister}
-                        disabled={loading}
-                    >
-
-                        {
-                            loading ? (
-
-                                <ActivityIndicator
-                                    color="#FFFFFF"
-                                />
-
-                            ) : (
-
-                                <Text
-                                    style={
-                                        styles.registerButtonText
-                                    }
-                                >
-                                    Create Account
-                                </Text>
-
-                            )
+                <TouchableOpacity
+                    onPress={() =>
+                        setShowPassword(!showPassword)
+                    }
+                >
+                    <Ionicons
+                        name={
+                            showPassword
+                                ? "eye-off-outline"
+                                : "eye-outline"
                         }
-
-                    </TouchableOpacity>
-
-                    <View style={styles.loginContainer}>
-
-                        <Text style={styles.loginText}>
-                            Already have an account?{" "}
-                        </Text>
-
-                        <TouchableOpacity
-                            onPress={() =>
-                                navigation.navigate("Login")
-                            }
-                        >
-
-                            <Text style={styles.loginLink}>
-                                Login
-                            </Text>
-
-                        </TouchableOpacity>
-
-                    </View>
-
-                </View>
+                        size={22}
+                        color="#64748B"
+                    />
+                </TouchableOpacity>
 
             </View>
+            <View style={styles.passwordContainer}>
 
-        </ImageBackground>
+                <TextInput
+                    placeholder="Confirm Password"
+                    secureTextEntry={!showConfirmPassword}
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    style={styles.passwordInput}
+                    placeholderTextColor="#94A3B8"
+                />
+
+                <TouchableOpacity
+                    onPress={() =>
+                        setShowConfirmPassword(
+                            !showConfirmPassword
+                        )
+                    }
+                >
+                    <Ionicons
+                        name={
+                            showConfirmPassword
+                                ? "eye-off-outline"
+                                : "eye-outline"
+                        }
+                        size={22}
+                        color="#64748B"
+                    />
+                </TouchableOpacity>
+
+            </View>
+            <TouchableOpacity
+                style={[
+                    authStyles.button,
+                    loading && authStyles.disabledButton,
+                ]}
+                onPress={handleRegister}
+                disabled={loading}
+            >
+                {loading ? (
+                    <ActivityIndicator color="#FFFFFF" />
+                ) : (
+                    <Text style={authStyles.buttonText}>
+                        Create Account
+                    </Text>
+                )}
+            </TouchableOpacity>
+
+            <View style={authStyles.linkContainer}>
+                <Text style={authStyles.linkText}>
+                    Already have an account?{" "}
+                </Text>
+
+                <TouchableOpacity
+                    onPress={() =>
+                        navigation.navigate("Login")
+                    }
+                >
+                    <Text style={authStyles.link}>
+                        Login
+                    </Text>
+                </TouchableOpacity>
+            </View>
+
+        </AuthLayout>
     );
 };
 
 export default RegisterScreen;
 
 const styles = StyleSheet.create({
-
-    background: {
-        flex: 1,
-    },
-
-    overlay: {
-        flex: 1,
-        justifyContent: "center",
-        padding: 20,
-    },
-
-    card: {
-        backgroundColor:
-            "rgba(255,255,255,0.94)",
-        borderRadius: 24,
-        padding: 25,
-
-        shadowColor: "#000",
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-        elevation: 8,
-    },
-
-    title: {
-        fontSize: 30,
-        fontWeight: "bold",
-        textAlign: "center",
-        color: "#0F172A",
-    },
-
-    subtitle: {
-        textAlign: "center",
-        color: "#64748B",
-        marginTop: 8,
-        marginBottom: 25,
-        fontSize: 15,
-    },
-
-    input: {
+    passwordContainer: {
+        flexDirection: "row",
+        alignItems: "center",
         backgroundColor: "#F8FAFC",
         borderWidth: 1,
         borderColor: "#E2E8F0",
         borderRadius: 12,
-        padding: 14,
+        paddingHorizontal: 14,
         marginBottom: 16,
+    },
+
+    passwordInput: {
+        flex: 1,
+        paddingVertical: 14,
         fontSize: 16,
     },
 
-    registerButton: {
-        backgroundColor: COLORS.primary,
-        paddingVertical: 15,
-        borderRadius: 12,
-        alignItems: "center",
-        marginTop: 8,
-    },
-
-    disabledButton: {
-        opacity: 0.7,
-    },
-
-    registerButtonText: {
-        color: "#FFFFFF",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
-
-    loginContainer: {
-        flexDirection: "row",
-        justifyContent: "center",
-        marginTop: 22,
-    },
-
-    loginText: {
-        color: "#64748B",
-        fontSize: 15,
-    },
-
-    loginLink: {
-        color: COLORS.primary,
-        fontSize: 15,
-        fontWeight: "bold",
-    },
 });

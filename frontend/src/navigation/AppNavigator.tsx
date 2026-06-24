@@ -40,16 +40,25 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="Splash"
                         component={SplashScreen}
+                        options={{
+                            headerShown: false,
+                        }}
                     />
 
                     <Stack.Screen
                         name="Login"
                         component={LoginScreen}
+                        options={{
+                            headerShown: false,
+                        }}
                     />
 
                     <Stack.Screen
                         name="Register"
                         component={RegisterScreen}
+                        options={{
+                            headerShown: false,
+                        }}
                     />
 
                     {/* <Stack.Screen
@@ -60,17 +69,25 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="MainApp"
                         component={BottomTabNavigator}
-                        options={{ headerShown: false }}
+                        options={{
+                            headerShown: false
+                        }}
                     />
 
                     <Stack.Screen
                         name="Expenses"
                         component={ExpenseListScreen}
+                        options={{
+                            headerShown: false,
+                        }}
                     />
 
                     <Stack.Screen
                         name="AddExpense"
                         component={AddExpenseScreen}
+                        options={{
+                            headerShown: false,
+                        }}
                     />
 
                     <Stack.Screen
@@ -86,6 +103,9 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="Trend"
                         component={TrendScreen}
+                        options={{
+                            headerShown: false,
+                        }}
                     />
 
                     <Stack.Screen
@@ -96,11 +116,17 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="ResendVerification"
                         component={ResendVerificationScreen}
+                        options={{
+                            headerShown: false,
+                        }}
                     />
 
                     <Stack.Screen
                         name="ForgotPassword"
                         component={ForgotPasswordScreen}
+                        options={{
+                            headerShown: false,
+                        }}
                     />
 
                     <Stack.Screen

@@ -5,14 +5,15 @@ import {
     TextInput,
     TouchableOpacity,
     StyleSheet,
-    ActivityIndicator
+    ActivityIndicator,
 } from "react-native";
 
 import api from "../api/api";
 import { showError, showSuccess } from "../utils/toast";
 import { COLORS } from "../constants/colors";
+import AuthLayout from "../components/AuthLayout";
 
-const ForgotPasswordScreen = () => {
+const ForgotPasswordScreen = ({ navigation }: any) => {
 
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
@@ -25,107 +26,168 @@ const ForgotPasswordScreen = () => {
 
             await api.post(
                 "/api/users/forgot-password",
-                {
-                    email
-                }
+                { email }
             );
 
             showSuccess(
                 "Password reset email sent"
             );
 
-        }
-        catch (error: any) {
+        } catch (error: any) {
+
             console.log(
                 "FORGOT PASSWORD ERROR",
                 error.response?.data
             );
 
-            console.log(
-                "STATUS",
-                error.response?.status
-            );
-
             showError(
                 error.response?.data?.message ||
-                JSON.stringify(error.response?.data) ||
                 "Something went wrong"
             );
+
         } finally {
-            setLoading(false);   
+
+            setLoading(false);
         }
     };
 
     return (
 
-        <View style={styles.container}>
+        <AuthLayout>
 
-            <Text style={styles.title}>
-                Forgot Password
-            </Text>
+                <Text style={styles.title}>
+                    Forgot Password
+                </Text>
 
-            <TextInput
-                placeholder="Enter your email"
-                value={email}
-                onChangeText={setEmail}
-                style={styles.input}
-            />
+                <Text style={styles.subtitle}>
+                    Enter your registered email address and we'll send you a password reset link.
+                </Text>
 
-            <TouchableOpacity
-                style={styles.button}
-                onPress={handleForgotPassword}
-                disabled={loading}
-            >
+                <TextInput
+                    placeholder="Email Address"
+                    value={email}
+                    onChangeText={setEmail}
+                    style={styles.input}
+                    placeholderTextColor="#94A3B8"
+                    autoCapitalize="none"
+                />
 
-                {
-                    loading
-                        ? <ActivityIndicator color="#fff" />
-                        : (
+                <TouchableOpacity
+                    style={[
+                        styles.button,
+                        loading && styles.disabledButton
+                    ]}
+                    onPress={handleForgotPassword}
+                    disabled={loading}
+                >
+
+                    {
+                        loading ? (
+                            <ActivityIndicator color="#FFFFFF" />
+                        ) : (
                             <Text style={styles.buttonText}>
                                 Send Reset Link
                             </Text>
                         )
-                }
+                    }
 
-            </TouchableOpacity>
+                </TouchableOpacity>
 
-        </View>
+                <View style={styles.backContainer}>
+
+                    <Text style={styles.backText}>
+                        Remember your password?{" "}
+                    </Text>
+
+                    <TouchableOpacity
+                        onPress={() =>
+                            navigation.navigate("Login")
+                        }
+                    >
+                        <Text style={styles.backLink}>
+                            Login
+                        </Text>
+                    </TouchableOpacity>
+
+                </View>
+
+        </AuthLayout>
+
     );
 };
 
+export default ForgotPasswordScreen;
+
 const styles = StyleSheet.create({
 
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        padding: 20
+    card: {
+        backgroundColor: "rgba(255,255,255,0.94)",
+        borderRadius: 24,
+        padding: 25,
+
+        shadowColor: "#000",
+        shadowOpacity: 0.15,
+        shadowRadius: 10,
+        elevation: 8,
     },
 
     title: {
-        fontSize: 28,
+        fontSize: 30,
         fontWeight: "bold",
-        marginBottom: 30,
-        textAlign: "center"
+        textAlign: "center",
+        color: "#0F172A",
+    },
+
+    subtitle: {
+        textAlign: "center",
+        color: "#64748B",
+        marginTop: 8,
+        marginBottom: 25,
+        fontSize: 15,
+        lineHeight: 22,
     },
 
     input: {
+        backgroundColor: "#F8FAFC",
         borderWidth: 1,
-        borderRadius: 10,
-        padding: 12,
-        marginBottom: 20
+        borderColor: "#E2E8F0",
+        borderRadius: 12,
+        padding: 14,
+        marginBottom: 16,
+        fontSize: 16,
     },
 
     button: {
         backgroundColor: COLORS.primary,
-        padding: 15,
-        borderRadius: 10,
-        alignItems: "center"
+        paddingVertical: 15,
+        borderRadius: 12,
+        alignItems: "center",
+    },
+
+    disabledButton: {
+        opacity: 0.7,
     },
 
     buttonText: {
-        color: "#fff",
-        fontWeight: "bold"
-    }
-});
+        color: "#FFFFFF",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
 
-export default ForgotPasswordScreen;
+    backContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginTop: 25,
+    },
+
+    backText: {
+        color: "#64748B",
+        fontSize: 15,
+    },
+
+    backLink: {
+        color: COLORS.primary,
+        fontSize: 15,
+        fontWeight: "bold",
+    },
+});

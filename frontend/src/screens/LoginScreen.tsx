@@ -11,16 +11,19 @@ import {
 
 import api from "../api/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
 
 import { LoginRequest } from "../types/LoginRequest";
 import { AuthResponse } from "../types/AuthResponse";
-import { COLORS } from "../constants/colors";
 import { showError, showSuccess } from "../utils/toast";
+import AuthLayout from "../components/AuthLayout";
+import { authStyles } from "../styles/authStyles";
 
 const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const validateEmail = (
     email: string
@@ -134,219 +137,154 @@ const LoginScreen = ({ navigation }: any) => {
   };
 
   return (
+    <AuthLayout>
 
-    <ImageBackground
-      source={require("../assets/register-bg.png")}
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <View style={styles.overlay}>
+      <Text style={authStyles.title}>
+        Welcome Back
+      </Text>
 
-        <View style={styles.card}>
+      <Text style={authStyles.subtitle}>
+        Login to continue tracking your finances
+      </Text>
 
-          <Text style={styles.title}>
-            Welcome Back
-          </Text>
+      <TextInput
+        placeholder="Email Address"
+        value={email}
+        onChangeText={setEmail}
+        style={authStyles.input}
+        placeholderTextColor="#94A3B8"
+        autoCapitalize="none"
+      />
 
-          <Text style={styles.subtitle}>
-            Login to continue tracking your finances
-          </Text>
+      {/* <TextInput
+        placeholder="Password"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+        style={authStyles.input}
+        placeholderTextColor="#94A3B8"
+      /> */}
+      <View style={styles.passwordContainer}>
 
-          <TextInput
-            placeholder="Email Address"
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-            placeholderTextColor="#94A3B8"
-            autoCapitalize="none"
+        <TextInput
+          placeholder="Password"
+          secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
+          style={styles.passwordInput}
+          placeholderTextColor="#94A3B8"
+        />
+
+        <TouchableOpacity
+          onPress={() =>
+            setShowPassword(!showPassword)
+          }
+        >
+          <Ionicons
+            name={
+              showPassword
+                ? "eye-off-outline"
+                : "eye-outline"
+            }
+            size={22}
+            color="#64748B"
           />
-
-          <TextInput
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-            style={styles.input}
-            placeholderTextColor="#94A3B8"
-          />
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("ForgotPassword")
-            }
-          >
-            <Text style={styles.forgotPassword}>
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.loginButton,
-              loading && styles.disabledButton,
-            ]}
-            onPress={handleLogin}
-            disabled={loading}
-          >
-            {
-              loading ? (
-                <ActivityIndicator color="#FFFFFF" />
-              ) : (
-                <Text style={styles.loginButtonText}>
-                  Login
-                </Text>
-              )
-            }
-          </TouchableOpacity>
-
-
-
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate(
-                "ResendVerification"
-              )
-            }
-          >
-            <Text style={styles.resendText}>
-              Resend Verification Email
-            </Text>
-          </TouchableOpacity>
-
-          <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>
-              Don't have an account?{" "}
-            </Text>
-
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("Register")
-              }
-            >
-              <Text style={styles.registerLink}>
-                Create Account
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-        </View>
+        </TouchableOpacity>
 
       </View>
 
-    </ImageBackground>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("ForgotPassword")
+        }
+      >
+        <Text style={[
+          authStyles.link,
+          {
+            marginTop: -15,
+            paddingBottom: 5,
+          }
+        ]}>
+          Forgot Password?
+        </Text>
+      </TouchableOpacity>
 
+      <TouchableOpacity
+        style={[
+          authStyles.button,
+          loading && authStyles.disabledButton,
+        ]}
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        {
+          loading ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text style={authStyles.buttonText}>
+              Login
+            </Text>
+          )
+        }
+      </TouchableOpacity>
 
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate(
+            "ResendVerification"
+          )
+        }
+      >
+        <Text style={[
+          authStyles.linkText,
+          {
+            textAlign: "center",
+            marginTop: 15,
+          }
+        ]}>
+          Resend Verification Email
+        </Text>
+      </TouchableOpacity>
+
+      <View style={authStyles.linkContainer}>
+
+        <Text style={authStyles.linkText}>
+          Don't have an account?{" "}
+        </Text>
+
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("Register")
+          }
+        >
+          <Text style={authStyles.link}>
+            Create Account
+          </Text>
+        </TouchableOpacity>
+
+      </View>
+    </AuthLayout>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 20,
-  },
 
-  loginButtonDisabled: {
-    opacity: 0.7,
-  },
-
-  loginText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  loginButton: {
-    backgroundColor:
-      COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
+  passwordContainer: {
+    flexDirection: "row",
     alignItems: "center",
-    marginTop: 20,
-  },
-
-  disabledButton: {
-    opacity: 0.7,
-  },
-
-  loginButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-
-  background: {
-    flex: 1,
-  },
-
-  overlay: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 20,
-  },
-
-  card: {
-    backgroundColor: "rgba(255,255,255,0.94)",
-    borderRadius: 24,
-    padding: 25,
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-
-  title: {
-    fontSize: 30,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#0F172A",
-  },
-
-  subtitle: {
-    textAlign: "center",
-    color: "#64748B",
-    marginTop: 8,
-    marginBottom: 25,
-    fontSize: 15,
-  },
-
-  input: {
     backgroundColor: "#F8FAFC",
     borderWidth: 1,
     borderColor: "#E2E8F0",
     borderRadius: 12,
-    padding: 14,
+    paddingHorizontal: 14,
     marginBottom: 16,
+},
+
+passwordInput: {
+    flex: 1,
+    paddingVertical: 14,
     fontSize: 16,
-  },
-
-  forgotPassword: {
-    textAlign: "left",
-    color: COLORS.primary,
-    marginTop: -10,
-    marginLeft: 5,
-    fontWeight: "600",
-  },
-
-  resendText: {
-    textAlign: "center",
-    marginTop: 15,
-    color: "#64748B",
-  },
-
-  registerContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 25,
-  },
-
-  registerText: {
-    color: "#64748B",
-    fontSize: 15,
-  },
-
-  registerLink: {
-    color: COLORS.primary,
-    fontSize: 15,
-    fontWeight: "bold",
-  },
+},
 });
 
 export default LoginScreen;
