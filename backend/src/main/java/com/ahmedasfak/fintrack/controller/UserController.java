@@ -1,6 +1,7 @@
 package com.ahmedasfak.fintrack.controller;
 
 import com.ahmedasfak.fintrack.dto.AuthResponse;
+import com.ahmedasfak.fintrack.dto.ChangePasswordRequest;
 import com.ahmedasfak.fintrack.dto.LoginRequest;
 import com.ahmedasfak.fintrack.dto.RegisterRequest;
 import com.ahmedasfak.fintrack.dto.ResendVerificationRequest;
@@ -8,6 +9,7 @@ import com.ahmedasfak.fintrack.service.UserService;
 import com.ahmedasfak.fintrack.dto.ForgotPasswordRequest;
 import com.ahmedasfak.fintrack.dto.ResetPasswordRequest;
 import com.ahmedasfak.fintrack.dto.UserProfileResponse;
+import com.ahmedasfak.fintrack.dto.ChangePasswordRequest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -99,6 +101,20 @@ public class UserController {
                 String email = authentication.getName();
 
                 return userService.getProfile(email);
+        }
+
+        @PutMapping("/change-password")
+        public ResponseEntity<String> changePassword(
+                        Authentication authentication,
+                        @RequestBody ChangePasswordRequest request) {
+
+                String email = authentication.getName();
+
+                return ResponseEntity.ok(
+                                userService.changePassword(
+                                                email,
+                                                request.getOldPassword(),
+                                                request.getNewPassword()));
         }
 
 }

@@ -338,4 +338,36 @@ public class UserService {
                                 user.getEnabled(),
                                 currentExpense);
         }
+
+        public String changePassword(
+                        String email,
+                        String oldPassword,
+                        String newPassword) {
+
+                User user = userRepository
+                                .findByEmail(email)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "User not found"));
+
+                boolean passwordMatched = passwordEncoder.matches(
+                                oldPassword,
+                                user.getPassword());
+
+                if (!passwordMatched) {
+
+                        throw new RuntimeException(
+                                        "Current password is incorrect");
+                }
+
+                user.setPassword(
+                                passwordEncoder.encode(
+                                                newPassword));
+
+                user.setUpdatedAt(
+                                LocalDateTime.now());
+
+                userRepository.save(user);
+
+                return "Password changed successfully";
+        }
 }

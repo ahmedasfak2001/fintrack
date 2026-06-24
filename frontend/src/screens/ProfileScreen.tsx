@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -9,6 +9,10 @@ import {
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api/api";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from "expo-sharing";
+import { useFocusEffect } from "@react-navigation/native";
+import { showError, showSuccess } from "../utils/toast";
 
 const ProfileScreen = ({ navigation }: any) => {
 
@@ -22,6 +26,49 @@ const ProfileScreen = ({ navigation }: any) => {
     const [loading, setLoading] = useState(true);
     const [enabled, setEnabled] = useState(false);
     const remainingBudget = monthlyBudget - currentExpense;
+
+     const exportReport = async () => {
+
+        try {
+
+            const token =
+                await AsyncStorage.getItem("token");
+
+            const response =
+                await api.get(
+                    "/api/expenses/export",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                        responseType: "text",
+                    }
+                );
+
+            const fileUri =
+                FileSystem.documentDirectory +
+                "expenses.csv";
+            await FileSystem.writeAsStringAsync(
+                fileUri,
+                response.data,
+                {
+                    encoding:
+                        FileSystem.EncodingType.UTF8,
+                }
+            );
+            await Sharing.shareAsync(fileUri);
+            showSuccess(
+                "Report exported successfully"
+            );
+
+        } catch (error) {
+            console.error(error);
+            showError(
+                "Failed to export report"
+            );
+        }
+    };
 
     const fetchProfile = async () => {
 
@@ -75,11 +122,11 @@ const ProfileScreen = ({ navigation }: any) => {
         }
     };
 
-    useEffect(() => {
-
-        fetchProfile();
-
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            fetchProfile();
+        }, [])
+    );
 
     const handleLogout = async () => {
 
@@ -200,18 +247,34 @@ const ProfileScreen = ({ navigation }: any) => {
                 <Text style={styles.sectionTitle}>
                     Account
                 </Text>
-
+                {/* <TouchableOpacity onPress={() =>
+                    navigation.navigate(
+                        "ResetPassword"
+                    )
+                }> */}
                 <Text style={styles.menuItem}>
                     🔒 Change Password
                 </Text>
+                {/* </TouchableOpacity> */}
 
-                <Text style={styles.menuItem}>
-                    📊 Budget Settings
-                </Text>
+                <TouchableOpacity onPress={() =>
+                    navigation.navigate(
+                        "Budget"
+                    )
+                }>
+                    <Text style={styles.menuItem}>
+                        📊 Budget Settings
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    
+                    onPress={exportReport}
+                >
 
-                <Text style={styles.menuItem}>
-                    📥 Export Expenses
-                </Text>
+                    <Text style={styles.menuItem}>
+                        📥 Export Expenses
+                    </Text>
+                </TouchableOpacity>
 
             </View>
 

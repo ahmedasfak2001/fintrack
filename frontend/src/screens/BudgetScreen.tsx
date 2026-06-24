@@ -1,4 +1,5 @@
 import React, {
+    useCallback,
     useEffect,
     useState,
 } from "react";
@@ -25,8 +26,9 @@ import {
 import * as Progress from "react-native-progress";
 import { COLORS } from "../constants/colors";
 import { showError, showSuccess } from "../utils/toast";
+import { useFocusEffect } from "@react-navigation/native";
 
-const BudgetScreen = () => {
+const BudgetScreen = ({ navigation }: any) => {
 
     const [budget, setBudget] = useState("");
 
@@ -68,12 +70,12 @@ const BudgetScreen = () => {
             null
         );
 
-    useEffect(() => {
-
-        fetchBudgetSummary();
-        fetchBudget();
-
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            fetchBudgetSummary();
+            fetchBudget();
+        }, [])
+    );
 
     const fetchBudgetSummary =
         async () => {
@@ -139,7 +141,7 @@ const BudgetScreen = () => {
             );
 
             await fetchBudgetSummary();
-            
+
             showSuccess(
                 "Budget updated"
             );
@@ -148,10 +150,6 @@ const BudgetScreen = () => {
 
             console.error(error);
 
-            // Alert.alert(
-            //     "Error",
-            //     "Failed to update budget"
-            // );
             showError(
                 "Failed to update budget"
             );
@@ -161,11 +159,6 @@ const BudgetScreen = () => {
         }
     };
 
-    // const usage =
-    //     (summary?.usagePercentage ?? 0) / 100;
-
-    // const usagePercentage =
-    //     summary?.usagePercentage ?? 0;
     const usagePercentage =
         parseFloat(
             String(
@@ -196,12 +189,23 @@ const BudgetScreen = () => {
                 style={styles.input}
             />
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={[
                     styles.updateButton,
                     loading && { opacity: 0.7 }
                 ]}
                 onPress={updateBudget}
+                disabled={loading}
+            > */}
+            <TouchableOpacity
+                style={[
+                    styles.updateButton,
+                    loading && { opacity: 0.7 }
+                ]}
+                onPress={async () => {
+                    await updateBudget();
+                    navigation.goBack();
+                }}
                 disabled={loading}
             >
                 <Text style={styles.updateButtonText}>

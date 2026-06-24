@@ -3,14 +3,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import DashboardScreen from "../screens/DashboardScreen";
 import ExpenseListScreen from "../screens/ExpenseListScreen";
 import TrendScreen from "../screens/TrendScreen";
-import BudgetScreen from "../screens/BudgetScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 
 import {
   House,
   Receipt,
   ChartColumn,
-  Target,
   User,
   Plus,
 } from "lucide-react-native";
@@ -37,9 +35,6 @@ export default function BottomTabNavigator() {
           if (route.name === "Trends")
             return <ChartColumn color={color} size={size} />;
 
-          if (route.name === "Budget")
-            return <Target color={color} size={size} />;
-
           if (route.name === "Profile")
             return <User color={color} size={size} />;
 
@@ -54,7 +49,6 @@ export default function BottomTabNavigator() {
       <Tab.Screen name="Expenses" component={ExpenseListScreen} />
       <Tab.Screen name="Add" component={AddExpenseScreen}/>
       <Tab.Screen name="Trends" component={TrendScreen} />
-      <Tab.Screen name="Budget" component={BudgetScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
