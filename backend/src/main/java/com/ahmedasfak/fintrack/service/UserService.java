@@ -3,6 +3,7 @@ package com.ahmedasfak.fintrack.service;
 import com.ahmedasfak.fintrack.dto.AuthResponse;
 import com.ahmedasfak.fintrack.security.JwtService;
 
+import com.ahmedasfak.fintrack.repository.ExpenseRepository;
 import com.ahmedasfak.fintrack.dto.LoginRequest;
 import com.ahmedasfak.fintrack.dto.RegisterRequest;
 import com.ahmedasfak.fintrack.dto.UserProfileResponse;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -30,6 +32,7 @@ public class UserService {
         private final VerificationTokenRepository verificationTokenRepository;
         private final PasswordResetTokenRepository passwordResetTokenRepository;
         private final EmailService emailService;
+        private final ExpenseRepository expenseRepository;
 
         public UserService(
                         UserRepository userRepository,
@@ -37,7 +40,8 @@ public class UserService {
                         JwtService jwtService,
                         VerificationTokenRepository verificationTokenRepository,
                         PasswordResetTokenRepository passwordResetTokenRepository,
-                        EmailService emailService) {
+                        EmailService emailService,
+                        ExpenseRepository expenseRepository) {
 
                 this.userRepository = userRepository;
                 this.passwordEncoder = passwordEncoder;
@@ -45,6 +49,7 @@ public class UserService {
                 this.verificationTokenRepository = verificationTokenRepository;
                 this.passwordResetTokenRepository = passwordResetTokenRepository;
                 this.emailService = emailService;
+                this.expenseRepository = expenseRepository;
         }
 
         private final UserRepository userRepository;
@@ -324,10 +329,13 @@ public class UserService {
                                 .findByEmail(email)
                                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+                BigDecimal currentExpense = expenseRepository.getTotalExpenseByUser(user);
+
                 return new UserProfileResponse(
                                 user.getName(),
                                 user.getEmail(),
                                 user.getMonthlyBudget(),
-                                user.getEnabled());
+                                user.getEnabled(),
+                                currentExpense);
         }
 }

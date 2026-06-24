@@ -8,17 +8,20 @@ public class UserProfileResponse {
     private String email;
     private BigDecimal monthlyBudget;
     private boolean enabled;
+    private BigDecimal currentExpense;
 
     public UserProfileResponse(
             String name,
             String email,
             BigDecimal monthlyBudget,
-            boolean enabled) {
+            boolean enabled,
+            BigDecimal currentExpense) {
 
         this.name = name;
         this.email = email;
         this.monthlyBudget = monthlyBudget;
         this.enabled = enabled;
+        this.currentExpense = currentExpense;
     }
 
     public String getName() {
@@ -35,5 +38,9 @@ public class UserProfileResponse {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public BigDecimal getCurrentExpense() {
+        return currentExpense;
     }
 }
