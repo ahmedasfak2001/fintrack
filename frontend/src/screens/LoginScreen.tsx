@@ -3,11 +3,10 @@ import {
   View,
   Text,
   TextInput,
-  Button,
-  Alert,
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  ImageBackground,
 } from "react-native";
 
 import api from "../api/api";
@@ -23,9 +22,6 @@ const LoginScreen = ({ navigation }: any) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // const handleLogin = () => {
-  //   Alert.alert("Login", "Button Clicked");
-  // };
   const validateEmail = (
     email: string
   ) => {
@@ -40,11 +36,6 @@ const LoginScreen = ({ navigation }: any) => {
     try {
       setLoading(true);
       if (!email.trim()) {
-
-        // Alert.alert(
-        //   "Validation Error",
-        //   "Email is required"
-        // );
         showError(
           "Email is required"
         );
@@ -54,10 +45,6 @@ const LoginScreen = ({ navigation }: any) => {
 
       if (!validateEmail(email)) {
 
-        // Alert.alert(
-        //   "Validation Error",
-        //   "Please enter a valid email address"
-        // );
         showError(
           "Please enter a valid email address"
         );
@@ -87,7 +74,6 @@ const LoginScreen = ({ navigation }: any) => {
       await AsyncStorage.setItem(
         "token",
         response.data.token
-        //  "invalid-token-test"
       );
       await AsyncStorage.setItem(
         "userName",
@@ -124,14 +110,9 @@ const LoginScreen = ({ navigation }: any) => {
 
       console.log("Stored Token:", savedToken);
 
-      // Alert.alert(
-      //   "Success",
-      //   "Login Successful"
-      // );
       showSuccess(
         "Login Successful"
       );
-      // navigation.replace("Dashboard");
       navigation.replace("MainApp");
 
       console.log(
@@ -141,10 +122,6 @@ const LoginScreen = ({ navigation }: any) => {
 
     } catch (error) {
 
-      // Alert.alert(
-      //   "Error",
-      //   "Invalid email or password"
-      // );
       showError(
         "Invalid email or password"
       );
@@ -157,96 +134,104 @@ const LoginScreen = ({ navigation }: any) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>FinTrack Login</Text>
 
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-      />
+    <ImageBackground
+      source={require("../assets/register-bg.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay}>
 
-      <TextInput
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-      />
+        <View style={styles.card}>
 
-      {/* <Button
-        title="Login"
-        onPress={handleLogin}
-      /> */}
+          <Text style={styles.title}>
+            Welcome Back
+          </Text>
 
-      <TouchableOpacity
-        style={[
-          styles.loginButton,
-          loading &&
-          styles.disabledButton,
-        ]}
-        onPress={handleLogin}
-        disabled={loading}
-      >
+          <Text style={styles.subtitle}>
+            Login to continue tracking your finances
+          </Text>
 
-        {
-          loading ? (
+          <TextInput
+            placeholder="Email Address"
+            value={email}
+            onChangeText={setEmail}
+            style={styles.input}
+            placeholderTextColor="#94A3B8"
+            autoCapitalize="none"
+          />
 
-            <ActivityIndicator
-              color="#FFFFFF"
-            />
+          <TextInput
+            placeholder="Password"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+            style={styles.input}
+            placeholderTextColor="#94A3B8"
+          />
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("ForgotPassword")
+            }
+          >
+            <Text style={styles.forgotPassword}>
+              Forgot Password?
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.loginButton,
+              loading && styles.disabledButton,
+            ]}
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            {
+              loading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={styles.loginButtonText}>
+                  Login
+                </Text>
+              )
+            }
+          </TouchableOpacity>
 
-          ) : (
 
-            <Text
-              style={
-                styles.loginButtonText
-              }
-            >
-              Login
+
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(
+                "ResendVerification"
+              )
+            }
+          >
+            <Text style={styles.resendText}>
+              Resend Verification Email
+            </Text>
+          </TouchableOpacity>
+
+          <View style={styles.registerContainer}>
+            <Text style={styles.registerText}>
+              Don't have an account?{" "}
             </Text>
 
-          )
-        }
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Register")
+              }
+            >
+              <Text style={styles.registerLink}>
+                Create Account
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate(
-            "ForgotPassword"
-          )
-        }
-      >
-        <Text
-          style={{
-            textAlign: "center",
-            marginTop: 15,
-            color: COLORS.primary
-          }}
-        >
-          Forgot Password?
-        </Text>
+        </View>
 
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate(
-            "ResendVerification"
-          )
-        }
-      >
-        <Text>
-          Resend Verification Email
-        </Text>
-      </TouchableOpacity>
-      <View style={{ marginTop: 10 }}>
-        <Button
-          title="Create Account"
-          onPress={() => navigation.navigate("Register")}
-        />
       </View>
-    </View>
+
+    </ImageBackground>
 
 
   );
@@ -257,17 +242,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 20,
-  },
-  title: {
-    fontSize: 28,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  input: {
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 15,
-    borderRadius: 5,
   },
 
   loginButtonDisabled: {
@@ -295,6 +269,82 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  background: {
+    flex: 1,
+  },
+
+  overlay: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 20,
+  },
+
+  card: {
+    backgroundColor: "rgba(255,255,255,0.94)",
+    borderRadius: 24,
+    padding: 25,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+
+  title: {
+    fontSize: 30,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#0F172A",
+  },
+
+  subtitle: {
+    textAlign: "center",
+    color: "#64748B",
+    marginTop: 8,
+    marginBottom: 25,
+    fontSize: 15,
+  },
+
+  input: {
+    backgroundColor: "#F8FAFC",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 16,
+    fontSize: 16,
+  },
+
+  forgotPassword: {
+    textAlign: "left",
+    color: COLORS.primary,
+    marginTop: -10,
+    marginLeft: 5,
+    fontWeight: "600",
+  },
+
+  resendText: {
+    textAlign: "center",
+    marginTop: 15,
+    color: "#64748B",
+  },
+
+  registerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 25,
+  },
+
+  registerText: {
+    color: "#64748B",
+    fontSize: 15,
+  },
+
+  registerLink: {
+    color: COLORS.primary,
+    fontSize: 15,
     fontWeight: "bold",
   },
 });

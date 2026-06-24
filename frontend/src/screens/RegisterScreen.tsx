@@ -3,17 +3,17 @@ import {
     View,
     Text,
     TextInput,
-    Button,
     Alert,
     StyleSheet,
     ActivityIndicator,
     TouchableOpacity,
+    ImageBackground,
 } from "react-native";
 
 import api from "../api/api";
 import { RegisterRequest } from "../types/RegisterRequest";
 import { COLORS } from "../constants/colors";
-import { showError, showSuccess } from "../utils/toast";
+import { showError } from "../utils/toast";
 
 const RegisterScreen = ({ navigation }: any) => {
 
@@ -23,9 +23,7 @@ const RegisterScreen = ({ navigation }: any) => {
 
     const [loading, setLoading] = useState(false);
 
-    const validateEmail = (
-        email: string
-    ) => {
+    const validateEmail = (email: string) => {
 
         const regex =
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,43 +32,47 @@ const RegisterScreen = ({ navigation }: any) => {
     };
 
     const handleRegister = async () => {
+
         try {
+
             setLoading(true);
-            if (
-                name.trim().length < 3
-            ) {
+
+            if (name.trim().length < 3) {
+
                 showError(
                     "Username must be at least 3 characters"
                 );
-                setLoading(false);
+
                 return;
             }
 
             if (!email.trim()) {
+
                 showError(
                     "Email is required"
                 );
-                setLoading(false);
+
                 return;
             }
 
             if (!validateEmail(email)) {
+
                 showError(
                     "Please enter a valid email address"
                 );
-                setLoading(false);
+
                 return;
             }
 
-            if (
-                password.length < 6
-            ) {
+            if (password.length < 6) {
+
                 showError(
                     "Password must be at least 6 characters"
                 );
-                setLoading(false);
+
                 return;
             }
+
             const request: RegisterRequest = {
                 name,
                 email,
@@ -84,11 +86,7 @@ const RegisterScreen = ({ navigation }: any) => {
 
             Alert.alert(
                 "Registration Successful 🎉",
-                `We've sent a verification email to:
-
-            ${email}
-
-            Please verify your email before logging in.`,
+                `We've sent a verification email to:\n\n${email}\n\nPlease verify your email before logging in.`,
                 [
                     {
                         text: "Go To Login",
@@ -98,125 +96,190 @@ const RegisterScreen = ({ navigation }: any) => {
                 ]
             );
 
-
-        }
-        catch (error: any) {
+        } catch (error: any) {
 
             if (error.response?.status === 409) {
+
                 showError(
                     "Email already registered"
                 );
 
             } else {
+
                 showError(
                     "Something went wrong."
                 );
             }
+
         } finally {
 
             setLoading(false);
         }
     };
 
-
     return (
-        <View style={styles.container}>
 
-            <Text style={styles.title}>
-                FinTrack Register
-            </Text>
+        <ImageBackground
+            source={require("../assets/register-bg.png")}
+            style={styles.background}
+            resizeMode="cover"
+        >
 
-            <TextInput
-                placeholder="Name"
-                value={name}
-                onChangeText={setName}
-                style={styles.input}
-            />
+            <View style={styles.overlay}>
 
-            <TextInput
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                style={styles.input}
-            />
+                <View style={styles.card}>
 
-            <TextInput
-                placeholder="Password"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-                style={styles.input}
-            />
+                    <Text style={styles.title}>
+                        Welcome to FinTrack
+                    </Text>
 
-            <TouchableOpacity
-                style={[
-                    styles.registerButton,
-                    loading &&
-                    styles.disabledButton,
-                ]}
-                onPress={handleRegister}
-                disabled={loading}
-            >
+                    <Text style={styles.subtitle}>
+                        Track every rupee. Build better habits.
+                    </Text>
 
-                {
-                    loading ? (
+                    <TextInput
+                        placeholder="Full Name"
+                        value={name}
+                        onChangeText={setName}
+                        style={styles.input}
+                        placeholderTextColor="#94A3B8"
+                    />
 
-                        <ActivityIndicator
-                            color="#FFFFFF"
-                        />
+                    <TextInput
+                        placeholder="Email Address"
+                        value={email}
+                        onChangeText={setEmail}
+                        style={styles.input}
+                        placeholderTextColor="#94A3B8"
+                        autoCapitalize="none"
+                    />
 
-                    ) : (
+                    <TextInput
+                        placeholder="Password"
+                        secureTextEntry
+                        value={password}
+                        onChangeText={setPassword}
+                        style={styles.input}
+                        placeholderTextColor="#94A3B8"
+                    />
 
-                        <Text
-                            style={
-                                styles.registerButtonText
-                            }
-                        >
-                            Register
+                    <TouchableOpacity
+                        style={[
+                            styles.registerButton,
+                            loading &&
+                            styles.disabledButton,
+                        ]}
+                        onPress={handleRegister}
+                        disabled={loading}
+                    >
+
+                        {
+                            loading ? (
+
+                                <ActivityIndicator
+                                    color="#FFFFFF"
+                                />
+
+                            ) : (
+
+                                <Text
+                                    style={
+                                        styles.registerButtonText
+                                    }
+                                >
+                                    Create Account
+                                </Text>
+
+                            )
+                        }
+
+                    </TouchableOpacity>
+
+                    <View style={styles.loginContainer}>
+
+                        <Text style={styles.loginText}>
+                            Already have an account?{" "}
                         </Text>
 
-                    )
-                }
+                        <TouchableOpacity
+                            onPress={() =>
+                                navigation.navigate("Login")
+                            }
+                        >
 
-            </TouchableOpacity>
+                            <Text style={styles.loginLink}>
+                                Login
+                            </Text>
 
-            <View style={{ marginTop: 10 }}>
+                        </TouchableOpacity>
 
-                <Button
-                    title="Back To Login"
-                    onPress={() => navigation.goBack()}
-                />
+                    </View>
+
+                </View>
 
             </View>
 
-        </View>
+        </ImageBackground>
     );
 };
 
+export default RegisterScreen;
+
 const styles = StyleSheet.create({
-    container: {
+
+    background: {
+        flex: 1,
+    },
+
+    overlay: {
         flex: 1,
         justifyContent: "center",
         padding: 20,
     },
-    title: {
-        fontSize: 28,
-        marginBottom: 20,
-        textAlign: "center",
-    },
-    input: {
-        borderWidth: 1,
-        padding: 10,
-        marginBottom: 15,
-        borderRadius: 5,
-    },
-    registerButton: {
+
+    card: {
         backgroundColor:
-            COLORS.primary,
-        paddingVertical: 14,
+            "rgba(255,255,255,0.94)",
+        borderRadius: 24,
+        padding: 25,
+
+        shadowColor: "#000",
+        shadowOpacity: 0.15,
+        shadowRadius: 10,
+        elevation: 8,
+    },
+
+    title: {
+        fontSize: 30,
+        fontWeight: "bold",
+        textAlign: "center",
+        color: "#0F172A",
+    },
+
+    subtitle: {
+        textAlign: "center",
+        color: "#64748B",
+        marginTop: 8,
+        marginBottom: 25,
+        fontSize: 15,
+    },
+
+    input: {
+        backgroundColor: "#F8FAFC",
+        borderWidth: 1,
+        borderColor: "#E2E8F0",
+        borderRadius: 12,
+        padding: 14,
+        marginBottom: 16,
+        fontSize: 16,
+    },
+
+    registerButton: {
+        backgroundColor: COLORS.primary,
+        paddingVertical: 15,
         borderRadius: 12,
         alignItems: "center",
-        marginTop: 20,
+        marginTop: 8,
     },
 
     disabledButton: {
@@ -228,6 +291,21 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
-});
 
-export default RegisterScreen;
+    loginContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginTop: 22,
+    },
+
+    loginText: {
+        color: "#64748B",
+        fontSize: 15,
+    },
+
+    loginLink: {
+        color: COLORS.primary,
+        fontSize: 15,
+        fontWeight: "bold",
+    },
+});
