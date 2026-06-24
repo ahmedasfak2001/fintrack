@@ -12,36 +12,46 @@ import com.ahmedasfak.fintrack.dto.ErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse>
-    handleRuntimeException(
-            RuntimeException ex) {
+        @ExceptionHandler(RuntimeException.class)
+        public ResponseEntity<ErrorResponse> handleRuntimeException(
+                        RuntimeException ex) {
 
-        ErrorResponse response =
-                new ErrorResponse(
-                        LocalDateTime.now(),
-                        HttpStatus.BAD_REQUEST.value(),
-                        ex.getMessage());
+                ErrorResponse response = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                ex.getMessage());
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(response);
-    }
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(response);
+        }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse>
-    handleException(
-            Exception ex) {
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<ErrorResponse> handleException(
+                        Exception ex) {
 
-        ErrorResponse response =
-                new ErrorResponse(
-                        LocalDateTime.now(),
-                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        "Something went wrong");
+                ErrorResponse response = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                "Something went wrong");
 
-        return ResponseEntity
-                .status(
-                        HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(response);
-    }
+                return ResponseEntity
+                                .status(
+                                                HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(response);
+        }
+
+        @ExceptionHandler(AccountAlreadyVerifiedException.class)
+        public ResponseEntity<ErrorResponse> handleAccountAlreadyVerified(
+                        AccountAlreadyVerifiedException ex) {
+
+                ErrorResponse error = new ErrorResponse();
+
+                error.setMessage(
+                                ex.getMessage());
+
+                return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(error);
+        }
 }

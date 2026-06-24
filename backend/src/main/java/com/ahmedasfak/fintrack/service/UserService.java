@@ -10,6 +10,7 @@ import com.ahmedasfak.fintrack.dto.UserProfileResponse;
 import com.ahmedasfak.fintrack.entity.User;
 import com.ahmedasfak.fintrack.repository.UserRepository;
 import com.ahmedasfak.fintrack.entity.VerificationToken;
+import com.ahmedasfak.fintrack.exception.AccountAlreadyVerifiedException;
 import com.ahmedasfak.fintrack.exception.VerificationException;
 import com.ahmedasfak.fintrack.repository.VerificationTokenRepository;
 import com.ahmedasfak.fintrack.entity.PasswordResetToken;
@@ -191,13 +192,18 @@ public class UserService {
                                 .orElseThrow(() -> new RuntimeException(
                                                 "No account found with this email"));
 
+                // if (user.getEnabled()) {
+
+                // return """
+                // Your account is already verified.
+
+                // You can log in to FinTrack.
+                // """;
+                // }
                 if (user.getEnabled()) {
 
-                        return """
-                                        Your account is already verified.
-
-                                        You can log in to FinTrack.
-                                        """;
+                        throw new AccountAlreadyVerifiedException(
+                                        "Account is already verified");
                 }
 
                 verificationTokenRepository
