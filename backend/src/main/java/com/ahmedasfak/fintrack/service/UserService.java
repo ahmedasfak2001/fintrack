@@ -327,6 +327,7 @@ public class UserService {
                 return new UserProfileResponse(
                                 user.getName(),
                                 user.getEmail(),
-                                user.getMonthlyBudget());
+                                user.getMonthlyBudget(),
+                                user.getEnabled());
         }
 }

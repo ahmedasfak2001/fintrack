@@ -20,12 +20,13 @@ const ProfileScreen = ({ navigation }: any) => {
     const [currentExpense, setCurrentExpense] = useState(0);
 
     const [loading, setLoading] = useState(true);
-
+    const [enabled, setEnabled] = useState(false);
     const remainingBudget = monthlyBudget - currentExpense;
 
     const fetchProfile = async () => {
 
         try {
+
             const token =
                 await AsyncStorage.getItem("token");
 
@@ -45,13 +46,9 @@ const ProfileScreen = ({ navigation }: any) => {
                 response.data
             );
 
-            setUserName(
-                response.data.name
-            );
+            setUserName(response.data.name);
 
-            setEmail(
-                response.data.email
-            );
+            setEmail(response.data.email);
 
             setMonthlyBudget(
                 response.data.monthlyBudget || 0
@@ -59,6 +56,10 @@ const ProfileScreen = ({ navigation }: any) => {
 
             setCurrentExpense(
                 response.data.currentExpense || 0
+            );
+
+            setEnabled(
+                response.data.enabled || false
             );
 
         } catch (error) {
@@ -142,9 +143,34 @@ const ProfileScreen = ({ navigation }: any) => {
                     📧 {email}
                 </Text>
 
-                <Text style={styles.verified}>
-                    ✅ Email Verified
+                <Text
+                    style={[
+                        styles.verified,
+                        {
+                            color: enabled ? "green" : "#E67E22",
+                        },
+                    ]}
+                >
+                    {enabled
+                        ? "✅ Email Verified"
+                        : "⚠️ Email Not Verified"}
                 </Text>
+                {
+                    !enabled && (
+                        <TouchableOpacity
+                            style={styles.verifyButton}
+                            onPress={() =>
+                                navigation.navigate(
+                                    "ResendVerification"
+                                )
+                            }
+                        >
+                            <Text style={styles.verifyButtonText}>
+                                Verify Email
+                            </Text>
+                        </TouchableOpacity>
+                    )
+                }
             </View>
 
             {/* Financial Summary */}
@@ -272,6 +298,18 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 16,
         fontWeight: "bold",
+    },
+    verifyButton: {
+        marginTop: 10,
+        backgroundColor: "#F39C12",
+        padding: 10,
+        borderRadius: 8,
+    },
+
+    verifyButtonText: {
+        color: "#FFFFFF",
+        textAlign: "center",
+        fontWeight: "600",
     },
 
 });
