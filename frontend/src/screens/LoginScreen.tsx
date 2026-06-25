@@ -18,12 +18,15 @@ import { AuthResponse } from "../types/AuthResponse";
 import { showError, showSuccess } from "../utils/toast";
 import AuthLayout from "../components/AuthLayout";
 import { authStyles } from "../styles/authStyles";
+import PasswordInput from "../components/PasswordInput";
+import { useTheme } from "../theme/useTheme";
 
 const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { theme } = useTheme();
 
   const validateEmail = (
     email: string
@@ -139,11 +142,25 @@ const LoginScreen = ({ navigation }: any) => {
   return (
     <AuthLayout>
 
-      <Text style={authStyles.title}>
+      <Text
+        style={[
+          authStyles.title,
+          {
+            color: theme.text,
+          },
+        ]}
+      >
         Welcome Back
       </Text>
 
-      <Text style={authStyles.subtitle}>
+      <Text
+        style={[
+          authStyles.subtitle,
+          {
+            color: theme.secondaryText,
+          },
+        ]}
+      >
         Login to continue tracking your finances
       </Text>
 
@@ -151,47 +168,23 @@ const LoginScreen = ({ navigation }: any) => {
         placeholder="Email Address"
         value={email}
         onChangeText={setEmail}
-        style={authStyles.input}
-        placeholderTextColor="#94A3B8"
+        style={[
+          authStyles.input,
+          {
+            backgroundColor: theme.card,
+            borderColor: theme.border,
+            color: theme.text,
+          },
+        ]}
+        placeholderTextColor={theme.secondaryText}
         autoCapitalize="none"
       />
 
-      {/* <TextInput
-        placeholder="Password"
-        secureTextEntry
+      <PasswordInput
         value={password}
         onChangeText={setPassword}
-        style={authStyles.input}
-        placeholderTextColor="#94A3B8"
-      /> */}
-      <View style={styles.passwordContainer}>
-
-        <TextInput
-          placeholder="Password"
-          secureTextEntry={!showPassword}
-          value={password}
-          onChangeText={setPassword}
-          style={styles.passwordInput}
-          placeholderTextColor="#94A3B8"
-        />
-
-        <TouchableOpacity
-          onPress={() =>
-            setShowPassword(!showPassword)
-          }
-        >
-          <Ionicons
-            name={
-              showPassword
-                ? "eye-off-outline"
-                : "eye-outline"
-            }
-            size={22}
-            color="#64748B"
-          />
-        </TouchableOpacity>
-
-      </View>
+        placeholder="Password"
+      />
 
       <TouchableOpacity
         onPress={() =>
@@ -235,20 +228,29 @@ const LoginScreen = ({ navigation }: any) => {
           )
         }
       >
-        <Text style={[
-          authStyles.linkText,
-          {
-            textAlign: "center",
-            marginTop: 15,
-          }
-        ]}>
+        <Text
+          style={[
+            authStyles.linkText,
+            {
+              color: theme.secondaryText,
+              textAlign: "center",
+              marginTop: 15,
+            }
+          ]}>
           Resend Verification Email
         </Text>
       </TouchableOpacity>
 
       <View style={authStyles.linkContainer}>
 
-        <Text style={authStyles.linkText}>
+        <Text
+          style={[
+            authStyles.linkText,
+            {
+              color: theme.secondaryText,
+            },
+          ]}
+        >
           Don't have an account?{" "}
         </Text>
 
@@ -278,13 +280,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 14,
     marginBottom: 16,
-},
+  },
 
-passwordInput: {
+  passwordInput: {
     flex: 1,
     paddingVertical: 14,
     fontSize: 16,
-},
+  },
 });
 
 export default LoginScreen;

@@ -192,14 +192,6 @@ public class UserService {
                                 .orElseThrow(() -> new RuntimeException(
                                                 "No account found with this email"));
 
-                // if (user.getEnabled()) {
-
-                // return """
-                // Your account is already verified.
-
-                // You can log in to FinTrack.
-                // """;
-                // }
                 if (user.getEnabled()) {
 
                         throw new AccountAlreadyVerifiedException(

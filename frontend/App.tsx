@@ -22,11 +22,14 @@
 
 import AppNavigator from "./src/navigation/AppNavigator";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { ThemeProvider } from "./src/theme/ThemeContext";
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <AppNavigator />
-    </SafeAreaProvider>
+    <ThemeProvider>
+      <SafeAreaProvider>
+        <AppNavigator />
+      </SafeAreaProvider>
+    </ThemeProvider>
   );
 }

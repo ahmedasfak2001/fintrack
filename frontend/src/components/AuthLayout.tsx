@@ -15,6 +15,8 @@ import {
     Text
 } from "react-native";
 
+import { useTheme } from "../theme/useTheme";
+
 type Props = {
     children: React.ReactNode;
 };
@@ -33,6 +35,12 @@ const AuthLayout = ({
             new Animated.Value(30)
         ).current;
 
+    const scaleAnim = useRef(
+        new Animated.Value(0.95)
+    ).current;
+
+    const { darkMode, theme } = useTheme();
+
     useEffect(() => {
 
         Animated.parallel([
@@ -41,7 +49,7 @@ const AuthLayout = ({
                 fadeAnim,
                 {
                     toValue: 1,
-                    duration: 700,
+                    duration: 600,
                     useNativeDriver: true,
                 }
             ),
@@ -50,10 +58,19 @@ const AuthLayout = ({
                 slideAnim,
                 {
                     toValue: 0,
-                    duration: 700,
+                    duration: 600,
                     useNativeDriver: true,
                 }
             ),
+
+            Animated.timing(
+                scaleAnim,
+                {
+                    toValue: 1,
+                    duration: 600,
+                    useNativeDriver: true
+                }
+            )
 
         ]).start();
 
@@ -62,19 +79,32 @@ const AuthLayout = ({
     return (
 
         <ImageBackground
-            source={require("../assets/register-bg.png")}
+            source={
+                darkMode
+                    ? require("../assets/register-bg-dark.png")
+                    : require("../assets/register-bg.png")
+            }
             style={styles.background}
             resizeMode="cover"
         >
 
-            <View style={styles.overlay}>
+            <View
+                style={[
+                    styles.overlay,
+                    {
+                        backgroundColor: darkMode
+                            ? "rgba(0,0,0,0.45)"
+                            : "rgba(0,0,0,0.20)",
+                    },
+                ]}
+            >
 
                 <KeyboardAvoidingView
                     style={{ flex: 1 }}
                     behavior={
                         Platform.OS === "ios"
                             ? "padding"
-                            : undefined
+                            : "height"
                     }
                 >
 
@@ -88,18 +118,29 @@ const AuthLayout = ({
                             style={[
                                 styles.card,
                                 {
+                                    backgroundColor: darkMode
+                                        ? "rgba(30,41,59,0.92)"
+                                        : "rgba(255,255,255,0.95)",
+
+                                    borderColor: theme.border,
+                                    borderWidth: 1,
+
                                     opacity: fadeAnim,
+
                                     transform: [
-                                        {
-                                            translateY: slideAnim,
-                                        },
+                                        { translateY: slideAnim },
+                                        { scale: scaleAnim },
                                     ],
                                 },
                             ]}
                         >
 
                             <Image
-                                source={require("../assets/logo.png")}
+                                source={
+                                    darkMode
+                                        ? require("../assets/logo-dark.png")
+                                        : require("../assets/logo.png")
+                                }
                                 style={styles.logo}
                                 resizeMode="contain"
                             />
@@ -130,8 +171,6 @@ const styles = StyleSheet.create({
 
     overlay: {
         flex: 1,
-        backgroundColor:
-            "rgba(0,0,0,0.20)",
     },
 
     scrollContent: {
@@ -140,25 +179,37 @@ const styles = StyleSheet.create({
         padding: 20,
     },
 
+    // card: {
+    //     backgroundColor:
+    //         "rgba(255,255,255,0.95)",
+
+    //     borderRadius: 24,
+
+    //     padding: 25,
+
+    //     shadowColor: "#000",
+
+    //     shadowOffset: {
+    //         width: 0,
+    //         height: 4,
+    //     },
+
+    //     shadowOpacity: 0.15,
+
+    //     shadowRadius: 10,
+
+    //     elevation: 8,
+    // },
     card: {
-        backgroundColor:
-            "rgba(255,255,255,0.95)",
-
         borderRadius: 24,
-
         padding: 25,
-
         shadowColor: "#000",
-
         shadowOffset: {
             width: 0,
             height: 4,
         },
-
         shadowOpacity: 0.15,
-
         shadowRadius: 10,
-
         elevation: 8,
     },
     logo: {

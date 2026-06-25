@@ -3,13 +3,9 @@ import {
     View,
     Text,
     StyleSheet,
-    Button,
     RefreshControl,
     ScrollView,
-    Alert,
-    TouchableOpacity,
-    ActivityIndicator,
-    SafeAreaView,
+    ActivityIndicator
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SummaryResponse } from "../types/SummaryResponse";
@@ -25,9 +21,11 @@ import { SpendingInsightResponse } from "../types/SpendingInsightResponse";
 import { BiggestExpenseResponse } from "../types/BiggestExpenseResponse";
 import { SavingsPotentialResponse } from "../types/SavingsPotentialResponse";
 import { showError, showSuccess } from "../utils/toast";
+import { useTheme } from "../theme/useTheme";
 
 const DashboardScreen = ({ navigation }: any) => {
 
+    const { theme, darkMode } = useTheme();
     const [summary, setSummary] = useState<SummaryResponse | null>(null);
 
     const [refreshing, setRefreshing] = useState(false);
@@ -243,9 +241,13 @@ const DashboardScreen = ({ navigation }: any) => {
         return (
 
             <View
-                style={
-                    styles.loadingContainer
-                }
+                style={[
+                    styles.loadingContainer,
+                    {
+                        backgroundColor:
+                            theme.background,
+                    },
+                ]}
             >
 
                 <ActivityIndicator
@@ -254,9 +256,13 @@ const DashboardScreen = ({ navigation }: any) => {
                 />
 
                 <Text
-                    style={
-                        styles.loadingText
-                    }
+                    style={[
+                        styles.loadingText,
+                        {
+                            color:
+                                theme.secondaryText,
+                        },
+                    ]}
                 >
                     Loading Dashboard...
                 </Text>
@@ -265,148 +271,363 @@ const DashboardScreen = ({ navigation }: any) => {
         );
     }
 
+    const themedCard = {
+        backgroundColor: theme.card,
+        borderColor: theme.border,
+        borderWidth: 1,
+    };
+
     return (
-            <ScrollView
-                style={styles.container}
-                contentContainerStyle={
-                    styles.contentContainer
-                }
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }
+        <ScrollView
+            style={[
+                styles.container,
+                {
+                    backgroundColor:
+                        theme.background,
+                    paddingTop: 40
+                },
+            ]}
+
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={
+                styles.contentContainer
+            }
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                />
+            }
+        >
+
+            <Text
+                style={[
+                    styles.title,
+                    {
+                        color: theme.text,
+                    },
+                ]}
             >
-                <Text style={styles.title}>
-                    {welcomeMessage}
+                {welcomeMessage}
+            </Text>
+
+            <View style={styles.summaryContainer}>
+
+                <View
+                    style={[
+                        styles.card,
+                        themedCard,
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.cardTitle,
+                            {
+                                color:
+                                    theme.secondaryText,
+                            },
+                        ]}
+                    >
+                        Total Expenses
+                    </Text>
+
+                    <Text
+                        style={[
+                            styles.cardValue,
+                            {
+                                color:
+                                    theme.text,
+                            },
+                        ]}
+                    >
+                        ₹ {summary?.totalExpense ?? 0}
+                    </Text>
+                </View>
+
+                <View
+                    style={[
+                        styles.card,
+                        themedCard,
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.cardTitle,
+                            {
+                                color:
+                                    theme.secondaryText,
+                            },
+                        ]}
+                    >
+                        Total Entries
+                    </Text>
+
+                    <Text
+                        style={[
+                            styles.cardValue,
+                            {
+                                color:
+                                    theme.text,
+                            },
+                        ]}
+                    >
+                        {summary?.expenseCount ?? 0}
+                    </Text>
+                </View>
+
+            </View>
+
+            <View
+                style={[
+                    styles.comparisonCard,
+                    themedCard,
+                ]}
+            >
+
+                <Text
+                    style={[
+                        styles.cardTitle,
+                        {
+                            color:
+                                theme.secondaryText,
+                        },
+                    ]}
+                >
+                    Monthly Comparison
                 </Text>
 
-                <View style={styles.summaryContainer}>
-
-                    <View style={styles.card}>
-                        <Text style={styles.cardTitle}>
-                            Total Expenses
-                        </Text>
-
-                        <Text style={styles.cardValue}>
-                            ₹ {summary?.totalExpense ?? 0}
-                        </Text>
-                    </View>
-
-                    <View style={styles.card}>
-                        <Text style={styles.cardTitle}>
-                            Total Entries
-                        </Text>
-
-                        <Text style={styles.cardValue}>
-                            {summary?.expenseCount ?? 0}
-                        </Text>
-                    </View>
-
-                </View>
-
-                <View style={styles.comparisonCard}>
-
-                    <Text style={styles.cardTitle}>
-                        Monthly Comparison
-                    </Text>
-
-                    <Text style={styles.compareText}>
-                        Current: ₹
-                        {comparison?.currentMonthExpense ?? 0}
-                    </Text>
-
-                    <Text style={styles.compareText}>
-                        Previous: ₹
-                        {comparison?.previousMonthExpense ?? 0}
-                    </Text>
-
-                    {(comparison?.previousMonthExpense ?? 0) > 0 ? (
-
-                        <Text style={styles.compareResult}>
-                            {(comparison?.percentageChange ?? 0) >= 0
-                                ? "▲"
-                                : "▼"}{" "}
-                            {Math.abs(
-                                comparison?.percentageChange ?? 0
-                            ).toFixed(2)}%
-                        </Text>
-
-                    ) : (
-
-                        <Text style={styles.compareResult}>
-                            First month of tracking
-                        </Text>
-                    )}
-                </View>
-                <View style={styles.comparisonCard}>
-                    <Text style={styles.cardTitle}>
-                        Daily Average Spending
-                    </Text>
-                    <Text style={styles.cardValue}>
-                        ₹
+                <Text
+                    style={[
+                        styles.compareText,
                         {
-                            dailyAverage?.dailyAverage
-                                ?.toFixed(2) ?? "0.00"
-                        }
-                    </Text>
-                    <Text style={styles.compareText}>
-                        Per Day
-                    </Text>
-                </View>
-                <View style={styles.insightCard}>
-                    <Text style={styles.cardTitle}>
-                        Spending Insight
-                    </Text>
-                    <Text style={styles.insightText}>
-                        {insight?.message ??
-                            "Loading..."}
-                    </Text>
-                </View>
-                <View style={styles.insightCard}>
-
-                    <Text style={styles.cardTitle}>
-                        Biggest Expense This Month
-                    </Text>
-
-                    <Text style={styles.cardValue}>
-                        ₹ {biggestExpense?.amount ?? 0}
-                    </Text>
-
-                    <Text style={styles.compareText}>
-                        {
-                            biggestExpense?.description
-                            ?? "No expenses"
-                        }
-                    </Text>
-
-                </View>
-                <View style={styles.insightCard}>
-
-                    <Text style={styles.cardTitle}>
-                        Savings Potential
-                    </Text>
-
-                    <Text style={styles.cardValue}>
-                        ₹ {savingsPotential?.amount ?? 0}
-                    </Text>
-
-                    <Text style={styles.compareText}>
-                        {savingsPotential?.message}
-                    </Text>
-
-                </View>
-                <Text style={styles.sectionTitle}>
-                    Category Breakdown
+                            color:
+                                theme.text,
+                        },
+                    ]}
+                >
+                    Current: ₹
+                    {comparison?.currentMonthExpense ?? 0}
                 </Text>
 
+                <Text
+                    style={[
+                        styles.compareText,
+                        {
+                            color:
+                                theme.text,
+                        },
+                    ]}
+                >
+                    Previous: ₹
+                    {comparison?.previousMonthExpense ?? 0}
+                </Text>
+
+                {(comparison?.previousMonthExpense ?? 0) > 0 ? (
+
+                    <Text
+                        style={[
+                            styles.compareResult,
+                            {
+                                color:
+                                    (comparison?.percentageChange ?? 0) >= 0
+                                        ? "#22C55E"
+                                        : "#EF4444",
+                            },
+                        ]}
+                    >
+                        {(comparison?.percentageChange ?? 0) >= 0
+                            ? "▲"
+                            : "▼"}{" "}
+                        {Math.abs(
+                            comparison?.percentageChange ?? 0
+                        ).toFixed(2)}%
+                    </Text>
+
+                ) : (
+
+                    <Text
+                        style={[
+                            styles.compareResult,
+                            {
+                                color: theme.text,
+                            },
+                        ]}
+                    >
+                        First month of tracking
+                    </Text>
+                )}
+            </View>
+            <View
+                style={[
+                    styles.comparisonCard,
+                    themedCard,
+                ]}
+            >
+                <Text
+                    style={[
+                        styles.cardTitle,
+                        {
+                            color:
+                                theme.secondaryText,
+                        },
+                    ]}
+                >
+                    Daily Average Spending
+                </Text>
+                <Text
+                    style={[
+                        styles.cardValue,
+                        {
+                            color:
+                                theme.text,
+                        },
+                    ]}
+                >
+                    ₹
+                    {
+                        dailyAverage?.dailyAverage
+                            ?.toFixed(2) ?? "0.00"
+                    }
+                </Text>
+                <Text
+                    style={[
+                        styles.compareText,
+                        {
+                            color:
+                                theme.text,
+                        },
+                    ]}
+                >
+                    Per Day
+                </Text>
+            </View>
+            <View style={[styles.insightCard, themedCard]}>
+                <Text
+                    style={[
+                        styles.cardTitle,
+                        {
+                            color:
+                                theme.secondaryText,
+                        },
+                    ]}
+                >
+                    Spending Insight
+                </Text>
+                <Text
+                    style={[
+                        styles.insightText,
+                        {
+                            color: theme.text,
+                        },
+                    ]}
+                >
+                    {insight?.message ??
+                        "Loading..."}
+                </Text>
+            </View>
+            <View style={[
+                styles.insightCard,
+                themedCard
+            ]}>
+
+                <Text
+                    style={[
+                        styles.cardTitle,
+                        {
+                            color:
+                                theme.secondaryText,
+                        },
+                    ]}
+                >
+                    Biggest Expense This Month
+                </Text>
+
+                <Text
+                    style={[
+                        styles.cardValue,
+                        {
+                            color:
+                                theme.text,
+                        },
+                    ]}
+                >
+                    ₹ {biggestExpense?.amount ?? 0}
+                </Text>
+
+                <Text
+                    style={[
+                        styles.compareText,
+                        {
+                            color:
+                                theme.text,
+                        },
+                    ]}
+                >
+                    {
+                        biggestExpense?.description
+                        ?? "No expenses"
+                    }
+                </Text>
+
+            </View>
+            <View style={[
+                styles.insightCard,
+                themedCard
+            ]}>
+
+                <Text
+                    style={[
+                        styles.cardTitle,
+                        {
+                            color:
+                                theme.secondaryText,
+                        },
+                    ]}
+                >
+                    Savings Potential
+                </Text>
+
+                <Text
+                    style={[
+                        styles.cardValue,
+                        {
+                            color:
+                                theme.text,
+                        },
+                    ]}
+                >
+                    ₹ {savingsPotential?.amount ?? 0}
+                </Text>
+
+                <Text
+                    style={[
+                        styles.compareText,
+                        {
+                            color:
+                                theme.text,
+                        },
+                    ]}
+                >
+                    {savingsPotential?.message}
+                </Text>
+
+            </View>
+            <Text
+                style={[
+                    styles.sectionTitle,
+                    {
+                        color:
+                            theme.text,
+                    },
+                ]}
+            >
+                Category Breakdown
+            </Text>
+
+            <View style={{ marginBottom: 15 }}>
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{
-                        paddingRight: 10,
-                    }}
                 >
 
                     {
@@ -420,17 +641,32 @@ const DashboardScreen = ({ navigation }: any) => {
 
                                 <View
                                     key={category}
-                                    style={styles.categoryCard}
+                                    style={[
+                                        styles.categoryCard,
+                                        themedCard,
+                                    ]}
                                 >
 
                                     <Text
-                                        style={styles.categoryName}
+                                        style={[
+                                            styles.categoryName,
+                                            {
+                                                color:
+                                                    theme.secondaryText,
+                                            },
+                                        ]}
                                     >
                                         {category}
                                     </Text>
 
                                     <Text
-                                        style={styles.categoryAmount}
+                                        style={[
+                                            styles.categoryAmount,
+                                            {
+                                                color:
+                                                    theme.text,
+                                            },
+                                        ]}
                                     >
                                         ₹ {amount}
                                     </Text>
@@ -441,116 +677,15 @@ const DashboardScreen = ({ navigation }: any) => {
                     }
 
                 </ScrollView>
+            </View>
 
-                <Text style={styles.sectionTitle}>
-                    Quick Actions
-                </Text>
-
-                <View style={styles.actionGrid}>
-
-                    <TouchableOpacity
-                        style={styles.actionCard}
-                        onPress={() =>
-                            navigation.navigate(
-                                "AddExpense"
-                            )
-                        }
-                    >
-                        <Text style={styles.actionIcon}>
-                            ➕
-                        </Text>
-
-                        <Text style={styles.actionText}>
-                            Add Expense
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.actionCard}
-                        onPress={() =>
-                            navigation.navigate(
-                                "Expenses"
-                            )
-                        }
-                    >
-                        <Text style={styles.actionIcon}>
-                            📋
-                        </Text>
-
-                        <Text style={styles.actionText}>
-                            Expenses
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.actionCard}
-                        onPress={() =>
-                            navigation.navigate(
-                                "MonthlySummary"
-                            )
-                        }
-                    >
-                        <Text style={styles.actionIcon}>
-                            📊
-                        </Text>
-
-                        <Text style={styles.actionText}>
-                            Analytics
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.actionCard}
-                        onPress={() =>
-                            navigation.navigate(
-                                "Budget"
-                            )
-                        }
-                    >
-                        <Text style={styles.actionIcon}>
-                            💰
-                        </Text>
-
-                        <Text style={styles.actionText}>
-                            Budget
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.actionCard}
-                        onPress={exportReport}
-                    >
-                        <Text style={styles.actionIcon}>
-                            📄
-                        </Text>
-
-                        <Text style={styles.actionText}>
-                            Export
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.actionCard}
-                        onPress={logout}
-                    >
-                        <Text style={styles.actionIcon}>
-                            🚪
-                        </Text>
-
-                        <Text style={styles.actionText}>
-                            Logout
-                        </Text>
-                    </TouchableOpacity>
-
-                </View>
-            </ScrollView >
+        </ScrollView >
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
         padding: 16
     },
     title: {
@@ -562,7 +697,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     card: {
-        backgroundColor: COLORS.card,
         borderRadius: 16,
         padding: 20,
         marginBottom: 12,
@@ -591,7 +725,6 @@ const styles = StyleSheet.create({
     },
     actionCard: {
         width: "48%",
-        backgroundColor: "#FFFFFF",
         borderRadius: 16,
         paddingVertical: 20,
         alignItems: "center",
@@ -611,7 +744,6 @@ const styles = StyleSheet.create({
     },
     categoryCard: {
         width: 140,
-        backgroundColor: "#FFFFFF",
         padding: 16,
         borderRadius: 14,
         marginRight: 12,
@@ -630,7 +762,6 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     comparisonCard: {
-        backgroundColor: COLORS.card,
         borderRadius: 16,
         padding: 20,
         marginBottom: 15,
@@ -648,7 +779,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     insightCard: {
-        backgroundColor: COLORS.card,
         borderRadius: 16,
         padding: 20,
         marginTop: 12,
@@ -664,8 +794,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor:
-            COLORS.background,
     },
     loadingText: {
         marginTop: 15,

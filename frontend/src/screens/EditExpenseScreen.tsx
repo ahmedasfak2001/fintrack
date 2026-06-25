@@ -17,6 +17,8 @@ import {
 } from "react-native";
 import { COLORS } from "../constants/colors";
 import { showError, showSuccess } from "../utils/toast";
+import { useTheme } from "../theme/useTheme";
+import { Dropdown } from "react-native-element-dropdown";
 
 
 const EditExpenseScreen = ({
@@ -24,6 +26,7 @@ const EditExpenseScreen = ({
     navigation,
 }: any) => {
 
+    const { theme } = useTheme();
     const { expense } = route.params;
 
     const [amount, setAmount] =
@@ -95,23 +98,6 @@ const EditExpenseScreen = ({
                     }
                 );
 
-            // Alert.alert(
-            //     "Success",
-            //     response.data,
-            //     [
-            //         {
-            //             text: "OK",
-            //             onPress: () => {
-
-            //                 setTimeout(() => {
-
-            //                     navigation.goBack();
-
-            //                 }, 500);
-            //             },
-            //         },
-            //     ]
-            // );
             showSuccess(response.data);
             setTimeout(() => {
                 navigation.goBack();
@@ -122,10 +108,6 @@ const EditExpenseScreen = ({
 
             console.error(error);
 
-            // Alert.alert(
-            //     "Error",
-            //     "Failed to update expense"
-            // );
             showError(
                 "Failed to update expense"
             );
@@ -133,90 +115,152 @@ const EditExpenseScreen = ({
 
             setLoading(false);
         }
-        // catch (error: any) {
 
-        //     console.log(
-        //         "STATUS:",
-        //         error.response?.status
-        //     );
-
-        //     console.log(
-        //         "DATA:",
-        //         error.response?.data
-        //     );
-
-        //     Alert.alert(
-        //         "Error",
-        //         JSON.stringify(
-        //             error.response?.data
-        //         )
-        //     );
-        // }
     };
 
     return (
         <ScrollView
-            style={styles.container}
+            style={[
+                styles.container,
+                {
+                    backgroundColor: theme.background,
+                },
+            ]}
             contentContainerStyle={{
                 paddingBottom: 30,
             }}
         >
 
-            <Text style={styles.subtitle}>
+            <Text
+                style={[
+                    styles.subtitle,
+                    { color: theme.secondaryText },
+                ]}
+            >
                 Update your expense details
             </Text>
-            <Text style={styles.label}>
+            <Text
+                style={[
+                    styles.label,
+                    { color: theme.secondaryText },
+                ]}
+            >
                 Amount
             </Text>
             <TextInput
                 value={amount}
                 onChangeText={setAmount}
                 keyboardType="numeric"
-                style={styles.input}
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: theme.card,
+                        color: theme.text,
+                        borderColor: theme.border,
+                    },
+                ]}
+                placeholderTextColor={theme.secondaryText}
             />
-            <Text style={styles.label}>
+            <Text
+                style={[
+                    styles.label,
+                    { color: theme.secondaryText },
+                ]}
+            >
                 Category
             </Text>
-            <Picker
-                selectedValue={category}
-                onValueChange={setCategory}
-                style={styles.picker}
-            >
-                {
-                    categories.map(category => (
-                        <Picker.Item
-                            key={category}
-                            label={category}
-                            value={category}
-                        />
-                    ))
+
+            <Dropdown
+                maxHeight={300}
+                data={categories.map((item) => ({
+                    label: item,
+                    value: item,
+                }))}
+                labelField="label"
+                valueField="value"
+                value={category}
+                placeholder="Select Category"
+
+                search
+                searchPlaceholder="Search Category..."
+
+                onChange={(item) =>
+                    setCategory(item.value)
                 }
-            </Picker>
-            <Text style={styles.label}>
+
+                style={[
+                    styles.dropdown,
+                    {
+                        backgroundColor: theme.card,
+                        borderColor: theme.border,
+                    },
+                ]}
+
+                containerStyle={{
+                    backgroundColor: theme.card,
+                    borderColor: theme.border,
+                    borderWidth: 1,
+                    borderRadius: 12,
+                }}
+
+                placeholderStyle={{
+                    color: theme.secondaryText,
+                }}
+
+                selectedTextStyle={{
+                    color: theme.text,
+                }}
+
+                itemTextStyle={{
+                    color: theme.text,
+                }}
+
+                inputSearchStyle={{
+                    color: theme.text,
+                    backgroundColor: theme.card,
+                    borderColor: theme.border,
+                    borderRadius: 8,
+                }}
+
+                activeColor={
+                    theme.card === "#FFFFFF"
+                        ? "#EEF2FF"
+                        : "#334155"
+                }
+
+                renderRightIcon={() => (
+                    <Text
+                        style={{
+                            color: theme.text,
+                            fontSize: 18,
+                        }}
+                    >
+                        ▼
+                    </Text>
+                )}
+            />
+            <Text
+                style={[
+                    styles.label,
+                    { color: theme.secondaryText },
+                ]}
+            >
                 Description
             </Text>
             <TextInput
                 value={description}
                 onChangeText={setDescription}
-                style={styles.input}
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: theme.card,
+                        color: theme.text,
+                        borderColor: theme.border,
+                    },
+                ]}
+                placeholderTextColor={theme.secondaryText}
             />
 
-            {/* <Button
-                title="Update Expense"
-                onPress={() =>
-                    Alert.alert(
-                        "Next Step"
-                    )
-                }
-            /> */}
-            {/* <TouchableOpacity
-                style={styles.updateButton}
-                onPress={handleUpdateExpense}
-            >
-                <Text style={styles.updateButtonText}>
-                    Update Expense
-                </Text>
-            </TouchableOpacity> */}
             <TouchableOpacity
                 style={[
                     styles.updateButton,
@@ -257,7 +301,6 @@ const EditExpenseScreen = ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
         padding: 20,
     },
 
@@ -311,6 +354,13 @@ const styles = StyleSheet.create({
         color: "#FFFFFF",
         fontSize: 16,
         fontWeight: "bold",
+    },
+    dropdown: {
+        height: 55,
+        borderWidth: 1,
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        marginBottom: 18,
     },
 });
 

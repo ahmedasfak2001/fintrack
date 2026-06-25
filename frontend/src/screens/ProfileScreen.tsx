@@ -6,7 +6,9 @@ import {
     TouchableOpacity,
     Alert,
     ActivityIndicator,
+    ScrollView,
 } from "react-native";
+import { useTheme } from "../theme/useTheme";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api/api";
@@ -17,6 +19,12 @@ import { showError, showSuccess } from "../utils/toast";
 import { COLORS } from "../constants/colors";
 
 const ProfileScreen = ({ navigation }: any) => {
+
+    const {
+        theme,
+        themeMode,
+        setThemeMode,
+    } = useTheme();
 
     // we are fetching data from backend
     const [userName, setUserName] = useState("");
@@ -161,9 +169,13 @@ const ProfileScreen = ({ navigation }: any) => {
         return (
 
             <View
-                style={
-                    styles.loadingContainer
-                }
+                style={[
+                    styles.loadingContainer,
+                    {
+                        backgroundColor:
+                            theme.background,
+                    },
+                ]}
             >
 
                 <ActivityIndicator
@@ -172,9 +184,13 @@ const ProfileScreen = ({ navigation }: any) => {
                 />
 
                 <Text
-                    style={
-                        styles.loadingText
-                    }
+                    style={[
+                        styles.loadingText,
+                        {
+                            color:
+                                theme.secondaryText,
+                        },
+                    ]}
                 >
                     Loading Profile...
                 </Text>
@@ -183,19 +199,67 @@ const ProfileScreen = ({ navigation }: any) => {
         );
     }
     return (
-        <View style={styles.container}>
-
-            <Text style={styles.title}>
+        <ScrollView
+            style={[
+                styles.container,
+                {
+                    backgroundColor:
+                        theme.background,
+                },
+            ]}
+            contentContainerStyle={{
+                paddingBottom: 40,
+                paddingTop: 40
+            }}
+            showsVerticalScrollIndicator={false}
+        >
+            {/* <View style={{ flex: 1 }}> */}
+            <Text
+                style={[
+                    styles.title,
+                    {
+                        color: theme.text,
+                    },
+                ]}
+            >
                 Profile
             </Text>
 
             {/* User Card */}
-            <View style={styles.card}>
-                <Text style={styles.name}>
+            <View
+                style={[
+                    styles.card,
+                    {
+                        backgroundColor:
+                            theme.card,
+
+                        borderColor:
+                            theme.border,
+
+                        borderWidth: 1,
+                    },
+                ]}
+            >
+                <Text
+                    style={[
+                        styles.name,
+                        {
+                            color: theme.text,
+                        },
+                    ]}
+                >
                     👤 {userName}
                 </Text>
 
-                <Text style={styles.email}>
+                <Text
+                    style={[
+                        styles.email,
+                        {
+                            color:
+                                theme.secondaryText,
+                        },
+                    ]}
+                >
                     📧 {email}
                 </Text>
 
@@ -230,30 +294,91 @@ const ProfileScreen = ({ navigation }: any) => {
             </View>
 
             {/* Financial Summary */}
-            <View style={styles.card}>
+            <View
+                style={[
+                    styles.card,
+                    {
+                        backgroundColor:
+                            theme.card,
 
-                <Text style={styles.sectionTitle}>
+                        borderColor:
+                            theme.border,
+
+                        borderWidth: 1,
+                    },
+                ]}
+            >
+
+                <Text
+                    style={[
+                        styles.sectionTitle,
+                        {
+                            color: theme.text,
+                        },
+                    ]}
+                >
                     Financial Summary
                 </Text>
 
-                <Text style={styles.summaryText}>
+                <Text
+                    style={[
+                        styles.summaryText,
+                        {
+                            color: theme.text,
+                        },
+                    ]}
+                >
                     Monthly Budget : ₹{monthlyBudget}
                 </Text>
 
-                <Text style={styles.summaryText}>
+                <Text
+                    style={[
+                        styles.summaryText,
+                        {
+                            color: theme.text,
+                        },
+                    ]}
+                >
                     Current Expense : ₹{currentExpense}
                 </Text>
 
-                <Text style={styles.summaryText}>
+                <Text
+                    style={[
+                        styles.summaryText,
+                        {
+                            color: theme.text,
+                        },
+                    ]}
+                >
                     Remaining Budget : ₹{remainingBudget}
                 </Text>
 
             </View>
 
             {/* Future Settings Section */}
-            <View style={styles.card}>
+            <View
+                style={[
+                    styles.card,
+                    {
+                        backgroundColor:
+                            theme.card,
 
-                <Text style={styles.sectionTitle}>
+                        borderColor:
+                            theme.border,
+
+                        borderWidth: 1,
+                    },
+                ]}
+            >
+
+                <Text
+                    style={[
+                        styles.sectionTitle,
+                        {
+                            color: theme.text,
+                        },
+                    ]}
+                >
                     Account
                 </Text>
                 <TouchableOpacity onPress={() =>
@@ -261,7 +386,14 @@ const ProfileScreen = ({ navigation }: any) => {
                         "ChangePassword"
                     )
                 }>
-                    <Text style={styles.menuItem}>
+                    <Text
+                        style={[
+                            styles.menuItem,
+                            {
+                                color: theme.text,
+                            },
+                        ]}
+                    >
                         🔒 Change Password
                     </Text>
                 </TouchableOpacity>
@@ -271,7 +403,14 @@ const ProfileScreen = ({ navigation }: any) => {
                         "Budget"
                     )
                 }>
-                    <Text style={styles.menuItem}>
+                    <Text
+                        style={[
+                            styles.menuItem,
+                            {
+                                color: theme.text,
+                            },
+                        ]}
+                    >
                         📊 Budget Settings
                     </Text>
                 </TouchableOpacity>
@@ -280,12 +419,133 @@ const ProfileScreen = ({ navigation }: any) => {
                     onPress={exportReport}
                 >
 
-                    <Text style={styles.menuItem}>
+                    <Text
+                        style={[
+                            styles.menuItem,
+                            {
+                                color: theme.text,
+                            },
+                        ]}
+                    >
                         📥 Export Expenses
                     </Text>
                 </TouchableOpacity>
 
+                <Text
+                    style={[
+                        styles.sectionTitle,
+                        {
+                            color: theme.text,
+                            marginTop: 10,
+                        },
+                    ]}
+                >
+                    🎨 Appearance
+                </Text>
+
+                <TouchableOpacity
+                    style={[
+                        styles.themeOption,
+                        {
+                            borderBottomColor:
+                                theme.border,
+                        },
+                    ]}
+                    onPress={() =>
+                        setThemeMode("light")
+                    }
+                >
+                    <Text
+                        style={{
+                            color: theme.text,
+                            fontSize: 16,
+                        }}
+                    >
+                        ☀️ Light Mode
+                    </Text>
+
+                    {themeMode === "light" && (
+                        <Text
+                            style={{
+                                color: COLORS.primary,
+                                fontSize: 18,
+                                fontWeight: "bold",
+                            }}
+                        >
+                            ✓
+                        </Text>
+                    )}
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={[
+                        styles.themeOption,
+                        {
+                            borderBottomColor:
+                                theme.border,
+                        },
+                    ]}
+                    onPress={() =>
+                        setThemeMode("dark")
+                    }
+                >
+                    <Text
+                        style={{
+                            color: theme.text,
+                            fontSize: 16,
+                        }}
+                    >
+                        🌙 Dark Mode
+                    </Text>
+
+                    {themeMode === "dark" && (
+                        <Text
+                            style={{
+                                color: COLORS.primary,
+                                fontSize: 18,
+                                fontWeight: "bold",
+                            }}
+                        >
+                            ✓
+                        </Text>
+                    )}
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={[
+                        styles.themeOption,
+                        {
+                            borderBottomWidth: 0,
+                        },
+                    ]}
+                    onPress={() =>
+                        setThemeMode("system")
+                    }
+                >
+                    <Text
+                        style={{
+                            color: theme.text,
+                            fontSize: 16,
+                        }}
+                    >
+                        📱 System Default
+                    </Text>
+
+                    {themeMode === "system" && (
+                        <Text
+                            style={{
+                                color: COLORS.primary,
+                                fontSize: 18,
+                                fontWeight: "bold",
+                            }}
+                        >
+                            ✓
+                        </Text>
+                    )}
+                </TouchableOpacity>
+
             </View>
+            {/* </View> */}
 
             {/* Logout Button */}
             <TouchableOpacity
@@ -297,7 +557,9 @@ const ProfileScreen = ({ navigation }: any) => {
                 </Text>
             </TouchableOpacity>
 
-        </View>
+        </ScrollView>
+
+
     );
 };
 
@@ -307,7 +569,6 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: "#F5F5F5",
         padding: 20,
     },
 
@@ -318,7 +579,6 @@ const styles = StyleSheet.create({
     },
 
     card: {
-        backgroundColor: "#FFFFFF",
         padding: 18,
         borderRadius: 12,
         marginBottom: 15,
@@ -387,14 +647,20 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor:
-            COLORS.background,
     },
     loadingText: {
         marginTop: 15,
         fontSize: 18,
         fontWeight: "600",
         color: "#64748B",
-    }
+    },
+
+    themeOption: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+    },
 
 });

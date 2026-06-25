@@ -1,4 +1,8 @@
-import { NavigationContainer } from "@react-navigation/native";
+import {
+    NavigationContainer,
+    DarkTheme,
+    DefaultTheme,
+} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Toast from "react-native-toast-message";
 
@@ -19,6 +23,7 @@ import ChangePasswordScreen from "../screens/ChangePasswordScreen";
 
 import { navigationRef } from "../utils/NavigationService";
 import BottomTabNavigator from "./BottomTabNavigator";
+import { useTheme } from "../theme/useTheme";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,10 +37,41 @@ const linking = {
 };
 
 export default function AppNavigator() {
+
+    const {
+        darkMode,
+        theme,
+    } = useTheme();
+
     return (
         <>
-            <NavigationContainer ref={navigationRef} linking={linking}>
-                <Stack.Navigator initialRouteName="Splash">
+            <NavigationContainer
+                ref={navigationRef}
+                linking={linking}
+                theme={
+                    darkMode
+                        ? DarkTheme
+                        : DefaultTheme
+                }
+            >
+                <Stack.Navigator initialRouteName="Splash"
+                    screenOptions={{
+                        headerStyle: {
+                            backgroundColor: theme.card,
+                        },
+
+                        headerTintColor: theme.text,
+
+                        headerTitleStyle: {
+                            color: theme.text,
+                            fontWeight: "600",
+                        },
+
+                        contentStyle: {
+                            backgroundColor: theme.background,
+                        },
+                    }}
+                >
 
                     <Stack.Screen
                         name="Splash"
@@ -60,11 +96,6 @@ export default function AppNavigator() {
                             headerShown: false,
                         }}
                     />
-
-                    {/* <Stack.Screen
-                        name="Dashboard"
-                        component={DashboardScreen}
-                    /> */}
 
                     <Stack.Screen
                         name="MainApp"

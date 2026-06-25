@@ -118,14 +118,35 @@ export default function ResendVerificationScreen({ navigation }: any) {
                 ]
             );
 
-        } catch (error: any) {
+        }
+        // catch (error: any) {
 
-            showError(
+        //     showError(
+        //         error?.response?.data?.message ||
+        //         "Something went wrong"
+        //     );
+
+        // } 
+        catch (error: any) {
+
+            const message =
                 error?.response?.data?.message ||
-                "Something went wrong"
-            );
+                "Something went wrong";
 
-        } finally {
+            showError(message);
+
+            if (
+                error?.response?.status === 409
+            ) {
+
+                setTimeout(() => {
+
+                    navigation.navigate("Login");
+
+                }, 2000);
+            }
+        }
+        finally {
 
             setLoading(false);
         }
@@ -135,68 +156,68 @@ export default function ResendVerificationScreen({ navigation }: any) {
 
         <AuthLayout>
 
-                <Text style={styles.title}>
-                    Verify Your Email
-                </Text>
+            <Text style={styles.title}>
+                Verify Your Email
+            </Text>
 
-                <Text style={styles.subtitle}>
-                    Enter your registered email address and we'll send a fresh verification link.
-                </Text>
+            <Text style={styles.subtitle}>
+                Enter your registered email address and we'll send a fresh verification link.
+            </Text>
 
-                <TextInput
-                    placeholder="Email Address"
-                    value={email}
-                    onChangeText={setEmail}
-                    style={styles.input}
-                    placeholderTextColor="#94A3B8"
-                    autoCapitalize="none"
-                />
+            <TextInput
+                placeholder="Email Address"
+                value={email}
+                onChangeText={setEmail}
+                style={styles.input}
+                placeholderTextColor="#94A3B8"
+                autoCapitalize="none"
+            />
+
+            <TouchableOpacity
+                style={[
+                    styles.button,
+                    loading &&
+                    styles.disabledButton,
+                ]}
+                onPress={resendEmail}
+                disabled={loading}
+            >
+
+                {
+                    loading ? (
+
+                        <ActivityIndicator
+                            color="#FFFFFF"
+                        />
+
+                    ) : (
+
+                        <Text style={styles.buttonText}>
+                            Send Verification Email
+                        </Text>
+
+                    )
+                }
+
+            </TouchableOpacity>
+
+            <View style={styles.backContainer}>
+
+                <Text style={styles.backText}>
+                    Already verified?{" "}
+                </Text>
 
                 <TouchableOpacity
-                    style={[
-                        styles.button,
-                        loading &&
-                        styles.disabledButton,
-                    ]}
-                    onPress={resendEmail}
-                    disabled={loading}
-                >
-
-                    {
-                        loading ? (
-
-                            <ActivityIndicator
-                                color="#FFFFFF"
-                            />
-
-                        ) : (
-
-                            <Text style={styles.buttonText}>
-                                Send Verification Email
-                            </Text>
-
-                        )
+                    onPress={() =>
+                        navigation.navigate("Login")
                     }
-
+                >
+                    <Text style={styles.backLink}>
+                        Login
+                    </Text>
                 </TouchableOpacity>
 
-                <View style={styles.backContainer}>
-
-                    <Text style={styles.backText}>
-                        Already verified?{" "}
-                    </Text>
-
-                    <TouchableOpacity
-                        onPress={() =>
-                            navigation.navigate("Login")
-                        }
-                    >
-                        <Text style={styles.backLink}>
-                            Login
-                        </Text>
-                    </TouchableOpacity>
-
-                </View>
+            </View>
 
         </AuthLayout>
 

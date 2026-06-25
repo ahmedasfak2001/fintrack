@@ -9,29 +9,44 @@ import {
     RefreshControl,
     TextInput,
     TouchableOpacity,
-    ActivityIndicator
+    ActivityIndicator,
+    ScrollView
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Picker } from "@react-native-picker/picker";
 
 import api from "../api/api";
 import { COLORS } from "../constants/colors";
 import { showError, showSuccess } from "../utils/toast";
+import { useTheme } from "../theme/useTheme";
+import { Dropdown } from "react-native-element-dropdown";
 
 const ExpenseListScreen = ({ navigation }: any) => {
 
+    const { theme } = useTheme();
     const [expenses, setExpenses] = useState([]);
     const [categories, setCategories] = useState<string[]>([]);
 
-    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedCategory, setSelectedCategory] =
+        useState<string | null>(null);
     const [searchText, setSearchText] = useState("");
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(true);
+    const categoryOptions = [
+        {
+            label: "All Categories",
+            value: "",
+        },
+
+        ...categories.map(category => ({
+            label: category,
+            value: category,
+        })),
+    ];
     const onRefresh = async () => {
 
         setRefreshing(true);
 
-        await fetchExpenses();
+        await fetchExpenses(false);
 
         setRefreshing(false);
     };
@@ -43,7 +58,7 @@ const ExpenseListScreen = ({ navigation }: any) => {
                 "Expense List Refreshed"
             );
 
-            fetchExpenses();
+            fetchExpenses(true);
             fetchCategories();
 
         }, [])
@@ -51,7 +66,13 @@ const ExpenseListScreen = ({ navigation }: any) => {
 
     useEffect(() => {
 
-        fetchExpenses();
+        const timer = setTimeout(() => {
+
+            fetchExpenses(false);
+
+        }, 500);
+
+        return () => clearTimeout(timer);
 
     }, [
         selectedCategory,
@@ -59,11 +80,15 @@ const ExpenseListScreen = ({ navigation }: any) => {
     ]);
 
     // const fetchExpenses = async () => {
-    const fetchExpenses = async (): Promise<void> => {
+    const fetchExpenses = async (
+        showLoader: boolean = true
+    ): Promise<void> => {
 
         try {
 
-            setLoading(true);
+            if (showLoader) {
+                setLoading(true);
+            }
 
             const token =
                 await AsyncStorage.getItem("token");
@@ -106,7 +131,9 @@ const ExpenseListScreen = ({ navigation }: any) => {
             );
         } finally {
 
-            setLoading(false);
+            if (showLoader) {
+                setLoading(false);
+            }
         }
     };
 
@@ -181,16 +208,11 @@ const ExpenseListScreen = ({ navigation }: any) => {
             showSuccess(
                 "Expense deleted successfully"
             );
-            fetchExpenses();
+            fetchExpenses(false);
 
         } catch (error) {
 
             console.error(error);
-
-            // Alert.alert(
-            //     "Error",
-            //     "Failed to delete expense"
-            // );
 
             showError(
                 "Failed to delete expense"
@@ -202,9 +224,13 @@ const ExpenseListScreen = ({ navigation }: any) => {
         return (
 
             <View
-                style={
-                    styles.loadingContainer
-                }
+                style={[
+                    styles.loadingContainer,
+                    {
+                        backgroundColor:
+                            theme.background,
+                    },
+                ]}
             >
 
                 <ActivityIndicator
@@ -213,9 +239,13 @@ const ExpenseListScreen = ({ navigation }: any) => {
                 />
 
                 <Text
-                    style={
-                        styles.loadingText
-                    }
+                    style={[
+                        styles.loadingText,
+                        {
+                            color:
+                                theme.secondaryText,
+                        },
+                    ]}
                 >
                     Loading Expenses...
                 </Text>
@@ -223,35 +253,103 @@ const ExpenseListScreen = ({ navigation }: any) => {
             </View>
         );
     }
+
+    const themedCard = {
+        backgroundColor: theme.card,
+        borderColor: theme.border,
+        borderWidth: 1,
+    };
     return (
-        <View style={styles.container}>
+        <View
+            style={[
+                styles.container,
+                {
+                    backgroundColor:
+                        theme.background,
+                },
+            ]}
+        >
             <TextInput
                 placeholder="🔍 Search Expenses..."
+                placeholderTextColor={
+                    theme.secondaryText
+                }
                 value={searchText}
                 onChangeText={setSearchText}
-                style={styles.searchInput}
+                style={[
+                    styles.searchInput,
+                    {
+                        backgroundColor:
+                            theme.card,
+                        borderColor:
+                            theme.border,
+                        color:
+                            theme.text,
+                    },
+                ]}
             />
-            <Picker
-                selectedValue={selectedCategory}
-                onValueChange={setSelectedCategory}
-            >
-
-                <Picker.Item
-                    label="All Categories"
-                    value=""
-                />
-
-                {
-                    categories.map(category => (
-                        <Picker.Item
-                            key={category}
-                            label={category}
-                            value={category}
-                        />
-                    ))
+            <Dropdown
+                maxHeight={300}
+                style={{
+                    backgroundColor: theme.card,
+                    borderColor: theme.border,
+                    borderWidth: 1,
+                    borderRadius: 12,
+                    paddingHorizontal: 12,
+                    height: 50,
+                    marginBottom: 10,
+                }}
+                containerStyle={{
+                    backgroundColor: theme.card,
+                    borderRadius: 12,
+                    borderWidth: 1,
+                    borderColor: theme.border,
+                }}
+                placeholderStyle={{
+                    color: theme.secondaryText,
+                    fontSize: 16,
+                    opacity: 1,
+                }}
+                selectedTextStyle={{
+                    color: theme.text,
+                }}
+                itemTextStyle={{
+                    color: theme.text,
+                }}
+                inputSearchStyle={{
+                    color: theme.text,
+                    backgroundColor: theme.card,
+                    borderRadius: 8,
+                    borderColor: theme.border,
+                    paddingHorizontal: 10,
+                }}
+                search
+                searchPlaceholder="Search Category..."
+                data={categoryOptions}
+                labelField="label"
+                valueField="value"
+                placeholder="Filter by Category"
+                value={selectedCategory}
+                onChange={(item) => {
+                    setSelectedCategory(item.value);
+                }}
+                activeColor={
+                    theme.card === "#FFFFFF"
+                        ? "#EEF2FF"
+                        : "#334155"
                 }
+                renderRightIcon={() => (
+                    <Text
+                        style={{
+                            color: theme.text,
+                            fontSize: 18,
+                        }}
+                    >
+                        ▼
+                    </Text>
+                )}
+            />
 
-            </Picker>
             <FlatList
                 data={expenses}
                 refreshControl={
@@ -260,6 +358,10 @@ const ExpenseListScreen = ({ navigation }: any) => {
                         onRefresh={onRefresh}
                     />
                 }
+                contentContainerStyle={{
+                    paddingBottom: 30,
+                    flexGrow: 1,
+                }}
                 keyExtractor={(item: any) => item.id}
 
                 ListEmptyComponent={
@@ -269,11 +371,27 @@ const ExpenseListScreen = ({ navigation }: any) => {
                             📭
                         </Text>
 
-                        <Text style={styles.emptyTitle}>
+                        <Text
+                            style={[
+                                styles.emptyTitle,
+                                {
+                                    color:
+                                        theme.text,
+                                },
+                            ]}
+                        >
                             No Expenses Found
                         </Text>
 
-                        <Text style={styles.emptySubtitle}>
+                        <Text
+                            style={[
+                                styles.emptySubtitle,
+                                {
+                                    color:
+                                        theme.secondaryText,
+                                },
+                            ]}
+                        >
                             Start tracking your spending by adding your first expense.
                         </Text>
 
@@ -292,42 +410,65 @@ const ExpenseListScreen = ({ navigation }: any) => {
 
                     </View>
                 }
-                // renderItem={({ item }: any) => (
-                //     <View style={styles.card}>
-                //         <Text>
-                //             ₹ {item.amount}
-                //         </Text>
 
-                //         <Text>
-                //             {item.category}
-                //         </Text>
-
-                //         <Text>
-                //             {item.description}
-                //         </Text>
-                //     </View>
-                // )}
                 renderItem={({ item }: any) => (
 
-                    <View style={styles.card}>
+                    <View
+                        style={[
+                            styles.card,
+                            themedCard,
+                        ]}
+                    >
 
                         <View style={styles.cardHeader}>
 
-                            <Text style={styles.categoryText}>
+                            <Text
+                                style={[
+                                    styles.categoryText,
+                                    {
+                                        color:
+                                            theme.text,
+                                    },
+                                ]}
+                            >
                                 {item.category}
                             </Text>
 
-                            <Text style={styles.amountText}>
+                            <Text
+                                style={[
+                                    styles.amountText,
+                                    {
+                                        color:
+                                            theme.text,
+                                    },
+                                ]}
+                            >
                                 ₹ {item.amount}
                             </Text>
 
                         </View>
 
-                        <Text style={styles.descriptionText}>
+                        <Text
+                            style={[
+                                styles.descriptionText,
+                                {
+                                    color:
+                                        theme.text,
+                                },
+                            ]}
+                        >
                             {item.description}
                         </Text>
 
-                        <Text style={styles.dateText}>
+                        <Text
+                            style={[
+                                styles.dateText,
+                                {
+                                    color:
+                                        theme.secondaryText,
+                                },
+                            ]}
+                        >
                             {item.expenseDate}
                         </Text>
 
@@ -373,21 +514,18 @@ const ExpenseListScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 15,
+        paddingHorizontal: 15,
+        paddingTop: 60,
     },
     searchInput: {
         borderWidth: 1,
-        borderColor: "#ddd",
         borderRadius: 10,
         paddingHorizontal: 12,
         paddingVertical: 10,
         marginBottom: 10,
-        backgroundColor: "#fff",
         fontSize: 16,
     },
     card: {
-
-        backgroundColor: "#FFFFFF",
         borderRadius: 16,
         padding: 16,
         marginBottom: 12,
@@ -459,8 +597,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor:
-            COLORS.background,
+        paddingTop: 40,
     },
 
     loadingText: {
@@ -470,9 +607,11 @@ const styles = StyleSheet.create({
         color: "#64748B",
     },
     emptyContainer: {
+        flex: 1,
+        justifyContent: "center",
         alignItems: "center",
-        marginTop: 80,
         paddingHorizontal: 20,
+        minHeight: 400,
     },
 
     emptyIcon: {

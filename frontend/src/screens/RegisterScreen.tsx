@@ -16,6 +16,8 @@ import { RegisterRequest } from "../types/RegisterRequest";
 import { showError } from "../utils/toast";
 import AuthLayout from "../components/AuthLayout";
 import { authStyles } from "../styles/authStyles";
+import PasswordInput from "../components/PasswordInput";
+import { useTheme } from "../theme/useTheme";
 
 const RegisterScreen = ({ navigation }: any) => {
 
@@ -26,6 +28,7 @@ const RegisterScreen = ({ navigation }: any) => {
     const [showPassword, setShowPassword] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const { theme } = useTheme();
 
     const validateEmail = (email: string) => {
 
@@ -133,11 +136,25 @@ const RegisterScreen = ({ navigation }: any) => {
     return (
         <AuthLayout>
 
-            <Text style={authStyles.title}>
+            <Text
+                style={[
+                    authStyles.title,
+                    {
+                        color: theme.text,
+                    },
+                ]}
+            >
                 Welcome to FinTrack
             </Text>
 
-            <Text style={authStyles.subtitle}>
+            <Text
+                style={[
+                    authStyles.subtitle,
+                    {
+                        color: theme.secondaryText,
+                    },
+                ]}
+            >
                 Track every rupee. Build better habits.
             </Text>
 
@@ -145,77 +162,42 @@ const RegisterScreen = ({ navigation }: any) => {
                 placeholder="Full Name"
                 value={name}
                 onChangeText={setName}
-                style={authStyles.input}
-                placeholderTextColor="#94A3B8"
+                style={[
+                    authStyles.input,
+                    {
+                        backgroundColor: theme.card,
+                        borderColor: theme.border,
+                        color: theme.text,
+                    },
+                ]}
+                placeholderTextColor={theme.secondaryText}
             />
 
             <TextInput
                 placeholder="Email Address"
                 value={email}
                 onChangeText={setEmail}
-                style={authStyles.input}
-                placeholderTextColor="#94A3B8"
+                style={[
+                    authStyles.input,
+                    {
+                        backgroundColor: theme.card,
+                        borderColor: theme.border,
+                        color: theme.text,
+                    },
+                ]}
+                placeholderTextColor={theme.secondaryText}
                 autoCapitalize="none"
             />
-
-            <View style={styles.passwordContainer}>
-
-                <TextInput
-                    placeholder="Password"
-                    secureTextEntry={!showPassword}
-                    value={password}
-                    onChangeText={setPassword}
-                    style={styles.passwordInput}
-                    placeholderTextColor="#94A3B8"
-                />
-
-                <TouchableOpacity
-                    onPress={() =>
-                        setShowPassword(!showPassword)
-                    }
-                >
-                    <Ionicons
-                        name={
-                            showPassword
-                                ? "eye-off-outline"
-                                : "eye-outline"
-                        }
-                        size={22}
-                        color="#64748B"
-                    />
-                </TouchableOpacity>
-
-            </View>
-            <View style={styles.passwordContainer}>
-
-                <TextInput
-                    placeholder="Confirm Password"
-                    secureTextEntry={!showConfirmPassword}
-                    value={confirmPassword}
-                    onChangeText={setConfirmPassword}
-                    style={styles.passwordInput}
-                    placeholderTextColor="#94A3B8"
-                />
-
-                <TouchableOpacity
-                    onPress={() =>
-                        setShowConfirmPassword(
-                            !showConfirmPassword
-                        )
-                    }
-                >
-                    <Ionicons
-                        name={
-                            showConfirmPassword
-                                ? "eye-off-outline"
-                                : "eye-outline"
-                        }
-                        size={22}
-                        color="#64748B"
-                    />
-                </TouchableOpacity>
-
-            </View>
+            <PasswordInput
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Password"
+            />
+            <PasswordInput
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder="Confirm Password"
+            />
             <TouchableOpacity
                 style={[
                     authStyles.button,
@@ -234,7 +216,13 @@ const RegisterScreen = ({ navigation }: any) => {
             </TouchableOpacity>
 
             <View style={authStyles.linkContainer}>
-                <Text style={authStyles.linkText}>
+                <Text
+                    style={[
+                        authStyles.linkText,
+                        {
+                            color: theme.secondaryText
+                        }
+                    ]}>
                     Already have an account?{" "}
                 </Text>
 

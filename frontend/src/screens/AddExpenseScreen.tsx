@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-    View,
     Text,
     TextInput,
-    Button,
-    Alert,
     StyleSheet,
     ScrollView,
     TouchableOpacity,
@@ -12,26 +9,28 @@ import {
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Picker } from "@react-native-picker/picker";
 
 import api from "../api/api";
 import { AddExpenseRequest } from "../types/AddExpenseRequest";
 import { COLORS } from "../constants/colors";
 import { showError, showSuccess } from "../utils/toast";
+import { useTheme } from "../theme/useTheme";
+import { Dropdown } from "react-native-element-dropdown";
 
 const AddExpenseScreen = ({ navigation }: any) => {
 
     const [amount, setAmount] = useState("");
     const [description, setDescription] = useState("");
-
     const [category, setCategory] = useState("");
     const [categories, setCategories] = useState<string[]>([]);
-
     const [loading, setLoading] = useState(false);
+    const { theme } = useTheme();
+    const categoryOptions = categories.map(category => ({
+        label: category,
+        value: category,
+    }));
 
-    useEffect(() => {
-        fetchCategories();
-    }, []);
+
 
     const fetchCategories = async () => {
 
@@ -94,26 +93,10 @@ const AddExpenseScreen = ({ navigation }: any) => {
                     }
                 );
 
-            // Alert.alert(
-            //     "Success",
-            //     response.data
-            // );
-
-            // Alert.alert(
-            //     "Success",
-            //     response.data,
-            //     [
-            //         {
-            //             text: "OK",
-            //             onPress: () =>
-            //                 navigation.goBack(),
-            //         },
-            //     ]
-            // );
             showSuccess(response.data);
             setTimeout(() => {
                 navigation.goBack();
-            }, 1500);
+            }, 500);
 
             setAmount("");
             setDescription("");
@@ -126,10 +109,6 @@ const AddExpenseScreen = ({ navigation }: any) => {
 
             console.error(error);
 
-            // Alert.alert(
-            //     "Error",
-            //     "Failed to add expense"
-            // );
             showError(
                 "Failed to add expense"
             );
@@ -140,63 +119,164 @@ const AddExpenseScreen = ({ navigation }: any) => {
 
     };
 
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
     return (
         <ScrollView
-            style={styles.container}
+            style={[
+                styles.container,
+                {
+                    backgroundColor:
+                        theme.background,
+                },
+            ]}
             contentContainerStyle={{
                 paddingBottom: 30,
+                paddingTop: 40
             }}
         >
 
-            <Text style={styles.title}>
+            <Text
+                style={[
+                    styles.title,
+                    {
+                        color: theme.text,
+                    },
+                ]}
+            >
                 Add Expense
             </Text>
-            <Text style={styles.label}>
+            <Text
+                style={[
+                    styles.label,
+                    {
+                        color:
+                            theme.secondaryText,
+                    },
+                ]}
+            >
                 Amount
             </Text>
             <TextInput
                 placeholder="₹ Enter amount"
+                placeholderTextColor={
+                    theme.secondaryText
+                }
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor:
+                            theme.card,
+                        borderColor:
+                            theme.border,
+                        color:
+                            theme.text,
+                    },
+                ]}
                 value={amount}
                 onChangeText={setAmount}
                 keyboardType="numeric"
-                style={styles.input}
             />
-            <Text style={styles.label}>
+            <Text
+                style={[
+                    styles.label,
+                    {
+                        color:
+                            theme.secondaryText,
+                    },
+                ]}
+            >
                 Category
             </Text>
-            <Picker
-                selectedValue={category}
-                onValueChange={(value) =>
-                    setCategory(value)
+
+            <Dropdown
+                maxHeight={300}
+                data={categoryOptions}
+                labelField="label"
+                valueField="value"
+                value={category}
+                placeholder="Select Category"
+                search
+                searchPlaceholder="Search Category..."
+                onChange={(item) =>
+                    setCategory(item.value)
                 }
-                style={styles.picker}
+                style={[
+                    styles.dropdown,
+                    {
+                        backgroundColor: theme.card,
+                        borderColor: theme.border,
+                    },
+                ]}
+                containerStyle={{
+                    backgroundColor: theme.card,
+                    borderColor: theme.border,
+                    borderWidth: 1,
+                    borderRadius: 12,
+                }}
+                placeholderStyle={{
+                    color: theme.secondaryText,
+                }}
+                selectedTextStyle={{
+                    color: theme.text,
+                }}
+                itemTextStyle={{
+                    color: theme.text,
+                }}
+                inputSearchStyle={{
+                    color: theme.text,
+                    backgroundColor: theme.card,
+                    borderColor: theme.border,
+                    borderRadius: 8,
+                }}
+                activeColor={
+                    theme.card === "#FFFFFF"
+                        ? "#EEF2FF"
+                        : "#334155"
+                }
+                renderRightIcon={() => (
+                    <Text
+                        style={{
+                            color: theme.text,
+                            fontSize: 18,
+                        }}
+                    >
+                        ▼
+                    </Text>
+                )}
+            />
+            <Text
+                style={[
+                    styles.label,
+                    {
+                        color:
+                            theme.secondaryText,
+                    },
+                ]}
             >
-                {categories.map((category) => (
-                    <Picker.Item
-                        key={category}
-                        label={category}
-                        value={category}
-                    />
-                ))}
-            </Picker>
-            <Text style={styles.label}>
                 Description
             </Text>
             <TextInput
                 placeholder="Enter description"
+                placeholderTextColor={
+                    theme.secondaryText
+                }
                 value={description}
                 onChangeText={setDescription}
-                style={styles.input}
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor:
+                            theme.card,
+                        borderColor:
+                            theme.border,
+                        color:
+                            theme.text,
+                    },
+                ]}
             />
-
-            {/* <TouchableOpacity
-                style={styles.addButton}
-                onPress={handleAddExpense}
-            >
-                <Text style={styles.addButtonText}>
-                    Add Expense
-                </Text>
-            </TouchableOpacity> */}
             <TouchableOpacity
                 style={[
                     styles.saveButton,
@@ -236,7 +316,6 @@ const AddExpenseScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
         padding: 20,
     },
 
@@ -255,11 +334,21 @@ const styles = StyleSheet.create({
     },
 
     input: {
-        backgroundColor: "#FFFFFF",
         borderRadius: 12,
         padding: 14,
         marginBottom: 18,
+        borderWidth: 1,
+        shadowColor: "#000",
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
         elevation: 2,
+    },
+    dropdown: {
+        height: 55,
+        borderWidth: 1,
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        marginBottom: 18,
     },
 
     picker: {

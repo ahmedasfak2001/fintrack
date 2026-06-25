@@ -19,6 +19,7 @@ import AsyncStorage
     from "@react-native-async-storage/async-storage";
 
 import api from "../api/api";
+import { useTheme } from "../theme/useTheme";
 
 import {
     BudgetSummaryResponse,
@@ -30,6 +31,7 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const BudgetScreen = ({ navigation }: any) => {
 
+    const { theme } = useTheme();
     const [budget, setBudget] = useState("");
 
     const [loading, setLoading] = useState(false);
@@ -172,13 +174,36 @@ const BudgetScreen = ({ navigation }: any) => {
     return (
 
         <ScrollView
-            style={styles.container}
+            style={[
+                styles.container,
+                {
+                    backgroundColor: theme.background,
+                },
+            ]}
+            contentContainerStyle={{
+                paddingBottom: 120
+            }}
         >
 
-            <Text style={styles.title}>
+            <Text
+                style={[
+                    styles.title,
+                    {
+                        color: theme.text,
+                    },
+                ]}
+            >
                 Budget vs Actual
             </Text>
-            <Text style={styles.label}>
+            <Text
+                style={[
+                    styles.label,
+                    {
+                        color: theme.text,
+                        paddingBottom: 10
+                    },
+                ]}
+            >
                 Monthly Budget
             </Text>
 
@@ -186,17 +211,17 @@ const BudgetScreen = ({ navigation }: any) => {
                 value={budget}
                 onChangeText={setBudget}
                 keyboardType="numeric"
-                style={styles.input}
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: theme.card,
+                        borderColor: theme.border,
+                        color: theme.text,
+                        borderWidth: 1,
+                    },
+                ]}
             />
 
-            {/* <TouchableOpacity
-                style={[
-                    styles.updateButton,
-                    loading && { opacity: 0.7 }
-                ]}
-                onPress={updateBudget}
-                disabled={loading}
-            > */}
             <TouchableOpacity
                 style={[
                     styles.updateButton,
@@ -216,12 +241,25 @@ const BudgetScreen = ({ navigation }: any) => {
                     }
                 </Text>
             </TouchableOpacity>
-            <View style={styles.progressContainer}>
+            <View
+                style={[
+                    styles.progressContainer,
+                    {
+                        backgroundColor: theme.card,
+                        borderColor: theme.border,
+                        borderWidth: 1,
+                    },
+                ]}
+            >
 
-                {/* <Text style={styles.progressText}>
-                    {usagePercentage.toFixed(0)}% Used
-                </Text> */}
-                <Text style={styles.progressText}>
+                <Text
+                    style={[
+                        styles.progressText,
+                        {
+                            color: theme.text,
+                        },
+                    ]}
+                >
                     {(usagePercentage ?? 0).toFixed(0)}% Used
                 </Text>
 
@@ -265,58 +303,158 @@ const BudgetScreen = ({ navigation }: any) => {
                     )
                 }
 
-                {/* <Text style={styles.percentage}>
-                    {usagePercentage.toFixed(2)}%
-                </Text> */}
-                <Text style={styles.percentage}>
+                <Text
+                    style={[
+                        styles.percentage,
+                        {
+                            color: theme.text,
+                        },
+                    ]}
+                >
                     {(usagePercentage ?? 0).toFixed(2)}%
                 </Text>
 
             </View>
-            <Text style={styles.remainingHighlight}>
+            <Text
+                style={[
+                    styles.remainingHighlight,
+                    {
+                        color: theme.text,
+                    },
+                ]}
+            >
                 Remaining: ₹ {summary?.remaining ?? 0}
             </Text>
             <View style={styles.summaryGrid}>
 
-                <View style={styles.summaryCard}>
-                    <Text style={styles.cardTitle}>
+                <View
+                    style={[
+                        styles.summaryCard,
+                        {
+                            backgroundColor: theme.card,
+                            borderColor: theme.border,
+                            borderWidth: 1,
+                        },
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.cardTitle,
+                            {
+                                color: theme.secondaryText,
+                            },
+                        ]}
+                    >
                         Budget
                     </Text>
 
-                    <Text style={styles.cardValue}>
+                    <Text
+                        style={[
+                            styles.cardValue,
+                            {
+                                color: theme.text,
+                            },
+                        ]}
+                    >
                         ₹ {summary?.budget ?? 0}
                     </Text>
                 </View>
 
-                <View style={styles.summaryCard}>
-                    <Text style={styles.cardTitle}>
+                <View
+                    style={[
+                        styles.summaryCard,
+                        {
+                            backgroundColor: theme.card,
+                            borderColor: theme.border,
+                            borderWidth: 1,
+                        },
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.cardTitle,
+                            {
+                                color: theme.secondaryText,
+                            },
+                        ]}
+                    >
                         Spent
                     </Text>
 
-                    <Text style={styles.cardValue}>
+                    <Text
+                        style={[
+                            styles.cardValue,
+                            {
+                                color: theme.text,
+                            },
+                        ]}
+                    >
                         ₹ {summary?.spent ?? 0}
                     </Text>
                 </View>
 
-                <View style={styles.summaryCard}>
-                    <Text style={styles.cardTitle}>
+                <View
+                    style={[
+                        styles.summaryCard,
+                        {
+                            backgroundColor: theme.card,
+                            borderColor: theme.border,
+                            borderWidth: 1,
+                        },
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.cardTitle,
+                            {
+                                color: theme.secondaryText,
+                            },
+                        ]}
+                    >
                         Remaining
                     </Text>
 
-                    <Text style={styles.cardValue}>
+                    <Text
+                        style={[
+                            styles.cardValue,
+                            {
+                                color: theme.text,
+                            },
+                        ]}
+                    >
                         ₹ {summary?.remaining ?? 0}
                     </Text>
                 </View>
 
-                <View style={styles.summaryCard}>
-                    <Text style={styles.cardTitle}>
+                <View
+                    style={[
+                        styles.summaryCard,
+                        {
+                            backgroundColor: theme.card,
+                            borderColor: theme.border,
+                            borderWidth: 1,
+                        },
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.cardTitle,
+                            {
+                                color: theme.secondaryText,
+                            },
+                        ]}
+                    >
                         Usage
                     </Text>
 
-                    {/* <Text style={styles.cardValue}>
-                        {summary?.usagePercentage?.toFixed(0)}%
-                    </Text> */}
-                    <Text style={styles.cardValue}>
+                    <Text
+                        style={[
+                            styles.cardValue,
+                            {
+                                color: theme.text,
+                            },
+                        ]}
+                    >
                         {Number(
                             summary?.usagePercentage ?? 0
                         ).toFixed(0)}%
@@ -333,8 +471,8 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
         padding: 20,
+        paddingTop: 40,
     },
 
     title: {
@@ -349,7 +487,6 @@ const styles = StyleSheet.create({
     },
 
     progressContainer: {
-        backgroundColor: COLORS.card,
         borderRadius: 16,
         padding: 16,
         marginBottom: 20,
@@ -373,7 +510,6 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     input: {
-        backgroundColor: COLORS.card,
         borderRadius: 12,
         padding: 14,
         marginBottom: 12,
@@ -388,7 +524,6 @@ const styles = StyleSheet.create({
 
     summaryCard: {
         width: "48%",
-        backgroundColor: COLORS.card,
         borderRadius: 16,
         padding: 16,
         marginBottom: 12,
