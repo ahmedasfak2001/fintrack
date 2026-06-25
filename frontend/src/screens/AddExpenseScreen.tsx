@@ -16,6 +16,7 @@ import { COLORS } from "../constants/colors";
 import { showError, showSuccess } from "../utils/toast";
 import { useTheme } from "../theme/useTheme";
 import { Dropdown } from "react-native-element-dropdown";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const AddExpenseScreen = ({ navigation }: any) => {
 
@@ -30,7 +31,11 @@ const AddExpenseScreen = ({ navigation }: any) => {
         value: category,
     }));
 
+    const [expenseDate, setExpenseDate] =
+        useState(new Date());
 
+    const [showDatePicker, setShowDatePicker] =
+        useState(false);
 
     const fetchCategories = async () => {
 
@@ -76,7 +81,7 @@ const AddExpenseScreen = ({ navigation }: any) => {
                 amount: Number(amount),
                 category,
                 description,
-                expenseDate: new Date()
+                expenseDate: expenseDate
                     .toISOString()
                     .split("T")[0],
             };
@@ -277,6 +282,65 @@ const AddExpenseScreen = ({ navigation }: any) => {
                     },
                 ]}
             />
+
+            <Text
+                style={[
+                    styles.label,
+                    {
+                        color: theme.secondaryText,
+                    },
+                ]}
+            >
+                Expense Date
+            </Text>
+
+            <TouchableOpacity
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: theme.card,
+                        borderColor: theme.border,
+                    },
+                ]}
+                onPress={() =>
+                    setShowDatePicker(true)
+                }
+            >
+                <Text
+                    style={{
+                        color: theme.text,
+                    }}
+                >
+                    {expenseDate.toLocaleDateString()}
+                </Text>
+            </TouchableOpacity>
+
+            {
+                showDatePicker && (
+                    <DateTimePicker
+                        value={expenseDate}
+                        mode="date"
+                        display="default"
+                        maximumDate={new Date()}
+                        onChange={(
+                            event,
+                            selectedDate
+                        ) => {
+
+                            setShowDatePicker(false);
+
+                            if (selectedDate) {
+
+                                setExpenseDate(
+                                    selectedDate
+                                );
+
+                            }
+                        }}
+                    />
+                )
+            }
+
             <TouchableOpacity
                 style={[
                     styles.saveButton,

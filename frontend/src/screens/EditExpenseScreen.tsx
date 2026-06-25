@@ -19,6 +19,7 @@ import { COLORS } from "../constants/colors";
 import { showError, showSuccess } from "../utils/toast";
 import { useTheme } from "../theme/useTheme";
 import { Dropdown } from "react-native-element-dropdown";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 
 const EditExpenseScreen = ({
@@ -41,7 +42,17 @@ const EditExpenseScreen = ({
     const [categories, setCategories] =
         useState<string[]>([]);
 
-    const [loading, setLoading] =
+    const [loading, setLoading] = useState(false);
+    const [expenseDate, setExpenseDate] =
+        useState(
+            expense?.expenseDate
+                ? new Date(
+                    expense.expenseDate
+                )
+                : new Date()
+        );
+
+    const [showDatePicker, setShowDatePicker] =
         useState(false);
 
     useEffect(() => {
@@ -84,7 +95,10 @@ const EditExpenseScreen = ({
                 amount: Number(amount),
                 category,
                 description,
-                expenseDate: expense.expenseDate,
+                expenseDate:
+                    expenseDate
+                        .toISOString()
+                        .split("T")[0],
             };
             const response =
                 await api.put(
@@ -261,6 +275,64 @@ const EditExpenseScreen = ({
                 placeholderTextColor={theme.secondaryText}
             />
 
+            <Text
+                style={[
+                    styles.label,
+                    {
+                        color: theme.secondaryText,
+                    },
+                ]}
+            >
+                Expense Date
+            </Text>
+
+            <TouchableOpacity
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: theme.card,
+                        borderColor: theme.border,
+                    },
+                ]}
+                onPress={() =>
+                    setShowDatePicker(true)
+                }
+            >
+                <Text
+                    style={{
+                        color: theme.text,
+                    }}
+                >
+                    {expenseDate.toLocaleDateString()}
+                </Text>
+            </TouchableOpacity>
+
+            {
+                showDatePicker && (
+                    <DateTimePicker
+                        value={expenseDate}
+                        mode="date"
+                        display="default"
+                        maximumDate={new Date()}
+                        onChange={(
+                            event,
+                            selectedDate
+                        ) => {
+
+                            setShowDatePicker(false);
+
+                            if (selectedDate) {
+
+                                setExpenseDate(
+                                    selectedDate
+                                );
+
+                            }
+                        }}
+                    />
+                )
+            }
+
             <TouchableOpacity
                 style={[
                     styles.updateButton,
@@ -319,10 +391,13 @@ const styles = StyleSheet.create({
     },
 
     input: {
-        backgroundColor: "#FFFFFF",
         borderRadius: 12,
         padding: 14,
         marginBottom: 18,
+        borderWidth: 1,
+        shadowColor: "#000",
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
         elevation: 2,
     },
 
