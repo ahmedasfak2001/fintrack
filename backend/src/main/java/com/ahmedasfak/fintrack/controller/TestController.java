@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    @GetMapping("/api/test")
+    @GetMapping("/health")
     public String test() {
-        return "JWT Working";
+        return "Monitor is Up and running...";
     }
 }
