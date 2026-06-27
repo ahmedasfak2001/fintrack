@@ -591,7 +591,22 @@ const ProfileScreen = ({ navigation }: any) => {
 
             </View>
             {/* </View> */}
-
+            <View
+                style={{
+                    marginTop: 30,
+                    alignItems: "center",
+                }}
+            >
+                <Text
+                    style={{
+                        color:
+                            theme.secondaryText,
+                        fontSize: 13,
+                    }}
+                >
+                    FinTrack v6.1.0
+                </Text>
+            </View>
             {/* Logout Button */}
             <TouchableOpacity
                 style={styles.logoutButton}

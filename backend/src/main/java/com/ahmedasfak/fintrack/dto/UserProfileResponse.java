@@ -25,6 +25,7 @@ public class UserProfileResponse {
         this.monthlyBudget = monthlyBudget;
         this.enabled = enabled;
         this.currentExpense = currentExpense;
+        this.createdAt = createdAt;
     }
 
     public String getName() {
