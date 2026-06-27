@@ -17,6 +17,7 @@ import { showError, showSuccess } from "../utils/toast";
 import { useTheme } from "../theme/useTheme";
 import { Dropdown } from "react-native-element-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import AnimatedActionButton from "../components/AnimatedActionButton";
 
 const AddExpenseScreen = ({ navigation }: any) => {
 
@@ -25,6 +26,7 @@ const AddExpenseScreen = ({ navigation }: any) => {
     const [category, setCategory] = useState("");
     const [categories, setCategories] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
     const { theme } = useTheme();
     const categoryOptions = categories.map(category => ({
         label: category,
@@ -72,6 +74,26 @@ const AddExpenseScreen = ({ navigation }: any) => {
 
     const handleAddExpense = async () => {
 
+        if (!amount.trim()) {
+            showError("Amount is required");
+            return;
+        }
+
+        if (Number(amount) <= 0) {
+            showError("Please enter a valid amount");
+            return;
+        }
+
+        if (!category.trim()) {
+            showError("Please select a category");
+            return;
+        }
+
+        if (!description.trim()) {
+            showError("Description is required");
+            return;
+        }
+
         try {
             setLoading(true);
             const token =
@@ -98,10 +120,14 @@ const AddExpenseScreen = ({ navigation }: any) => {
                     }
                 );
 
+            setSuccess(true);
+
             showSuccess(response.data);
+
             setTimeout(() => {
+                setSuccess(false);
                 navigation.goBack();
-            }, 500);
+            }, 1000);
 
             setAmount("");
             setDescription("");
@@ -118,7 +144,6 @@ const AddExpenseScreen = ({ navigation }: any) => {
                 "Failed to add expense"
             );
         } finally {
-
             setLoading(false);
         }
 
@@ -341,7 +366,7 @@ const AddExpenseScreen = ({ navigation }: any) => {
                 )
             }
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={[
                     styles.saveButton,
                     loading &&
@@ -371,7 +396,13 @@ const AddExpenseScreen = ({ navigation }: any) => {
                     )
                 }
 
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            <AnimatedActionButton
+                title="Save Expense"
+                loading={loading}
+                success={success}
+                onPress={handleAddExpense}
+            />
 
         </ScrollView>
     );

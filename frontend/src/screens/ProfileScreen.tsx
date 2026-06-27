@@ -381,6 +381,29 @@ const ProfileScreen = ({ navigation }: any) => {
                 >
                     Account
                 </Text>
+
+                <TouchableOpacity
+                    onPress={() =>
+                        navigation.navigate(
+                            "EditProfile",
+                            {
+                                name: userName,
+                            }
+                        )
+                    }
+                >
+                    <Text
+                        style={[
+                            styles.menuItem,
+                            {
+                                color: theme.text,
+                            },
+                        ]}
+                    >
+                        ✏️ Edit Profile
+                    </Text>
+                </TouchableOpacity>
+                
                 <TouchableOpacity onPress={() =>
                     navigation.navigate(
                         "ChangePassword"

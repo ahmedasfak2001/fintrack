@@ -20,6 +20,7 @@ import { showError, showSuccess } from "../utils/toast";
 import { useTheme } from "../theme/useTheme";
 import { Dropdown } from "react-native-element-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import AnimatedActionButton from "../components/AnimatedActionButton";
 
 
 const EditExpenseScreen = ({
@@ -29,7 +30,7 @@ const EditExpenseScreen = ({
 
     const { theme } = useTheme();
     const { expense } = route.params;
-
+    const [success, setSuccess] = useState(false);
     const [amount, setAmount] =
         useState(expense.amount.toString());
 
@@ -111,11 +112,12 @@ const EditExpenseScreen = ({
                         },
                     }
                 );
-
+            setSuccess(true);
             showSuccess(response.data);
             setTimeout(() => {
+                setSuccess(false);
                 navigation.goBack();
-            }, 1500);
+            }, 1000);
 
         }
         catch (error) {
@@ -333,7 +335,7 @@ const EditExpenseScreen = ({
                 )
             }
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={[
                     styles.updateButton,
                     loading &&
@@ -363,7 +365,14 @@ const EditExpenseScreen = ({
                     )
                 }
 
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            <AnimatedActionButton
+                title="Update Expense"
+                successTitle="Updated"
+                loading={loading}
+                success={success}
+                onPress={handleUpdateExpense}
+            />
 
         </ScrollView>
     );

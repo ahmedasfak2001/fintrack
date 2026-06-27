@@ -337,6 +337,21 @@ public class UserService {
                                 currentExpense);
         }
 
+        public String updateProfile(
+                        String email,
+                        String name) {
+
+                User user = userRepository
+                                .findByEmail(email)
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                user.setName(name);
+
+                userRepository.save(user);
+
+                return "Profile updated successfully";
+        }
+
         public String changePassword(
                         String email,
                         String oldPassword,

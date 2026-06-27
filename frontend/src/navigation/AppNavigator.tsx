@@ -20,6 +20,7 @@ import ResendVerificationScreen from "../screens/ResendVerificationScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 import ChangePasswordScreen from "../screens/ChangePasswordScreen";
+import EditProfileScreen from "../screens/EditProfileScreen";
 
 import { navigationRef } from "../utils/NavigationService";
 import BottomTabNavigator from "./BottomTabNavigator";
@@ -168,6 +169,11 @@ export default function AppNavigator() {
                     <Stack.Screen
                         name="ChangePassword"
                         component={ChangePasswordScreen}
+                    />
+
+                    <Stack.Screen
+                        name="EditProfile"
+                        component={EditProfileScreen}
                     />
 
                 </Stack.Navigator>

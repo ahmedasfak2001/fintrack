@@ -8,6 +8,7 @@ import com.ahmedasfak.fintrack.dto.ResendVerificationRequest;
 import com.ahmedasfak.fintrack.service.UserService;
 import com.ahmedasfak.fintrack.dto.ForgotPasswordRequest;
 import com.ahmedasfak.fintrack.dto.ResetPasswordRequest;
+import com.ahmedasfak.fintrack.dto.UpdateProfileRequest;
 import com.ahmedasfak.fintrack.dto.UserProfileResponse;
 import com.ahmedasfak.fintrack.dto.ChangePasswordRequest;
 
@@ -101,6 +102,19 @@ public class UserController {
                 String email = authentication.getName();
 
                 return userService.getProfile(email);
+        }
+
+        @PutMapping("/profile")
+        public ResponseEntity<String> updateProfile(
+                        Authentication authentication,
+                        @RequestBody UpdateProfileRequest request) {
+
+                String email = authentication.getName();
+
+                return ResponseEntity.ok(
+                                userService.updateProfile(
+                                                email,
+                                                request.getName()));
         }
 
         @PutMapping("/change-password")
