@@ -1,6 +1,7 @@
 package com.ahmedasfak.fintrack.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class UserProfileResponse {
 
@@ -9,13 +10,15 @@ public class UserProfileResponse {
     private BigDecimal monthlyBudget;
     private boolean enabled;
     private BigDecimal currentExpense;
+    private LocalDateTime createdAt;
 
     public UserProfileResponse(
             String name,
             String email,
             BigDecimal monthlyBudget,
             boolean enabled,
-            BigDecimal currentExpense) {
+            BigDecimal currentExpense,
+            LocalDateTime createdAt) {
 
         this.name = name;
         this.email = email;
@@ -42,5 +45,9 @@ public class UserProfileResponse {
 
     public BigDecimal getCurrentExpense() {
         return currentExpense;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

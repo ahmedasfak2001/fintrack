@@ -334,7 +334,8 @@ public class UserService {
                                 user.getEmail(),
                                 user.getMonthlyBudget(),
                                 user.getEnabled(),
-                                currentExpense);
+                                currentExpense,
+                                user.getCreatedAt());
         }
 
         public String updateProfile(

@@ -17,6 +17,7 @@ import * as Sharing from "expo-sharing";
 import { useFocusEffect } from "@react-navigation/native";
 import { showError, showSuccess } from "../utils/toast";
 import { COLORS } from "../constants/colors";
+import { Ionicons } from "@expo/vector-icons";
 
 const ProfileScreen = ({ navigation }: any) => {
 
@@ -29,6 +30,7 @@ const ProfileScreen = ({ navigation }: any) => {
     // we are fetching data from backend
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
+    const [createdAt, setCreatedAt] = useState("");
 
     const [monthlyBudget, setMonthlyBudget] = useState(0);
     const [currentExpense, setCurrentExpense] = useState(0);
@@ -117,6 +119,10 @@ const ProfileScreen = ({ navigation }: any) => {
 
             setEnabled(
                 response.data.enabled || false
+            );
+
+            setCreatedAt(
+                response.data.createdAt
             );
 
         } catch (error) {
@@ -225,6 +231,12 @@ const ProfileScreen = ({ navigation }: any) => {
                 Profile
             </Text>
 
+            <View style={styles.avatarContainer}>
+                <Text style={styles.avatarText}>
+                    {userName?.charAt(0).toUpperCase()}
+                </Text>
+            </View>
+
             {/* User Card */}
             <View
                 style={[
@@ -238,18 +250,34 @@ const ProfileScreen = ({ navigation }: any) => {
 
                         borderWidth: 1,
                     },
-                ]}
-            >
-                <Text
-                    style={[
-                        styles.name,
-                        {
-                            color: theme.text,
-                        },
-                    ]}
-                >
-                    👤 {userName}
-                </Text>
+                ]}>
+                <View style={styles.nameRow}>
+                    <Text
+                        style={[
+                            styles.name,
+                            {
+                                color: theme.text,
+                            },
+                        ]}
+                    >
+                        👤 {userName}
+                    </Text>
+
+                    <TouchableOpacity
+                        onPress={() =>
+                            navigation.navigate(
+                                "EditProfile",
+                                { name: userName }
+                            )
+                        }
+                    >
+                        <Ionicons
+                            name="create-outline"
+                            size={22}
+                            color={COLORS.primary}
+                        />
+                    </TouchableOpacity>
+                </View>
 
                 <Text
                     style={[
@@ -291,7 +319,23 @@ const ProfileScreen = ({ navigation }: any) => {
                         </TouchableOpacity>
                     )
                 }
+                <Text
+                    style={[
+                        styles.email,
+                        {
+                            color:
+                                theme.secondaryText,
+                        },
+                    ]}
+                >
+                    📅 Joined:
+                    {" "}
+                    {new Date(
+                        createdAt
+                    ).toLocaleDateString()}
+                </Text>
             </View>
+
 
             {/* Financial Summary */}
             <View
@@ -382,28 +426,6 @@ const ProfileScreen = ({ navigation }: any) => {
                     Account
                 </Text>
 
-                <TouchableOpacity
-                    onPress={() =>
-                        navigation.navigate(
-                            "EditProfile",
-                            {
-                                name: userName,
-                            }
-                        )
-                    }
-                >
-                    <Text
-                        style={[
-                            styles.menuItem,
-                            {
-                                color: theme.text,
-                            },
-                        ]}
-                    >
-                        ✏️ Edit Profile
-                    </Text>
-                </TouchableOpacity>
-                
                 <TouchableOpacity onPress={() =>
                     navigation.navigate(
                         "ChangePassword"
@@ -684,6 +706,27 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingVertical: 10,
         borderBottomWidth: 1,
+    },
+    avatarContainer: {
+        width: 90,
+        height: 90,
+        borderRadius: 45,
+        backgroundColor: COLORS.primary,
+        alignSelf: "center",
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: 20,
+    },
+
+    avatarText: {
+        color: "#FFFFFF",
+        fontSize: 36,
+        fontWeight: "bold",
+    },
+    nameRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
 
 });
