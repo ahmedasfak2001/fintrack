@@ -3,10 +3,10 @@ package com.ahmedasfak.fintrack.entity;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
 @Entity
