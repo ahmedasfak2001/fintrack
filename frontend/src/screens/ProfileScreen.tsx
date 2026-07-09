@@ -39,6 +39,8 @@ const ProfileScreen = ({ navigation }: any) => {
     const [enabled, setEnabled] = useState(false);
     const remainingBudget = monthlyBudget - currentExpense;
 
+
+
     const exportReport = async () => {
 
         try {
@@ -89,40 +91,39 @@ const ProfileScreen = ({ navigation }: any) => {
             const token =
                 await AsyncStorage.getItem("token");
 
-            const response =
-                await api.get(
-                    "/api/users/profile",
-                    {
-                        headers: {
-                            Authorization:
-                                `Bearer ${token}`,
-                        },
-                    }
-                );
+            const [profileResponse, monthlySummaryResponse] = await Promise.all([
+                api.get("/api/users/profile", {
+                    headers: { Authorization: `Bearer ${token}` },
+                }),
+                api.get("/api/expenses/summary/monthly", {
+                    headers: { Authorization: `Bearer ${token}` },
+                }),
+            ]);
 
             console.log(
                 "PROFILE RESPONSE",
-                response.data
+                profileResponse.data
             );
 
-            setUserName(response.data.name);
+            setUserName(profileResponse.data.name);
 
-            setEmail(response.data.email);
+            setEmail(profileResponse.data.email);
 
             setMonthlyBudget(
-                response.data.monthlyBudget || 0
+                profileResponse.data.monthlyBudget || 0
             );
 
+            // setCurrentExpense(
             setCurrentExpense(
-                response.data.currentExpense || 0
+                monthlySummaryResponse.data.totalExpense || 0
             );
 
             setEnabled(
-                response.data.enabled || false
+                profileResponse.data.enabled || false
             );
 
             setCreatedAt(
-                response.data.createdAt
+                profileResponse.data.createdAt
             );
 
         } catch (error) {

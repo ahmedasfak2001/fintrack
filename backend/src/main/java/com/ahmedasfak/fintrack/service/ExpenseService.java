@@ -123,41 +123,6 @@ public class ExpenseService {
         }
 
         // Get Summary
-        // public SummaryResponse getSummary(
-        // UserDetails userDetails) {
-
-        // User user = userRepository
-        // .findByEmail(userDetails.getUsername())
-        // .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // List<Expense> expenses = expenseRepository.findByUser(user);
-
-        // SummaryResponse response = new SummaryResponse();
-
-        // BigDecimal totalExpense = expenses.stream()
-        // .map(Expense::getAmount)
-        // .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        // Map<String, BigDecimal> categoryBreakdown = new HashMap<>();
-
-        // for (Expense expense : expenses) {
-
-        // String category = expense.getCategory().name();
-
-        // categoryBreakdown.put(
-        // category,
-        // categoryBreakdown.getOrDefault(
-        // category,
-        // BigDecimal.ZERO)
-        // .add(expense.getAmount()));
-        // }
-
-        // response.setTotalExpense(totalExpense);
-        // response.setExpenseCount((long) expenses.size());
-        // response.setCategoryBreakdown(categoryBreakdown);
-
-        // return response;
-        // }
         public SummaryResponse getSummary(
                         UserDetails userDetails) {
 
@@ -305,10 +270,11 @@ public class ExpenseService {
         }
 
         // Get Expenses by Month
-        public List<Expense> getExpensesByMonth(
+        public Page<Expense> getExpensesByMonth(
                         int month,
                         int year,
-                        UserDetails userDetails) {
+                        UserDetails userDetails,
+                        Pageable pageable) {
 
                 User user = userRepository
                                 .findByEmail(userDetails.getUsername())
@@ -324,16 +290,71 @@ public class ExpenseService {
                                 .findByUserAndExpenseDateBetween(
                                                 user,
                                                 startDate,
-                                                endDate);
+                                                endDate,
+                                                pageable);
         }
 
         // Get Expenses with Pagination and Optional Category Filter and Search
+        // public Page<Expense> getExpenses(
+        // UserDetails userDetails,
+        // int page,
+        // int size,
+        // ExpenseCategory category,
+        // String search,
+        // Integer month,
+        // Integer year) {
+
+        // User user = userRepository
+        // .findByEmail(userDetails.getUsername())
+        // .orElseThrow(() -> new RuntimeException("User not found"));
+        // if (month == null || year == null) {
+        // LocalDate today = LocalDate.now();
+
+        // month = today.getMonthValue();
+        // year = today.getYear();
+        // }
+
+        // YearMonth yearMonth = YearMonth.of(year, month);
+
+        // LocalDate startDate = yearMonth.atDay(1);
+        // LocalDate endDate = yearMonth.atEndOfMonth();
+        // Pageable pageable = PageRequest.of(
+        // page,
+        // size,
+        // Sort.by("createdAt").descending());
+
+        // if (search != null &&
+        // !search.isBlank()) {
+
+        // return expenseRepository
+        // .findByUserAndDescriptionContainingIgnoreCase(
+        // user,
+        // search,
+        // pageable);
+        // }
+
+        // if (category != null) {
+
+        // return expenseRepository
+        // .findByUserAndCategory(
+        // user,
+        // category,
+        // pageable);
+        // }
+
+        // return expenseRepository
+        // .findByUser(
+        // user,
+        // pageable);
+        // }
         public Page<Expense> getExpenses(
                         UserDetails userDetails,
                         int page,
                         int size,
                         ExpenseCategory category,
-                        String search) {
+                        String search,
+                        Integer month,
+                        Integer year) {
 
                 User user = userRepository
                                 .findByEmail(userDetails.getUsername())
@@ -342,38 +363,49 @@ public class ExpenseService {
                 Pageable pageable = PageRequest.of(
                                 page,
                                 size,
-                                Sort.by("createdAt").descending());
+                                Sort.by("expenseDate").descending());
 
-                if (search != null &&
-                                !search.isBlank()) {
-
-                        return expenseRepository
-                                        .findByUserAndDescriptionContainingIgnoreCase(
-                                                        user,
-                                                        search,
-                                                        pageable);
+                if (month == null || year == null) {
+                        LocalDate today = LocalDate.now();
+                        month = today.getMonthValue();
+                        year = today.getYear();
                 }
+
+                LocalDate startDate = LocalDate.of(year, month, 1);
+                LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
                 if (category != null) {
+                        return expenseRepository.findByUserAndCategoryAndExpenseDateBetween(
+                                        user,
+                                        category,
+                                        startDate,
+                                        endDate,
+                                        pageable);
+                }
 
+                if (search != null && !search.isBlank()) {
                         return expenseRepository
-                                        .findByUserAndCategory(
+                                        .findByUserAndDescriptionContainingIgnoreCaseAndExpenseDateBetween(
                                                         user,
-                                                        category,
+                                                        search,
+                                                        startDate,
+                                                        endDate,
                                                         pageable);
                 }
 
-                return expenseRepository
-                                .findByUser(
-                                                user,
-                                                pageable);
+                return expenseRepository.findByUserAndExpenseDateBetween(
+                                user,
+                                startDate,
+                                endDate,
+                                pageable);
         }
 
         // Get Expenses by Date Range
-        public List<Expense> getExpensesByDateRange(
+        public Page<Expense> getExpensesByDateRange(
                         LocalDate from,
                         LocalDate to,
-                        UserDetails userDetails) {
+                        UserDetails userDetails,
+                        Pageable pageable) {
 
                 User user = userRepository
                                 .findByEmail(userDetails.getUsername())
@@ -383,7 +415,8 @@ public class ExpenseService {
                                 .findByUserAndExpenseDateBetween(
                                                 user,
                                                 from,
-                                                to);
+                                                to,
+                                                pageable);
         }
 
         // Export Expenses to CSV

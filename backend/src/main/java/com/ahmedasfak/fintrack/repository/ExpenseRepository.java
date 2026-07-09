@@ -32,6 +32,26 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
             LocalDate startDate,
             LocalDate endDate);
 
+    Page<Expense> findByUserAndExpenseDateBetween(
+            User user,
+            LocalDate startDate,
+            LocalDate endDate,
+            Pageable pageable);
+
+    Page<Expense> findByUserAndCategoryAndExpenseDateBetween(
+            User user,
+            ExpenseCategory category,
+            LocalDate startDate,
+            LocalDate endDate,
+            Pageable pageable);
+
+    Page<Expense> findByUserAndDescriptionContainingIgnoreCaseAndExpenseDateBetween(
+            User user,
+            String description,
+            LocalDate startDate,
+            LocalDate endDate,
+            Pageable pageable);
+
     Page<Expense> findByUser(
             User user,
             Pageable pageable);

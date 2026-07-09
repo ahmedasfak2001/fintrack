@@ -42,6 +42,24 @@ const ExpenseListScreen = ({ navigation }: any) => {
             value: category,
         })),
     ];
+    const monthOptions = Array.from({ length: 24 }, (_, index) => {
+        const date = new Date();
+
+        date.setMonth(date.getMonth() - index);
+
+        return {
+            label: date.toLocaleString("default", {
+                month: "long",
+                year: "numeric",
+            }),
+            value: `${date.getFullYear()}-${date.getMonth() + 1}`,
+        };
+    });
+    const today = new Date();
+
+    const [selectedMonthYear, setSelectedMonthYear] = useState(
+        `${today.getFullYear()}-${today.getMonth() + 1}`
+    );
     const onRefresh = async () => {
 
         setRefreshing(true);
@@ -77,6 +95,7 @@ const ExpenseListScreen = ({ navigation }: any) => {
     }, [
         selectedCategory,
         searchText,
+        selectedMonthYear
     ]);
 
     // const fetchExpenses = async () => {
@@ -288,6 +307,62 @@ const ExpenseListScreen = ({ navigation }: any) => {
                     },
                 ]}
             />
+            <Dropdown
+                maxHeight={300}
+                data={monthOptions}
+                labelField="label"
+                valueField="value"
+                value={selectedMonthYear}
+                onChange={(item) => setSelectedMonthYear(item.value)}
+                placeholder="Select Month"
+
+                style={{
+                    backgroundColor: theme.card,
+                    borderColor: theme.border,
+                    borderWidth: 1,
+                    borderRadius: 12,
+                    paddingHorizontal: 12,
+                    height: 50,
+                    marginBottom: 10,
+                }}
+
+                containerStyle={{
+                    backgroundColor: theme.card,
+                    borderRadius: 12,
+                    borderWidth: 1,
+                    borderColor: theme.border,
+                }}
+
+                placeholderStyle={{
+                    color: theme.secondaryText,
+                }}
+
+                selectedTextStyle={{
+                    color: theme.text,
+                }}
+
+                itemTextStyle={{
+                    color: theme.text,
+                }}
+
+                activeColor={
+                    theme.card === "#FFFFFF"
+                        ? "#EEF2FF"
+                        : "#334155"
+                }
+
+                renderRightIcon={() => (
+                    <Text
+                        style={{
+                            color: theme.text,
+                            fontSize: 18,
+                        }}
+                    >
+                        ▼
+                    </Text>
+                )}
+            />
+
             <Dropdown
                 maxHeight={300}
                 style={{

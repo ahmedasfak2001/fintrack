@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -62,14 +63,20 @@ public class ExpenseController {
 
                         @RequestParam(required = false) ExpenseCategory category,
 
-                        @RequestParam(required = false) String search) {
+                        @RequestParam(required = false) String search,
+
+                        @RequestParam(required = false) Integer month,
+
+                        @RequestParam(required = false) Integer year) {
 
                 return expenseService.getExpenses(
                                 userDetails,
                                 page,
                                 size,
                                 category,
-                                search);
+                                search,
+                                month,
+                                year);
         }
 
         // Delete Expense Endpoint
@@ -132,31 +139,35 @@ public class ExpenseController {
 
         // Get Expenses by Month Endpoint
         @GetMapping("/filter/month")
-        public List<Expense> getExpensesByMonth(
+        public Page<Expense> getExpensesByMonth(
                         @RequestParam int month,
                         @RequestParam int year,
-                        @AuthenticationPrincipal UserDetails userDetails) {
+                        @AuthenticationPrincipal UserDetails userDetails,
+                        @AuthenticationPrincipal Pageable pageable) {
 
                 return expenseService.getExpensesByMonth(
                                 month,
                                 year,
-                                userDetails);
+                                userDetails,
+                                pageable);
         }
 
         // Get Expenses by Date Range Endpoint
         @GetMapping("/filter/date")
-        public List<Expense> getExpensesByDateRange(
+        public Page<Expense> getExpensesByDateRange(
 
                         @RequestParam LocalDate from,
 
                         @RequestParam LocalDate to,
 
-                        @AuthenticationPrincipal UserDetails userDetails) {
+                        @AuthenticationPrincipal UserDetails userDetails,
+                        @AuthenticationPrincipal Pageable pageable) {
 
                 return expenseService.getExpensesByDateRange(
                                 from,
                                 to,
-                                userDetails);
+                                userDetails,
+                                pageable);
         }
 
         // Export Expenses to CSV Endpoint
