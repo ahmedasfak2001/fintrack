@@ -26,6 +26,7 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -892,9 +893,9 @@ public class ExpenseService {
                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
                 document.open();
 
-                Image logo = Image.getInstance(
-                                getClass()
-                                                .getResource("../logo/logo.png"));
+                ClassPathResource resource = new ClassPathResource("logo/logo.png");
+
+                Image logo = Image.getInstance(resource.getURL());
 
                 logo.scaleToFit(70, 70);
 
@@ -913,8 +914,14 @@ public class ExpenseService {
 
                 document.add(new Paragraph(" "));
 
-                document.add(
-                                new Paragraph(" "));
+                document.add(new Paragraph(
+                                "Month : " + ym.getMonth() + " " + year,
+                                normalFont));
+
+                document.add(new Paragraph(
+                                "Generated On : " + LocalDate.now(),
+                                normalFont));
+
                 PdfPTable table = new PdfPTable(4);
 
                 table.setWidthPercentage(100);
@@ -960,14 +967,6 @@ public class ExpenseService {
                 }
 
                 document.add(table);
-
-                document.add(new Paragraph(
-                                "Month : " + ym.getMonth() + " " + year,
-                                normalFont));
-
-                document.add(new Paragraph(
-                                "Generated On : " + LocalDate.now(),
-                                normalFont));
 
                 document.add(new Paragraph(
                                 "Total Transactions : " + expenses.size(),
