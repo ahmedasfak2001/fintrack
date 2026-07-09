@@ -44,20 +44,36 @@ const BudgetScreen = ({ navigation }: any) => {
                 await AsyncStorage.getItem(
                     "token"
                 );
+            const today = new Date();
 
-            const response =
-                await api.get(
-                    "/api/expenses/budget",
-                    {
-                        headers: {
-                            Authorization:
-                                `Bearer ${token}`,
-                        },
-                    }
-                );
+            const month = today.getMonth() + 1;
+            const year = today.getFullYear();
+
+            const url = `/api/expenses/budget?month=${month}&year=${year}`;
+
+            console.log("Budget URL:", url);
+            const response = await api.get(
+                url,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            console.log("Budget Response:", response.data);
+            // const response =
+            //     await api.get(
+            //         "/api/expenses/budget",
+            //         {
+            //             headers: {
+            //                 Authorization:
+            //                     `Bearer ${token}`,
+            //             },
+            //         }
+            //     );
 
             setBudget(
-                response.data.monthlyBudget
+                response.data.budget
                     .toString()
             );
 
@@ -146,7 +162,7 @@ const BudgetScreen = ({ navigation }: any) => {
             await api.put(
                 "/api/expenses/budget",
                 {
-                    monthlyBudget: Number(budget),
+                    budget: Number(budget),
                     month: today.getMonth() + 1,
                     year: today.getFullYear(),
                 },

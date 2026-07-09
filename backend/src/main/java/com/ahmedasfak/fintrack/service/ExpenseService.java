@@ -535,12 +535,12 @@ public class ExpenseService {
 
                 if (optionalBudget.isPresent()) {
 
-                        response.setMonthlyBudget(
+                        response.setBudget(
                                         optionalBudget.get().getBudget());
 
                 } else {
 
-                        response.setMonthlyBudget(BigDecimal.ZERO);
+                        response.setBudget(BigDecimal.ZERO);
 
                 }
 
