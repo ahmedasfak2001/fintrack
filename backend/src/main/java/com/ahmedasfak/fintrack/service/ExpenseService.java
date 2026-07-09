@@ -13,6 +13,18 @@ import java.time.YearMonth;
 import java.io.StringWriter;
 import java.io.IOException;
 
+import java.io.ByteArrayOutputStream;
+
+import com.lowagie.text.Element;
+import com.lowagie.text.Document;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +51,7 @@ import com.ahmedasfak.fintrack.entity.User;
 import com.ahmedasfak.fintrack.repository.ExpenseRepository;
 import com.ahmedasfak.fintrack.repository.MonthlyBudgetRepository;
 import com.ahmedasfak.fintrack.repository.UserRepository;
+import com.lowagie.text.pdf.PdfWriter;
 import com.ahmedasfak.fintrack.dto.UpdateExpenseRequest;
 import com.ahmedasfak.fintrack.dto.MonthlyTrendResponse;
 import com.ahmedasfak.fintrack.dto.SavingsPotentialResponse;
@@ -836,5 +849,133 @@ public class ExpenseService {
                 }
 
                 return response;
+        }
+
+        public byte[] exportMonthlyReportPdf(
+                        UserDetails userDetails,
+                        int month,
+                        int year) throws Exception {
+
+                User user = userRepository
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                YearMonth ym = YearMonth.of(year, month);
+
+                LocalDate startDate = ym.atDay(1);
+                LocalDate endDate = ym.atEndOfMonth();
+
+                List<Expense> expenses = expenseRepository.findByUserAndExpenseDateBetween(
+                                user,
+                                startDate,
+                                endDate);
+
+                Font titleFont = FontFactory.getFont(
+                                FontFactory.HELVETICA_BOLD,
+                                20);
+
+                Font headingFont = FontFactory.getFont(
+                                FontFactory.HELVETICA_BOLD,
+                                12);
+
+                Font normalFont = FontFactory.getFont(
+                                FontFactory.HELVETICA,
+                                11);
+                Document document = new Document();
+
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+                PdfWriter.getInstance(document, out);
+                BigDecimal totalExpense = expenses.stream()
+                                .map(Expense::getAmount)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                document.open();
+                Paragraph title = new Paragraph(
+                                "FinTrack Monthly Expense Report",
+                                titleFont);
+
+                title.setAlignment(Element.ALIGN_CENTER);
+
+                document.add(title);
+
+                document.add(new Paragraph(" "));
+
+                document.add(
+                                new Paragraph(" "));
+                PdfPTable table = new PdfPTable(4);
+
+                table.setWidthPercentage(100);
+                table.setSpacingBefore(10f);
+                table.setSpacingAfter(10f);
+
+                table.setWidths(new float[] {
+                                2f,
+                                2f,
+                                5f,
+                                2f
+                });
+                PdfPCell dateHeader = new PdfPCell(new Phrase("Date", headingFont));
+
+                PdfPCell categoryHeader = new PdfPCell(new Phrase("Category", headingFont));
+
+                PdfPCell descriptionHeader = new PdfPCell(new Phrase("Description", headingFont));
+
+                PdfPCell amountHeader = new PdfPCell(new Phrase("Amount", headingFont));
+
+                table.addCell(dateHeader);
+                table.addCell(categoryHeader);
+                table.addCell(descriptionHeader);
+                table.addCell(amountHeader);
+
+                for (Expense expense : expenses) {
+
+                        table.addCell(expense.getExpenseDate().toString());
+
+                        table.addCell(expense.getCategory().name());
+
+                        table.addCell(expense.getDescription());
+
+                        PdfPCell amountCell = new PdfPCell(
+                                        new Phrase(
+                                                        "₹ " + expense.getAmount(),
+                                                        normalFont));
+
+                        amountCell.setHorizontalAlignment(
+                                        Element.ALIGN_RIGHT);
+
+                        table.addCell(amountCell);
+                }
+
+                document.add(table);
+
+                document.add(new Paragraph(
+                                "Month : " + ym.getMonth() + " " + year,
+                                normalFont));
+
+                document.add(new Paragraph(
+                                "Generated On : " + LocalDate.now(),
+                                normalFont));
+
+                document.add(new Paragraph(
+                                "Total Transactions : " + expenses.size(),
+                                normalFont));
+
+                document.add(new Paragraph(
+                                "Total Expense : ₹" + totalExpense,
+                                normalFont));
+
+                document.add(new Paragraph(" "));
+
+                Paragraph footer = new Paragraph(
+                                "Generated by FinTrack",
+                                normalFont);
+
+                footer.setAlignment(Element.ALIGN_CENTER);
+
+                document.add(footer);
+                document.close();
+
+                return out.toByteArray();
+
         }
 }

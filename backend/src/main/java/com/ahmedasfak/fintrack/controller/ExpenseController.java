@@ -280,4 +280,33 @@ public class ExpenseController {
                                 .getSavingsPotential(
                                                 userDetails);
         }
+
+        // Export Monthly PDF Report
+        @GetMapping("/export/pdf")
+        public ResponseEntity<byte[]> exportMonthlyPdf(
+
+                        @RequestParam int month,
+
+                        @RequestParam int year,
+
+                        @AuthenticationPrincipal UserDetails userDetails)
+
+                        throws Exception {
+
+                byte[] pdf = expenseService.exportMonthlyReportPdf(
+                                userDetails,
+                                month,
+                                year);
+
+                return ResponseEntity.ok()
+
+                                .header(
+                                                HttpHeaders.CONTENT_DISPOSITION,
+                                                "attachment; filename=FinTrack_Report.pdf")
+
+                                .contentType(
+                                                MediaType.APPLICATION_PDF)
+
+                                .body(pdf);
+        }
 }
