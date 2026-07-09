@@ -123,6 +123,41 @@ public class ExpenseService {
         }
 
         // Get Summary
+        // public SummaryResponse getSummary(
+        // UserDetails userDetails) {
+
+        // User user = userRepository
+        // .findByEmail(userDetails.getUsername())
+        // .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // List<Expense> expenses = expenseRepository.findByUser(user);
+
+        // SummaryResponse response = new SummaryResponse();
+
+        // BigDecimal totalExpense = expenses.stream()
+        // .map(Expense::getAmount)
+        // .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Map<String, BigDecimal> categoryBreakdown = new HashMap<>();
+
+        // for (Expense expense : expenses) {
+
+        // String category = expense.getCategory().name();
+
+        // categoryBreakdown.put(
+        // category,
+        // categoryBreakdown.getOrDefault(
+        // category,
+        // BigDecimal.ZERO)
+        // .add(expense.getAmount()));
+        // }
+
+        // response.setTotalExpense(totalExpense);
+        // response.setExpenseCount((long) expenses.size());
+        // response.setCategoryBreakdown(categoryBreakdown);
+
+        // return response;
+        // }
         public SummaryResponse getSummary(
                         UserDetails userDetails) {
 
@@ -130,7 +165,12 @@ public class ExpenseService {
                                 .findByEmail(userDetails.getUsername())
                                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-                List<Expense> expenses = expenseRepository.findByUser(user);
+                LocalDate today = LocalDate.now();
+
+                List<Expense> expenses = expenseRepository.findByUserAndExpenseDateBetween(
+                                user,
+                                today.withDayOfMonth(1),
+                                today.withDayOfMonth(today.lengthOfMonth()));
 
                 SummaryResponse response = new SummaryResponse();
 
