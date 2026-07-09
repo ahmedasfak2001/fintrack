@@ -302,7 +302,7 @@ public class ExpenseController {
 
                                 .header(
                                                 HttpHeaders.CONTENT_DISPOSITION,
-                                                "attachment; filename=FinTrack_Report.pdf")
+                                                "attachment; filename=FinTrack_Report_" + month + "_" + year + ".pdf")
 
                                 .contentType(
                                                 MediaType.APPLICATION_PDF)

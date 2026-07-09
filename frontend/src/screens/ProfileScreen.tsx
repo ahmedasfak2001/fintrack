@@ -39,7 +39,63 @@ const ProfileScreen = ({ navigation }: any) => {
     const [enabled, setEnabled] = useState(false);
     const remainingBudget = monthlyBudget - currentExpense;
 
+    const exportPdf = async () => {
 
+        try {
+
+            const token = await AsyncStorage.getItem("token");
+
+            const today = new Date();
+
+            const month = today.getMonth() + 1;
+            const year = today.getFullYear();
+
+            const url =
+                `${api.defaults.baseURL}/api/expenses/export/pdf?month=${month}&year=${year}`;
+
+            const fileUri =
+                FileSystem.cacheDirectory +
+                `FinTrack_Report_${month}_${year}.pdf`;
+
+            console.log("Downloading...");
+
+            const result = await FileSystem.downloadAsync(
+                url,
+                fileUri,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            console.log(result);
+            const isAvailable = await Sharing.isAvailableAsync();
+
+            if (isAvailable) {
+
+                await Sharing.shareAsync(result.uri);
+                showSuccess(
+                    "Report exported successfully"
+                );
+
+            } else {
+                alert("Sharing is not available on this device.");
+                showError(
+                    "Failed to export report"
+                );
+
+            }
+
+        } catch (error) {
+
+            console.log(error);
+            showError(
+                "Failed to export report"
+            );
+
+        }
+    };
 
     const exportReport = async () => {
 
@@ -477,6 +533,21 @@ const ProfileScreen = ({ navigation }: any) => {
                     </Text>
                 </TouchableOpacity>
 
+                <TouchableOpacity
+                    onPress={exportPdf}
+                >
+                    <Text
+                        style={[
+                            styles.menuItem,
+                            {
+                                color: theme.text,
+                            },
+                        ]}
+                    >
+                        📥 Download Monthly PDF
+                    </Text>
+                </TouchableOpacity>
+
                 <Text
                     style={[
                         styles.sectionTitle,
@@ -743,6 +814,19 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+    },
+    exportButton: {
+        backgroundColor: "#2563EB",
+        padding: 15,
+        borderRadius: 12,
+        alignItems: "center",
+        marginTop: 20,
+    },
+
+    exportButtonText: {
+        color: "#fff",
+        fontWeight: "bold",
+        fontSize: 16,
     },
 
 });

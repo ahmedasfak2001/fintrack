@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import com.lowagie.text.Element;
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
+import com.lowagie.text.Image;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
@@ -890,6 +891,18 @@ public class ExpenseService {
                                 .map(Expense::getAmount)
                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
                 document.open();
+
+                Image logo = Image.getInstance(
+                                getClass()
+                                                .getResource("../logo/logo.png"));
+
+                logo.scaleToFit(70, 70);
+
+                logo.setAlignment(Image.ALIGN_CENTER);
+                document.add(logo);
+
+                document.add(new Paragraph(" "));
+
                 Paragraph title = new Paragraph(
                                 "FinTrack Monthly Expense Report",
                                 titleFont);
