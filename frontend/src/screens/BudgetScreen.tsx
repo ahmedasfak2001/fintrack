@@ -128,16 +128,31 @@ const BudgetScreen = ({ navigation }: any) => {
                     "token"
                 );
 
+            // await api.put(
+            //     "/api/expenses/budget",
+            //     {
+            //         monthlyBudget:
+            //             Number(budget),
+            //     },
+            //     {
+            //         headers: {
+            //             Authorization:
+            //                 `Bearer ${token}`,
+            //         },
+            //     }
+            // );
+            const today = new Date();
+
             await api.put(
                 "/api/expenses/budget",
                 {
-                    monthlyBudget:
-                        Number(budget),
+                    monthlyBudget: Number(budget),
+                    month: today.getMonth() + 1,
+                    year: today.getFullYear(),
                 },
                 {
                     headers: {
-                        Authorization:
-                            `Bearer ${token}`,
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             );

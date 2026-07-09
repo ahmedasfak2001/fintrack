@@ -206,12 +206,23 @@ public class ExpenseController {
         }
 
         // Get Budget Endpoint
+        // @GetMapping("/budget")
+        // public BudgetResponse getBudget(
+        // @AuthenticationPrincipal UserDetails userDetails) {
+        // return expenseService
+        // .getUserBudget(
+        // userDetails);
+        // }
         @GetMapping("/budget")
         public BudgetResponse getBudget(
+                        @RequestParam Integer month,
+                        @RequestParam Integer year,
                         @AuthenticationPrincipal UserDetails userDetails) {
-                return expenseService
-                                .getUserBudget(
-                                                userDetails);
+
+                return expenseService.getUserBudget(
+                                month,
+                                year,
+                                userDetails);
         }
 
         // Update Budget Endpoint

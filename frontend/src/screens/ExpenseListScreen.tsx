@@ -60,6 +60,7 @@ const ExpenseListScreen = ({ navigation }: any) => {
     const [selectedMonthYear, setSelectedMonthYear] = useState(
         `${today.getFullYear()}-${today.getMonth() + 1}`
     );
+    const [year, month] = selectedMonthYear.split("-");
     const onRefresh = async () => {
 
         setRefreshing(true);
@@ -111,9 +112,11 @@ const ExpenseListScreen = ({ navigation }: any) => {
 
             const token =
                 await AsyncStorage.getItem("token");
-
+    
             let url =
-                "/api/expenses?page=0&size=100";
+                `/api/expenses?page=0&size=100` +
+                `&month=${month}` +
+                `&year=${year}`;
 
             if (selectedCategory) {
 
@@ -139,6 +142,7 @@ const ExpenseListScreen = ({ navigation }: any) => {
                 );
 
             console.log(response.data);
+            console.log(url);
 
             setExpenses(response.data.content);
 

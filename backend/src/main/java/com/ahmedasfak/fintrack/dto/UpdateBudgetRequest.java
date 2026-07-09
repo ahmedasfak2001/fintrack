@@ -4,14 +4,33 @@ import java.math.BigDecimal;
 
 public class UpdateBudgetRequest {
 
-    private BigDecimal monthlyBudget;
+    private Integer month;
 
-    public BigDecimal getMonthlyBudget() {
-        return monthlyBudget;
+    private Integer year;
+
+    private BigDecimal budget;
+
+    public Integer getMonth() {
+        return month;
     }
 
-    public void setMonthlyBudget(
-            BigDecimal monthlyBudget) {
-        this.monthlyBudget = monthlyBudget;
+    public void setMonth(Integer month) {
+        this.month = month;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public BigDecimal getBudget() {
+        return budget;
+    }
+
+    public void setBudget(BigDecimal budget) {
+        this.budget = budget;
     }
 }
