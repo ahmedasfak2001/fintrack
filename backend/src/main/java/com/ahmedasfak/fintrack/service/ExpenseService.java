@@ -923,6 +923,19 @@ public class ExpenseService {
 
                 document.add(new Paragraph(" "));
 
+                document.add(appName);
+
+                Paragraph reportTitle = new Paragraph(
+                                "Monthly Expense Report",
+                                FontFactory.getFont(
+                                                FontFactory.HELVETICA,
+                                                16));
+
+                reportTitle.setAlignment(Element.ALIGN_CENTER);
+
+                document.add(reportTitle);
+
+                document.add(new Paragraph(" "));
                 PdfPTable infoTable = new PdfPTable(2);
 
                 infoTable.setWidthPercentage(100);
@@ -942,19 +955,6 @@ public class ExpenseService {
                 infoTable.addCell(new Phrase(generatedDate, normalFont));
 
                 document.add(infoTable);
-                document.add(appName);
-
-                Paragraph reportTitle = new Paragraph(
-                                "Monthly Expense Report",
-                                FontFactory.getFont(
-                                                FontFactory.HELVETICA,
-                                                16));
-
-                reportTitle.setAlignment(Element.ALIGN_CENTER);
-
-                document.add(reportTitle);
-
-                document.add(new Paragraph(" "));
                 PdfPTable table = new PdfPTable(4);
 
                 table.setWidthPercentage(100);
