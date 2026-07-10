@@ -1046,9 +1046,13 @@ public class ExpenseService {
 
                 expenseCard.setBackgroundColor(new Color(230, 245, 255));
 
-                expenseCard.addElement(new Paragraph(
+                Paragraph expenseHeading = new Paragraph(
                                 "Total Expense",
-                                headingFont));
+                                headingFont);
+
+                expenseHeading.setAlignment(Element.ALIGN_CENTER);
+
+                expenseCard.addElement(expenseHeading);
 
                 Paragraph expenseValue = new Paragraph(
                                 "₹ " + totalExpense,
@@ -1065,13 +1069,28 @@ public class ExpenseService {
 
                 transactionCard.setBackgroundColor(new Color(240, 255, 240));
 
-                transactionCard.addElement(new Paragraph(
-                                "Transactions",
-                                headingFont));
+                // transactionCard.addElement(new Paragraph(
+                // "Transactions",
+                // headingFont));
 
-                transactionCard.addElement(new Paragraph(
+                // transactionCard.addElement(new Paragraph(
+                // String.valueOf(expenses.size()),
+                // titleFont));
+
+                Paragraph transactionHeading = new Paragraph(
+                                "Transactions",
+                                headingFont);
+
+                transactionHeading.setAlignment(Element.ALIGN_CENTER);
+
+                Paragraph transactionValue = new Paragraph(
                                 String.valueOf(expenses.size()),
-                                titleFont));
+                                titleFont);
+
+                transactionValue.setAlignment(Element.ALIGN_CENTER);
+
+                transactionCard.addElement(transactionHeading);
+                transactionCard.addElement(transactionValue);
 
                 summaryTable.addCell(transactionCard);
                 document.add(summaryTable);
@@ -1090,13 +1109,28 @@ public class ExpenseService {
 
                 budgetCard.setBackgroundColor(new Color(255, 248, 220));
 
-                budgetCard.addElement(new Paragraph(
-                                "Monthly Budget",
-                                headingFont));
+                // budgetCard.addElement(new Paragraph(
+                // "Monthly Budget",
+                // headingFont));
 
-                budgetCard.addElement(new Paragraph(
+                // budgetCard.addElement(new Paragraph(
+                // "₹ " + budget,
+                // titleFont));
+
+                Paragraph budgetHeading = new Paragraph(
+                                "Monthly Budget",
+                                headingFont);
+
+                budgetHeading.setAlignment(Element.ALIGN_CENTER);
+
+                Paragraph budgetValue = new Paragraph(
                                 "₹ " + budget,
-                                titleFont));
+                                titleFont);
+
+                budgetValue.setAlignment(Element.ALIGN_CENTER);
+
+                budgetCard.addElement(budgetHeading);
+                budgetCard.addElement(budgetValue);
 
                 budgetTable.addCell(budgetCard);
 
@@ -1113,13 +1147,28 @@ public class ExpenseService {
                         remainingCard.setBackgroundColor(new Color(255, 220, 220));
                 }
 
-                remainingCard.addElement(new Paragraph(
-                                "Remaining Budget",
-                                headingFont));
+                // remainingCard.addElement(new Paragraph(
+                // "Remaining Budget",
+                // headingFont));
 
-                remainingCard.addElement(new Paragraph(
+                // remainingCard.addElement(new Paragraph(
+                // "₹ " + remainingBudget,
+                // titleFont));
+
+                Paragraph remainingHeading = new Paragraph(
+                                "Remaining Budget",
+                                headingFont);
+
+                remainingHeading.setAlignment(Element.ALIGN_CENTER);
+
+                Paragraph remainingValue = new Paragraph(
                                 "₹ " + remainingBudget,
-                                titleFont));
+                                titleFont);
+
+                remainingValue.setAlignment(Element.ALIGN_CENTER);
+
+                remainingCard.addElement(remainingHeading);
+                remainingCard.addElement(remainingValue);
 
                 budgetTable.addCell(remainingCard);
                 document.add(budgetTable);
