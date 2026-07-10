@@ -917,9 +917,6 @@ public class ExpenseService {
                                                 24));
 
                 appName.setAlignment(Element.ALIGN_CENTER);
-                LineSeparator line = new LineSeparator();
-
-                document.add(line);
 
                 document.add(new Paragraph(" "));
 
@@ -936,6 +933,9 @@ public class ExpenseService {
                 document.add(reportTitle);
 
                 document.add(new Paragraph(" "));
+                LineSeparator line = new LineSeparator();
+
+                document.add(line);
                 PdfPTable infoTable = new PdfPTable(2);
 
                 infoTable.setWidthPercentage(100);
