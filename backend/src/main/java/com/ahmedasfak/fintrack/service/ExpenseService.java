@@ -956,10 +956,10 @@ public class ExpenseService {
                 infoTable.addCell(new Phrase(generatedDate, normalFont));
 
                 document.add(infoTable);
-
+                document.add(new Paragraph(" "));
                 document.add(line);
                 document.add(new Paragraph(" "));
-                
+
                 PdfPTable table = new PdfPTable(4);
 
                 table.setWidthPercentage(100);
