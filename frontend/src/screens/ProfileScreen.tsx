@@ -58,6 +58,9 @@ const ProfileScreen = ({ navigation }: any) => {
                 `FinTrack_Report_${month}_${year}.pdf`;
 
             console.log("Downloading...");
+            const info = await FileSystem.getInfoAsync(fileUri);
+            console.log(info);
+            console.log(fileUri);
 
             const result = await FileSystem.downloadAsync(
                 url,

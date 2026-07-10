@@ -893,9 +893,9 @@ public class ExpenseService {
                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
                 document.open();
 
-                ClassPathResource resource = new ClassPathResource("logo/logo.png");
+                ClassPathResource resource = new ClassPathResource("static/logo.png");
 
-                Image logo = Image.getInstance(resource.getURL());
+                Image logo = Image.getInstance(resource.getInputStream().readAllBytes());
 
                 logo.scaleToFit(70, 70);
 
