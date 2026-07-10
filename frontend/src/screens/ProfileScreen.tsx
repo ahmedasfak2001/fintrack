@@ -34,7 +34,7 @@ const ProfileScreen = ({ navigation }: any) => {
 
     const [monthlyBudget, setMonthlyBudget] = useState(0);
     const [currentExpense, setCurrentExpense] = useState(0);
-
+    const [pdfLoading, setPdfLoading] = useState(false);
     const [loading, setLoading] = useState(true);
     const [enabled, setEnabled] = useState(false);
     const remainingBudget = monthlyBudget - currentExpense;
@@ -42,7 +42,7 @@ const ProfileScreen = ({ navigation }: any) => {
     const exportPdf = async () => {
 
         try {
-
+            setPdfLoading(true);
             const token = await AsyncStorage.getItem("token");
 
             const today = new Date();
@@ -97,6 +97,8 @@ const ProfileScreen = ({ navigation }: any) => {
                 "Failed to export report"
             );
 
+        } finally {
+            setPdfLoading(false);
         }
     };
 
@@ -519,8 +521,18 @@ const ProfileScreen = ({ navigation }: any) => {
                         📊 Budget Settings
                     </Text>
                 </TouchableOpacity>
+                <Text
+                    style={[
+                        styles.sectionTitle,
+                        {
+                            color: theme.text,
+                            marginTop: 10,
+                        },
+                    ]}
+                >
+                    📋  Export Reports
+                </Text>
                 <TouchableOpacity
-
                     onPress={exportReport}
                 >
 
@@ -532,23 +544,40 @@ const ProfileScreen = ({ navigation }: any) => {
                             },
                         ]}
                     >
-                        📥 Export Expenses
+                        📥 Export CSV
                     </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     onPress={exportPdf}
+                    disabled={pdfLoading}
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginBottom: 12,
+                    }}
                 >
+
                     <Text
                         style={[
                             styles.menuItem,
                             {
                                 color: theme.text,
+                                marginBottom: 0,
                             },
                         ]}
                     >
-                        📥 Download Monthly PDF
+                        📄 {pdfLoading ? "Preparing PDF..." : "Download PDF"}
                     </Text>
+
+                    {pdfLoading && (
+                        <ActivityIndicator
+                            size="small"
+                            color={COLORS.primary}
+                            style={{ marginLeft: 8 }}
+                        />
+                    )}
+
                 </TouchableOpacity>
 
                 <Text
@@ -830,6 +859,20 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontWeight: "bold",
         fontSize: 16,
+    },
+    downloadButton: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+
+        backgroundColor: COLORS.primary,
+        paddingVertical: 14,
+        borderRadius: 12,
+    },
+    downloadText: {
+        color: "#FFFFFF",
+        fontSize: 16,
+        fontWeight: "bold",
     },
 
 });

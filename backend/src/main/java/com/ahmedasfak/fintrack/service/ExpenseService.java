@@ -25,6 +25,7 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.draw.LineSeparator;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
@@ -891,6 +892,11 @@ public class ExpenseService {
                 BigDecimal totalExpense = expenses.stream()
                                 .map(Expense::getAmount)
                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+                String reportMonth = ym.getMonth().name().substring(0, 1)
+                                + ym.getMonth().name().substring(1).toLowerCase();
+
+                String generatedDate = LocalDate.now().toString();
+
                 document.open();
 
                 ClassPathResource resource = new ClassPathResource("static/logo.png");
@@ -904,24 +910,51 @@ public class ExpenseService {
 
                 document.add(new Paragraph(" "));
 
-                Paragraph title = new Paragraph(
-                                "FinTrack Monthly Expense Report",
-                                titleFont);
+                Paragraph appName = new Paragraph(
+                                "FinTrack",
+                                FontFactory.getFont(
+                                                FontFactory.HELVETICA_BOLD,
+                                                24));
 
-                title.setAlignment(Element.ALIGN_CENTER);
+                appName.setAlignment(Element.ALIGN_CENTER);
+                LineSeparator line = new LineSeparator();
 
-                document.add(title);
+                document.add(line);
 
                 document.add(new Paragraph(" "));
 
-                document.add(new Paragraph(
-                                "Month : " + ym.getMonth() + " " + year,
-                                normalFont));
+                PdfPTable infoTable = new PdfPTable(2);
 
-                document.add(new Paragraph(
-                                "Generated On : " + LocalDate.now(),
-                                normalFont));
+                infoTable.setWidthPercentage(100);
+                infoTable.setWidths(new float[] { 2f, 5f });
+                infoTable.setSpacingAfter(15f);
 
+                infoTable.addCell(new Phrase("User", headingFont));
+                infoTable.addCell(new Phrase(user.getName(), normalFont));
+
+                infoTable.addCell(new Phrase("Email", headingFont));
+                infoTable.addCell(new Phrase(user.getEmail(), normalFont));
+
+                infoTable.addCell(new Phrase("Report Month", headingFont));
+                infoTable.addCell(new Phrase(reportMonth + " " + year, normalFont));
+
+                infoTable.addCell(new Phrase("Generated On", headingFont));
+                infoTable.addCell(new Phrase(generatedDate, normalFont));
+
+                document.add(infoTable);
+                document.add(appName);
+
+                Paragraph reportTitle = new Paragraph(
+                                "Monthly Expense Report",
+                                FontFactory.getFont(
+                                                FontFactory.HELVETICA,
+                                                16));
+
+                reportTitle.setAlignment(Element.ALIGN_CENTER);
+
+                document.add(reportTitle);
+
+                document.add(new Paragraph(" "));
                 PdfPTable table = new PdfPTable(4);
 
                 table.setWidthPercentage(100);
