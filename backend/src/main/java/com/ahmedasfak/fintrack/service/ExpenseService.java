@@ -3,11 +3,13 @@ package com.ahmedasfak.fintrack.service;
 import java.awt.Color;
 
 import java.util.List;
+import java.util.Locale.Category;
 import java.util.UUID;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.time.LocalDate;
 import java.math.RoundingMode;
@@ -913,6 +915,16 @@ public class ExpenseService {
 
                 BigDecimal remainingBudget = budget.subtract(totalExpense);
 
+                Map<ExpenseCategory, BigDecimal> categoryTotals = new HashMap<>();
+
+                for (Expense expense : expenses) {
+
+                        categoryTotals.merge(
+                                        expense.getCategory(),
+                                        expense.getAmount(),
+                                        BigDecimal::add);
+                }
+
                 String reportMonth = ym.getMonth().name().substring(0, 1)
                                 + ym.getMonth().name().substring(1).toLowerCase();
 
@@ -1172,6 +1184,47 @@ public class ExpenseService {
 
                 budgetTable.addCell(remainingCard);
                 document.add(budgetTable);
+
+                document.add(new Paragraph(" "));
+
+                Paragraph categoryTitle = new Paragraph(
+                                "Category-wise Breakdown",
+                                FontFactory.getFont(
+                                                FontFactory.HELVETICA_BOLD,
+                                                16));
+
+                categoryTitle.setSpacingBefore(10f);
+                categoryTitle.setSpacingAfter(10f);
+
+                document.add(categoryTitle);
+
+                PdfPTable categoryTable = new PdfPTable(2);
+
+                categoryTable.setWidthPercentage(100);
+
+                categoryTable.setWidths(new float[] { 3f, 2f });
+                PdfPCell categoryNameHeader = new PdfPCell(
+                                new Phrase("Category", headingFont));
+
+                PdfPCell categoryAmountHeader = new PdfPCell(
+                                new Phrase("Amount", headingFont));
+
+                categoryTable.addCell(categoryNameHeader);
+                categoryTable.addCell(categoryAmountHeader);
+                for (Entry<ExpenseCategory, BigDecimal> entry : categoryTotals.entrySet()) {
+
+                        categoryTable.addCell(entry.getKey().name());
+
+                        PdfPCell amountCell = new PdfPCell(
+                                        new Phrase(
+                                                        "₹ " + entry.getValue(),
+                                                        normalFont));
+
+                        amountCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+                        categoryTable.addCell(amountCell);
+                }
+                document.add(categoryTable);
 
                 document.add(new Paragraph(" "));
                 document.add(new Paragraph(" "));
