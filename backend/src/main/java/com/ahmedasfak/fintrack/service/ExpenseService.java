@@ -247,7 +247,9 @@ public class ExpenseService {
 
         // Get Monthly Trend
         public List<MonthlyTrendResponse> getMonthlyTrend(
-                        UserDetails userDetails) {
+                        UserDetails userDetails,
+                        int month,
+                        int year) {
 
                 User user = userRepository
                                 .findByEmail(
@@ -255,12 +257,20 @@ public class ExpenseService {
                                 .orElseThrow(
                                                 () -> new RuntimeException("User not found"));
 
-                LocalDate now = LocalDate.now();
+                // LocalDate now = LocalDate.now();
+                // YearMonth ym = YearMonth.of(year, month);
+                // LocalDate start = ym.atDay(1);
+                // LocalDate end = ym.atEndOfMonth();
+
+                // return expenseRepository.getMonthlyTrend(
+                // user,
+                // now.getMonthValue(),
+                // now.getYear());
 
                 return expenseRepository.getMonthlyTrend(
                                 user,
-                                now.getMonthValue(),
-                                now.getYear());
+                                month,
+                                year);
         }
 
         // Update Expense
@@ -1222,7 +1232,7 @@ public class ExpenseService {
                                         + categoryName.substring(1);
 
                         categoryTable.addCell(new Phrase(categoryName, normalFont));
-                        
+
                         PdfPCell amountCell = new PdfPCell(
                                         new Phrase(
                                                         "₹ " + entry.getValue(),

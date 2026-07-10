@@ -105,12 +105,23 @@ public class ExpenseController {
         }
 
         // Get Monthly Trend Endpoint
-        @GetMapping("/summary/trend")
-        public List<MonthlyTrendResponse> getMonthlyTrend(
-                        @AuthenticationPrincipal UserDetails userDetails) {
+        // @GetMapping("/summary/trend")
+        // public List<MonthlyTrendResponse> getMonthlyTrend(
+        // @AuthenticationPrincipal UserDetails userDetails,
+        // @RequestParam int month,
+        // @RequestParam int year) {
 
-                return expenseService
-                                .getMonthlyTrend(userDetails);
+        // return expenseService
+        // .getMonthlyTrend(userDetails);
+        // }
+        @GetMapping("/summary/trend")
+        public ResponseEntity<List<MonthlyTrendResponse>> getMonthlyTrend(
+                        @AuthenticationPrincipal UserDetails userDetails,
+                        @RequestParam int month,
+                        @RequestParam int year) {
+
+                return ResponseEntity.ok(
+                                expenseService.getMonthlyTrend(userDetails, month, year));
         }
 
         // Update Expense Endpoint
