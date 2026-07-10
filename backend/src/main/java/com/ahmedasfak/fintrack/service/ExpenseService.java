@@ -935,7 +935,7 @@ public class ExpenseService {
                 line.setLineWidth(1.5f);
                 line.setPercentage(100);
                 document.add(line);
-                
+
                 document.add(new Paragraph(" "));
                 PdfPTable infoTable = new PdfPTable(2);
 
@@ -956,6 +956,10 @@ public class ExpenseService {
                 infoTable.addCell(new Phrase(generatedDate, normalFont));
 
                 document.add(infoTable);
+
+                document.add(line);
+                document.add(new Paragraph(" "));
+                
                 PdfPTable table = new PdfPTable(4);
 
                 table.setWidthPercentage(100);
