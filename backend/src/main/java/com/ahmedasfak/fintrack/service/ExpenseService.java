@@ -918,8 +918,6 @@ public class ExpenseService {
 
                 appName.setAlignment(Element.ALIGN_CENTER);
 
-                document.add(new Paragraph(" "));
-
                 document.add(appName);
 
                 Paragraph reportTitle = new Paragraph(
@@ -934,8 +932,11 @@ public class ExpenseService {
 
                 document.add(new Paragraph(" "));
                 LineSeparator line = new LineSeparator();
-
+                line.setLineWidth(1.5f);
+                line.setPercentage(100);
                 document.add(line);
+                
+                document.add(new Paragraph(" "));
                 PdfPTable infoTable = new PdfPTable(2);
 
                 infoTable.setWidthPercentage(100);
