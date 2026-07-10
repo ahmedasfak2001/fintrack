@@ -1213,8 +1213,16 @@ public class ExpenseService {
                 categoryTable.addCell(categoryAmountHeader);
                 for (Entry<ExpenseCategory, BigDecimal> entry : categoryTotals.entrySet()) {
 
-                        categoryTable.addCell(entry.getKey().name());
+                        // categoryTable.addCell(entry.getKey().name());
+                        String categoryName = entry.getKey().name()
+                                        .replace("_", " ")
+                                        .toLowerCase();
 
+                        categoryName = Character.toUpperCase(categoryName.charAt(0))
+                                        + categoryName.substring(1);
+
+                        categoryTable.addCell(new Phrase(categoryName, normalFont));
+                        
                         PdfPCell amountCell = new PdfPCell(
                                         new Phrase(
                                                         "₹ " + entry.getValue(),
