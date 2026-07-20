@@ -34,73 +34,71 @@ const ProfileScreen = ({ navigation }: any) => {
 
     const [monthlyBudget, setMonthlyBudget] = useState(0);
     const [currentExpense, setCurrentExpense] = useState(0);
-    const [pdfLoading, setPdfLoading] = useState(false);
+    
     const [loading, setLoading] = useState(true);
     const [enabled, setEnabled] = useState(false);
     const remainingBudget = monthlyBudget - currentExpense;
 
-    const exportPdf = async () => {
+    // const exportPdf = async () => {
 
-        try {
-            setPdfLoading(true);
-            const token = await AsyncStorage.getItem("token");
+    //     try {
+            
+    //         const token = await AsyncStorage.getItem("token");
 
-            const today = new Date();
+    //         const today = new Date();
 
-            const month = today.getMonth() + 1;
-            const year = today.getFullYear();
+    //         const month = today.getMonth() + 1;
+    //         const year = today.getFullYear();
 
-            const url =
-                `${api.defaults.baseURL}/api/expenses/export/pdf?month=${month}&year=${year}`;
+    //         const url =
+    //             `${api.defaults.baseURL}/api/expenses/export/pdf?month=${month}&year=${year}`;
 
-            const fileUri =
-                FileSystem.cacheDirectory +
-                `FinTrack_Report_${month}_${year}.pdf`;
+    //         const fileUri =
+    //             FileSystem.cacheDirectory +
+    //             `FinTrack_Report_${month}_${year}.pdf`;
 
-            console.log("Downloading...");
-            const info = await FileSystem.getInfoAsync(fileUri);
-            console.log(info);
-            console.log(fileUri);
+    //         console.log("Downloading...");
+    //         const info = await FileSystem.getInfoAsync(fileUri);
+    //         console.log(info);
+    //         console.log(fileUri);
 
-            const result = await FileSystem.downloadAsync(
-                url,
-                fileUri,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+    //         const result = await FileSystem.downloadAsync(
+    //             url,
+    //             fileUri,
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                 },
+    //             }
+    //         );
 
-            console.log(result);
-            const isAvailable = await Sharing.isAvailableAsync();
+    //         console.log(result);
+    //         const isAvailable = await Sharing.isAvailableAsync();
 
-            if (isAvailable) {
+    //         if (isAvailable) {
 
-                await Sharing.shareAsync(result.uri);
-                showSuccess(
-                    "Report exported successfully"
-                );
+    //             await Sharing.shareAsync(result.uri);
+    //             showSuccess(
+    //                 "Report exported successfully"
+    //             );
 
-            } else {
-                alert("Sharing is not available on this device.");
-                showError(
-                    "Failed to export report"
-                );
+    //         } else {
+    //             alert("Sharing is not available on this device.");
+    //             showError(
+    //                 "Failed to export report"
+    //             );
 
-            }
+    //         }
 
-        } catch (error) {
+    //     } catch (error) {
 
-            console.log(error);
-            showError(
-                "Failed to export report"
-            );
+    //         console.log(error);
+    //         showError(
+    //             "Failed to export report"
+    //         );
 
-        } finally {
-            setPdfLoading(false);
-        }
-    };
+    //     }
+    // };
 
     const exportReport = async () => {
 
@@ -530,7 +528,7 @@ const ProfileScreen = ({ navigation }: any) => {
                         },
                     ]}
                 >
-                    📋  Export Reports
+                    Export Reports
                 </Text>
                 <TouchableOpacity
                     onPress={exportReport}
@@ -546,38 +544,6 @@ const ProfileScreen = ({ navigation }: any) => {
                     >
                         📥 Export CSV
                     </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={exportPdf}
-                    disabled={pdfLoading}
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginBottom: 12,
-                    }}
-                >
-
-                    <Text
-                        style={[
-                            styles.menuItem,
-                            {
-                                color: theme.text,
-                                marginBottom: 0,
-                            },
-                        ]}
-                    >
-                        📄 {pdfLoading ? "Preparing PDF..." : "Download PDF"}
-                    </Text>
-
-                    {pdfLoading && (
-                        <ActivityIndicator
-                            size="small"
-                            color={COLORS.primary}
-                            style={{ marginLeft: 8 }}
-                        />
-                    )}
-
                 </TouchableOpacity>
 
                 <Text

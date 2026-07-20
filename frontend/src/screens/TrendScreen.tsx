@@ -1,5 +1,4 @@
 import React, {
-    useEffect,
     useState,
     useCallback,
 } from "react";
@@ -10,42 +9,34 @@ import {
     StyleSheet,
     Dimensions,
     ScrollView,
+    TouchableOpacity,
 } from "react-native";
 
-import {
-    ActivityIndicator,
-} from "react-native";
+import { ActivityIndicator } from "react-native";
 
-import { useTheme }
-    from "../theme/useTheme";
+import { useTheme } from "../theme/useTheme";
 
-import { COLORS }
-    from "../constants/colors";
+import { COLORS } from "../constants/colors";
 
-import AsyncStorage
-    from "@react-native-async-storage/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import api from "../api/api";
 
-import {
-    LineChart
-} from "react-native-chart-kit";
-import { useFocusEffect }
-    from "@react-navigation/native";
+import { LineChart } from "react-native-gifted-charts";
+
+import { useFocusEffect } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
+import { showError } from "../utils/toast";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from "expo-sharing";
 
 const TrendScreen = () => {
 
     const { theme } = useTheme();
-
-    const [loading, setLoading] =
-        useState(true);
-
-    const [trendData, setTrendData] =
-        useState<any[]>([]);
-
-    const screenWidth =
-        Dimensions.get("window").width;
+    const [loading, setLoading] = useState(true);
+    const [trendData, setTrendData] = useState<any[]>([]);
+    const screenWidth = Dimensions.get("window").width;
+    const [pdfLoading, setPdfLoading] = useState(false);
 
     const monthOptions = Array.from({ length: 24 }, (_, index) => {
         const date = new Date();
@@ -84,10 +75,6 @@ const TrendScreen = () => {
 
             const token =
                 await AsyncStorage.getItem("token");
-
-            // const response =
-            //     await api.get(
-            //         "/api/expenses/summary/trend",
             const response = await api.get(
                 `/api/expenses/summary/trend?month=${month}&year=${year}`,
                 {
@@ -98,9 +85,7 @@ const TrendScreen = () => {
                 }
             );
 
-            setTrendData(
-                response.data
-            );
+            setTrendData(response.data);
 
         } catch (error) {
 
@@ -112,25 +97,55 @@ const TrendScreen = () => {
         }
     };
 
-    const chartData = {
+    const exportPdf = async () => {
+        try {
+            setPdfLoading(true);
 
-        labels:
-            trendData.map(
-                item =>
-                    item.date.slice(8)
-            ),
+            const token = await AsyncStorage.getItem("token");
 
-        datasets: [
-            {
-                data:
-                    trendData.map(
-                        item =>
-                            Number(item.total)
-                    ),
-            },
-        ],
+            const fileUri =
+                FileSystem.cacheDirectory +
+                `FinTrack_Report_${month}_${year}.pdf`;
+
+            const url =
+                `${api.defaults.baseURL}/api/expenses/export/pdf?month=${month}&year=${year}`;
+
+            const result = await FileSystem.downloadAsync(
+                url,
+                fileUri,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(result.uri);
+
+            } else {
+                showError("Sharing is not available.");
+            }
+
+
+        } catch (error) {
+            console.log(error);
+            showError("Failed to export PDF");
+
+        } finally {
+            setPdfLoading(false);
+        }
     };
 
+    const lineData = trendData.map(item => ({
+        value: Number(item.total),
+        label: String(Number(item.date.slice(8))),
+
+    }));
+
+
+    const maxValue = Math.max(...lineData.map(item => item.value), 0);
+    console.log(lineData);
+    console.log(Math.max(...lineData.map(item => item.value)));
     const totalSpending =
         trendData.reduce(
             (sum, item) =>
@@ -206,6 +221,7 @@ const TrendScreen = () => {
                     {
                         color:
                             theme.text,
+                        marginTop: 20,
                     },
                 ]}
             >
@@ -268,6 +284,26 @@ const TrendScreen = () => {
                 )}
             />
 
+            <TouchableOpacity
+                style={styles.downloadButton}
+                onPress={exportPdf}
+                disabled={pdfLoading}
+            >
+                {pdfLoading && (
+                    <ActivityIndicator
+                        size="small"
+                        color="#FFFFFF"
+                        style={{ marginRight: 8 }}
+                    />
+                )}
+
+                <Text style={styles.downloadText}>
+                    {pdfLoading
+                        ? "Preparing PDF..."
+                        : "📄 Download Monthly Report"}
+                </Text>
+            </TouchableOpacity>
+
             <Text
                 style={[
                     styles.title,
@@ -282,55 +318,141 @@ const TrendScreen = () => {
 
             {
                 trendData.length > 0 ? (
+                    <>
 
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={
-                            false
-                        }
-                    >
-                        <LineChart
-                            data={chartData}
-                            width={
-                                Math.max(
-                                    screenWidth - 30,
-                                    trendData.length * 60
-                                )
-                            }
-                            height={260}
-                            bezier
-                            chartConfig={{
-                                backgroundColor:
-                                    theme.card,
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                        >
 
-                                backgroundGradientFrom:
-                                    theme.card,
+                            <LineChart
+                                data={lineData}
+                                curved
+                                areaChart
+                                height={300}
+                                maxValue={Math.ceil(maxValue / 1000) * 1000}
+                                noOfSections={7}
 
-                                backgroundGradientTo:
-                                    theme.card,
+                                yAxisLabelWidth={65}
 
-                                decimalPlaces: 0,
+                                formatYLabel={(value) =>
+                                    Number(value).toLocaleString()
+                                }
 
-                                color: (
-                                    opacity = 1
-                                ) =>
-                                    `rgba(59,130,246,${opacity})`,
+                                hideDataPoints={false}
+                                dataPointsRadius={5}
+                                thickness={3}
 
-                                labelColor:
-                                    (opacity = 1) =>
-                                        theme.text,
+                                color={COLORS.primary}
+                                startFillColor={COLORS.primary}
+                                endFillColor={COLORS.primary}
+                                startOpacity={0.35}
+                                endOpacity={0.02}
 
-                                propsForDots: {
-                                    r: "5",
-                                },
-                            }}
-                            style={{
-                                borderRadius: 16,
-                            }}
-                        />
+                                spacing={55}
+                                initialSpacing={20}
 
-                    </ScrollView>
+                                yAxisThickness={0}
+                                xAxisThickness={1}
 
+                                xAxisColor={theme.border}
+                                rulesColor={theme.border}
+                                rulesType="solid"
+
+                                yAxisTextStyle={{
+                                    color: theme.secondaryText,
+                                }}
+
+                                xAxisLabelTextStyle={{
+                                    color: theme.secondaryText,
+                                }}
+                                isAnimated
+                                animateOnDataChange
+
+                                showVerticalLines
+                                focusEnabled
+                                showDataPointOnFocus
+                                showStripOnFocus
+                                showTextOnFocus={false}
+                                focusedDataPointRadius={7}
+                                focusedDataPointColor={COLORS.primary}
+
+                                pointerConfig={{
+                                    pointerStripHeight: 220,
+                                    pointerStripColor: theme.border,
+                                    pointerColor: COLORS.primary,
+                                    radius: 7,
+                                    pointerLabelWidth: 150,
+                                    pointerLabelHeight: 80,
+                                    activatePointersOnLongPress: false,
+
+                                    pointerLabelComponent: (items: any[]) => {
+                                        const point = items[0];
+
+                                        if (!point) return null;
+
+                                        const index = lineData.findIndex(
+                                            x => x.label === point.label && x.value === point.value
+                                        );
+                                        const selected = trendData.find(
+                                            item =>
+                                                String(Number(item.date.slice(8))) === String(point.label)
+                                        );
+
+                                        if (!selected) return null;
+                                        console.log(selected);
+
+                                        const isLast = index >= lineData.length - 3;
+                                        
+                                        return (
+                                            <View
+                                                style={{
+                                                    width: 140,
+                                                    minHeight: 70,
+                                                    backgroundColor: theme.card,
+                                                    borderRadius: 12,
+                                                    borderWidth: 1,
+                                                    borderColor: theme.border,
+                                                    paddingHorizontal: 12,
+                                                    paddingVertical: 10,
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                    elevation: 8,
+                                                    shadowColor: "#000",
+                                                    shadowOpacity: 0.25,
+                                                    shadowRadius: 5,
+                                                    shadowOffset: {
+                                                        width: 0,
+                                                        height: 2,
+                                                    },
+                                                    marginLeft: isLast ? -110 : 0,
+                                                }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        color: theme.text,
+                                                        fontWeight: "bold",
+                                                    }}
+                                                >
+                                                    {selected.date}
+                                                </Text>
+
+                                                <Text
+                                                    style={{
+                                                        color: COLORS.primary,
+                                                        marginTop: 4,
+                                                        fontWeight: "bold",
+                                                    }}
+                                                >
+                                                    ₹ {Number(selected.total).toLocaleString()}
+                                                </Text>
+                                            </View>
+                                        );
+                                    },
+                                }}
+                            />
+                        </ScrollView>
+                    </>
                 ) : (
 
                     <View
@@ -551,6 +673,21 @@ const styles = StyleSheet.create({
         padding: 30,
         alignItems: "center",
         marginTop: 20,
+    },
+    downloadButton: {
+        backgroundColor: COLORS.primary,
+        height: 50,
+        borderRadius: 12,
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
+        marginBottom: 20,
+    },
+
+    downloadText: {
+        color: "#FFFFFF",
+        fontWeight: "bold",
+        fontSize: 16,
     },
 });
 

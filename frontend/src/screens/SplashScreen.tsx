@@ -68,18 +68,6 @@ const SplashScreen = ({ navigation }: any) => {
   };
 
   // ⏩ Navigation delay
-  // const navigateAfterDelay = async () => {
-  //   const token = await AsyncStorage.getItem("token");
-
-  //   setTimeout(() => {
-  //     if (token) {
-  //       navigation.replace("Dashboard");
-  //     } else {
-  //       navigation.replace("Login");
-  //     }
-  //   }, 2800);
-  // };
-
   const navigateAfterDelay = async () => {
 
     const token = await AsyncStorage.getItem("token");
@@ -111,7 +99,6 @@ const SplashScreen = ({ navigation }: any) => {
 
       // Normal flow
       if (token) {
-        // navigation.replace("Dashboard");
         navigation.replace("MainApp");
       } else {
         navigation.replace("Login");
