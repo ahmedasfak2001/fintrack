@@ -845,20 +845,23 @@ public class ExpenseService {
         }
 
         // Get potential savings
-        public SavingsPotentialResponse getSavingsPotential(
-                        UserDetails userDetails) {
+        public SavingsPotentialResponse getSavingsPotential(UserDetails userDetails) {
 
                 User user = userRepository
-                                .findByEmail(
-                                                userDetails.getUsername())
-                                .orElseThrow(
-                                                () -> new RuntimeException(
-                                                                "User not found"));
+                                .findByEmail(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
 
-                MonthlySummaryResponse summary = getMonthlySummary(
-                                userDetails);
+                YearMonth currentMonth = YearMonth.now();
 
-                BigDecimal budget = user.getMonthlyBudget();
+                BigDecimal budget = monthlyBudgetRepository
+                                .findByUserAndMonthAndYear(
+                                                user,
+                                                currentMonth.getMonthValue(),
+                                                currentMonth.getYear())
+                                .map(MonthlyBudget::getBudget)
+                                .orElse(BigDecimal.ZERO);
+
+                MonthlySummaryResponse summary = getMonthlySummary(userDetails);
 
                 BigDecimal spent = summary.getTotalExpense();
 
@@ -866,22 +869,16 @@ public class ExpenseService {
 
                 SavingsPotentialResponse response = new SavingsPotentialResponse();
 
-                if (remaining.compareTo(
-                                BigDecimal.ZERO) > 0) {
+                if (remaining.compareTo(BigDecimal.ZERO) > 0) {
 
-                        response.setAmount(
-                                        remaining);
-
-                        response.setMessage(
-                                        "You can still save");
+                        response.setAmount(remaining);
+                        response.setMessage("You can still save ₹" + remaining);
 
                 } else {
 
-                        response.setAmount(
-                                        BigDecimal.ZERO);
+                        response.setAmount(BigDecimal.ZERO);
+                        response.setMessage("Budget already exceeded");
 
-                        response.setMessage(
-                                        "Budget already exceeded");
                 }
 
                 return response;

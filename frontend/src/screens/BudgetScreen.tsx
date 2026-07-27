@@ -61,16 +61,6 @@ const BudgetScreen = ({ navigation }: any) => {
                 }
             );
             console.log("Budget Response:", response.data);
-            // const response =
-            //     await api.get(
-            //         "/api/expenses/budget",
-            //         {
-            //             headers: {
-            //                 Authorization:
-            //                     `Bearer ${token}`,
-            //             },
-            //         }
-            //     );
 
             setBudget(
                 response.data.budget
@@ -116,7 +106,7 @@ const BudgetScreen = ({ navigation }: any) => {
                         }
                     );
 
-                // setSummary(response.data);
+                setSummary(response.data);
                 console.log(
                     "Budget Summary:",
                     response.data
