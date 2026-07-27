@@ -525,14 +525,32 @@ public class ExpenseService {
                                                 BigDecimal::add);
 
                 // BigDecimal budget = BigDecimal.valueOf(25000);
-                BigDecimal budget = user.getMonthlyBudget();
+                // BigDecimal budget = user.getMonthlyBudget();
+
+                // BigDecimal remaining = budget.subtract(spent);
+
+                // double usagePercentage = spent.doubleValue()
+                // / budget.doubleValue()
+                // * 100;
+
+                Optional<MonthlyBudget> optionalBudget = monthlyBudgetRepository.findByUserAndMonthAndYear(
+                                user,
+                                currentMonth.getMonthValue(),
+                                currentMonth.getYear());
+
+                BigDecimal budget = optionalBudget
+                                .map(MonthlyBudget::getBudget)
+                                .orElse(BigDecimal.ZERO);
 
                 BigDecimal remaining = budget.subtract(spent);
 
-                double usagePercentage = spent.doubleValue()
-                                / budget.doubleValue()
-                                * 100;
+                double usagePercentage = 0;
 
+                if (budget.compareTo(BigDecimal.ZERO) > 0) {
+                        usagePercentage = spent.doubleValue()
+                                        / budget.doubleValue()
+                                        * 100;
+                }
                 BudgetSummaryResponse response = new BudgetSummaryResponse();
 
                 response.setBudget(budget);

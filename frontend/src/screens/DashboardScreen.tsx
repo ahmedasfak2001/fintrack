@@ -31,7 +31,7 @@ const DashboardScreen = ({ navigation }: any) => {
     const [refreshing, setRefreshing] = useState(false);
 
     const [loading, setLoading] = useState(true);
-
+    
     const [comparison,
         setComparison] =
         useState<

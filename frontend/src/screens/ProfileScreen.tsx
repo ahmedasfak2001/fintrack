@@ -34,7 +34,7 @@ const ProfileScreen = ({ navigation }: any) => {
 
     const [monthlyBudget, setMonthlyBudget] = useState(0);
     const [currentExpense, setCurrentExpense] = useState(0);
-    
+
     const [loading, setLoading] = useState(true);
     const [enabled, setEnabled] = useState(false);
     const remainingBudget = monthlyBudget - currentExpense;
@@ -42,7 +42,7 @@ const ProfileScreen = ({ navigation }: any) => {
     // const exportPdf = async () => {
 
     //     try {
-            
+
     //         const token = await AsyncStorage.getItem("token");
 
     //         const today = new Date();
@@ -159,6 +159,16 @@ const ProfileScreen = ({ navigation }: any) => {
                 }),
             ]);
 
+            const today = new Date();
+
+            const budgetResponse = await api.get(
+                `/api/expenses/budget?month=${today.getMonth() + 1}&year=${today.getFullYear()}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
             console.log(
                 "PROFILE RESPONSE",
                 profileResponse.data
@@ -168,9 +178,11 @@ const ProfileScreen = ({ navigation }: any) => {
 
             setEmail(profileResponse.data.email);
 
-            setMonthlyBudget(
-                profileResponse.data.monthlyBudget || 0
-            );
+            // setMonthlyBudget(
+            //     profileResponse.data.monthlyBudget || 0
+            // );
+
+            setMonthlyBudget(budgetResponse.data.budget || 0);
 
             // setCurrentExpense(
             setCurrentExpense(

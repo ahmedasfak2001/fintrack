@@ -116,7 +116,7 @@ const BudgetScreen = ({ navigation }: any) => {
                         }
                     );
 
-                setSummary(response.data);
+                // setSummary(response.data);
                 console.log(
                     "Budget Summary:",
                     response.data
@@ -133,30 +133,71 @@ const BudgetScreen = ({ navigation }: any) => {
             }
         };
 
+    // const updateBudget = async () => {
+
+    //     try {
+
+    //         setLoading(true);
+
+    //         const token =
+    //             await AsyncStorage.getItem(
+    //                 "token"
+    //             );
+
+    //         // await api.put(
+    //         //     "/api/expenses/budget",
+    //         //     {
+    //         //         monthlyBudget:
+    //         //             Number(budget),
+    //         //     },
+    //         //     {
+    //         //         headers: {
+    //         //             Authorization:
+    //         //                 `Bearer ${token}`,
+    //         //         },
+    //         //     }
+    //         // );
+    //         const today = new Date();
+
+    //         await api.put(
+    //             "/api/expenses/budget",
+    //             {
+    //                 budget: Number(budget),
+    //                 month: today.getMonth() + 1,
+    //                 year: today.getFullYear(),
+    //             },
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                 },
+    //             }
+    //         );
+
+    //         await fetchBudgetSummary();
+
+    //         showSuccess(
+    //             "Budget updated"
+    //         );
+
+    //     } catch (error) {
+
+    //         console.error(error);
+
+    //         showError(
+    //             "Failed to update budget"
+    //         );
+    //     } finally {
+
+    //         setLoading(false);
+    //     }
+    // };
+
     const updateBudget = async () => {
-
         try {
-
             setLoading(true);
 
-            const token =
-                await AsyncStorage.getItem(
-                    "token"
-                );
+            const token = await AsyncStorage.getItem("token");
 
-            // await api.put(
-            //     "/api/expenses/budget",
-            //     {
-            //         monthlyBudget:
-            //             Number(budget),
-            //     },
-            //     {
-            //         headers: {
-            //             Authorization:
-            //                 `Bearer ${token}`,
-            //         },
-            //     }
-            // );
             const today = new Date();
 
             await api.put(
@@ -172,22 +213,20 @@ const BudgetScreen = ({ navigation }: any) => {
                     },
                 }
             );
+            console.log("Budget updated successfully");
 
-            await fetchBudgetSummary();
+            // Refresh everything from backend
+            await Promise.all([
+                fetchBudget(),
+                fetchBudgetSummary(),
+            ]);
 
-            showSuccess(
-                "Budget updated"
-            );
+            showSuccess("Budget updated");
 
         } catch (error) {
-
             console.error(error);
-
-            showError(
-                "Failed to update budget"
-            );
+            showError("Failed to update budget");
         } finally {
-
             setLoading(false);
         }
     };
@@ -258,10 +297,11 @@ const BudgetScreen = ({ navigation }: any) => {
                     styles.updateButton,
                     loading && { opacity: 0.7 }
                 ]}
-                onPress={async () => {
-                    await updateBudget();
-                    navigation.goBack();
-                }}
+                // onPress={async () => {
+                //     await updateBudget();
+                //     navigation.goBack();
+                // }}
+                onPress={updateBudget}
                 disabled={loading}
             >
                 <Text style={styles.updateButtonText}>
