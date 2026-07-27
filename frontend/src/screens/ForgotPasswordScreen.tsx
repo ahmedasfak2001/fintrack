@@ -12,11 +12,14 @@ import api from "../api/api";
 import { showError, showSuccess } from "../utils/toast";
 import { COLORS } from "../constants/colors";
 import AuthLayout from "../components/AuthLayout";
+import { authStyles } from "../styles/authStyles";
+import { useTheme } from "../theme/useTheme";
 
 const ForgotPasswordScreen = ({ navigation }: any) => {
 
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
+    const { theme } = useTheme();
 
     const handleForgotPassword = async () => {
 
@@ -55,61 +58,78 @@ const ForgotPasswordScreen = ({ navigation }: any) => {
 
         <AuthLayout>
 
-                <Text style={styles.title}>
-                    Forgot Password
-                </Text>
+            <Text style={[
+                authStyles.title,
+                {
+                    color: theme.text,
+                },
+            ]}>
+                Forgot Password
+            </Text>
 
-                <Text style={styles.subtitle}>
-                    Enter your registered email address and we'll send you a password reset link.
-                </Text>
+            <Text style={[
+                authStyles.subtitle,
+                {
+                    color: theme.secondaryText,
+                },
+            ]}>
+                Enter your registered email address and we'll send you a password reset link.
+            </Text>
 
-                <TextInput
-                    placeholder="Email Address"
-                    value={email}
-                    onChangeText={setEmail}
-                    style={styles.input}
-                    placeholderTextColor="#94A3B8"
-                    autoCapitalize="none"
-                />
+            <TextInput
+                placeholder="Email Address"
+                value={email}
+                onChangeText={setEmail}
+                style={[
+                    authStyles.input,
+                    {
+                        backgroundColor: theme.card,
+                        borderColor: theme.border,
+                        color: theme.text,
+                    },
+                ]}
+                placeholderTextColor="#94A3B8"
+                autoCapitalize="none"
+            />
+
+            <TouchableOpacity
+                style={[
+                    styles.button,
+                    loading && styles.disabledButton
+                ]}
+                onPress={handleForgotPassword}
+                disabled={loading}
+            >
+
+                {
+                    loading ? (
+                        <ActivityIndicator color="#FFFFFF" />
+                    ) : (
+                        <Text style={styles.buttonText}>
+                            Send Reset Link
+                        </Text>
+                    )
+                }
+
+            </TouchableOpacity>
+
+            <View style={styles.backContainer}>
+
+                <Text style={styles.backText}>
+                    Remember your password?{" "}
+                </Text>
 
                 <TouchableOpacity
-                    style={[
-                        styles.button,
-                        loading && styles.disabledButton
-                    ]}
-                    onPress={handleForgotPassword}
-                    disabled={loading}
-                >
-
-                    {
-                        loading ? (
-                            <ActivityIndicator color="#FFFFFF" />
-                        ) : (
-                            <Text style={styles.buttonText}>
-                                Send Reset Link
-                            </Text>
-                        )
+                    onPress={() =>
+                        navigation.navigate("Login")
                     }
-
+                >
+                    <Text style={styles.backLink}>
+                        Login
+                    </Text>
                 </TouchableOpacity>
 
-                <View style={styles.backContainer}>
-
-                    <Text style={styles.backText}>
-                        Remember your password?{" "}
-                    </Text>
-
-                    <TouchableOpacity
-                        onPress={() =>
-                            navigation.navigate("Login")
-                        }
-                    >
-                        <Text style={styles.backLink}>
-                            Login
-                        </Text>
-                    </TouchableOpacity>
-
-                </View>
+            </View>
 
         </AuthLayout>
 

@@ -81,11 +81,13 @@ import api from "../api/api";
 import AuthLayout from "../components/AuthLayout";
 import { COLORS } from "../constants/colors";
 import { showError, showSuccess } from "../utils/toast";
+import { authStyles } from "../styles/authStyles";
+import { useTheme } from "../theme/useTheme";
 
 export default function ResendVerificationScreen({ navigation }: any) {
 
     const [email, setEmail] = useState("");
-
+    const { theme } = useTheme();
     const [loading, setLoading] =
         useState(false);
 
@@ -156,11 +158,21 @@ export default function ResendVerificationScreen({ navigation }: any) {
 
         <AuthLayout>
 
-            <Text style={styles.title}>
+            <Text style={[
+                authStyles.title,
+                {
+                    color: theme.text,
+                },
+            ]}>
                 Verify Your Email
             </Text>
 
-            <Text style={styles.subtitle}>
+            <Text style={[
+                authStyles.subtitle,
+                {
+                    color: theme.secondaryText,
+                },
+            ]}>
                 Enter your registered email address and we'll send a fresh verification link.
             </Text>
 
@@ -168,7 +180,14 @@ export default function ResendVerificationScreen({ navigation }: any) {
                 placeholder="Email Address"
                 value={email}
                 onChangeText={setEmail}
-                style={styles.input}
+                style={[
+                    authStyles.input,
+                    {
+                        backgroundColor: theme.card,
+                        borderColor: theme.border,
+                        color: theme.text,
+                    },
+                ]}
                 placeholderTextColor="#94A3B8"
                 autoCapitalize="none"
             />
