@@ -191,11 +191,13 @@ const TrendScreen = () => {
                 />
 
                 <Text
-                    style={{
-                        color:
-                            theme.secondaryText,
-                        marginTop: 10,
-                    }}
+                    style={[
+                        styles.loadingText,
+                        {
+                            color:
+                                theme.secondaryText,
+                        },
+                    ]}
                 >
                     Loading Trend...
                 </Text>
@@ -403,7 +405,7 @@ const TrendScreen = () => {
                                         console.log(selected);
 
                                         const isLast = index >= lineData.length - 3;
-                                        
+
                                         return (
                                             <View
                                                 style={{
@@ -689,6 +691,13 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 16,
     },
+
+    loadingText: {
+        marginTop: 15,
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#64748B",
+    }
 });
 
 export default TrendScreen;
